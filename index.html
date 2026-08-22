@@ -18,7 +18,7 @@
       --bg: #0b0b0b;
       --surface: #111;
       --text: #edebe4;
-      --muted: #555;
+      --muted: #999;
       --dim: #2a2a2a;
       --border: rgba(255,255,255,0.07);
       --border-md: rgba(255,255,255,0.12);
@@ -34,7 +34,6 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       cursor: none;
-      overflow-x: hidden;
       overflow-x: hidden;
     }
 
@@ -63,6 +62,11 @@
     }
     .hover-target:hover ~ #cur-ring,
     a:hover ~ #cur-ring { width: 44px; height: 44px; }
+
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      #cur, #cur-ring { display: none; }
+    }
 
     /* ── NAV ── */
     nav {
@@ -114,6 +118,29 @@
     }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      width: 28px; height: 20px;
+      position: relative;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .nav-toggle span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: var(--text);
+      transition: transform 0.3s ease, opacity 0.3s ease, top 0.3s ease;
+    }
+    .nav-toggle span:nth-child(1) { top: 0; }
+    .nav-toggle span:nth-child(2) { top: 9px; }
+    .nav-toggle span:nth-child(3) { top: 18px; }
+    .nav-toggle.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
 
     /* ── HERO ── */
     .hero {
@@ -591,9 +618,24 @@
     @media (max-width: 860px) {
       nav { padding: 24px 28px; }
       nav.scrolled { padding: 16px 28px; }
-      .nav-links { display: none; }
+      .nav-toggle { display: block; }
+      .nav-links {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: rgba(11,11,11,0.98);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        padding: 96px 28px 40px;
+        transform: translateY(-100%);
+        transition: transform 0.4s ease;
+      }
+      .nav-links.open { transform: translateY(0); }
+      .nav-links li { border-bottom: 1px solid var(--border); }
+      .nav-links a { display: block; padding: 18px 0; font-size: 14px; }
 
-      .hero { padding: 0 28px 64px; overflow: hidden; }
+      .hero { min-height: unset; padding: 160px 28px 64px; overflow: hidden; }
       .hero-meta { right: 28px; top: 88px; }
       .hero-name { letter-spacing: -0.03em; }
       .hero-footer { flex-direction: column; align-items: flex-start; gap: 24px; }
@@ -648,7 +690,10 @@
       <rect x="625.09" y="761.06" width="90.92" height="414.97"/>
     </svg>
   </a>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#about">About</a></li>
     <li><a href="#expertise">Expertise</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -929,6 +974,22 @@
 </footer>
 
 <script>
+  /* Mobile nav toggle */
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', function() {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+  navLinks.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
   /* Logo → scroll to top */
   document.querySelector('.nav-logo').addEventListener('click', function(e) {
     e.preventDefault();
@@ -946,9 +1007,15 @@
   setHeroSize();
   window.addEventListener('resize', setHeroSize);
 
-  /* Cursor */
+  /* Cursor (disabled on touch devices) */
+  const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
   const cur = document.getElementById('cur');
   const ring = document.getElementById('cur-ring');
+  if (isTouch) {
+    cur.style.display = 'none';
+    ring.style.display = 'none';
+    document.body.style.cursor = 'auto';
+  } else {
   let mx = 0, my = 0, rx = 0, ry = 0;
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
@@ -974,6 +1041,7 @@
       ring.style.borderColor = 'rgba(237,235,228,0.25)';
     });
   });
+  }
 
   /* Nav compact on scroll */
   const nav = document.getElementById('nav');
