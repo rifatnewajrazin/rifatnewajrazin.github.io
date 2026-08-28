@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  /* The github.io mirror serves the same content as the canonical domain.
+     Keep it out of the index so the two don't compete for name searches. */
+  if (location.hostname === 'rifatnewajrazin.github.io') {
+    var m = document.createElement('meta');
+    m.name = 'robots'; m.content = 'noindex, follow';
+    document.head.appendChild(m);
+  }
+</script>
+<meta name="author" content="Rifat Newaj Razin" />
+<meta property="og:site_name" content="Rifat Newaj Razin" />
 <meta name="description" content="Rifat Newaj Razin — Professional Graphic Designer & Creative Professional from Dhaka, Bangladesh." />
 <meta property="og:title" content="Rifat Newaj Razin — Designer" />
 <meta property="og:description" content="Graphic Designer & Creative Professional based in Dhaka, Bangladesh." />
@@ -15,6 +26,37 @@
 <link rel="canonical" href="https://www.rifatnewajrazin.com/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0a'/%3E%3Crect x='7' y='7' width='18' height='18' fill='%239b17ff'/%3E%3C/svg%3E" />
 <title>Rifat Newaj Razin — Designer</title>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Rifat Newaj Razin",
+  "url": "https://www.rifatnewajrazin.com/",
+  "jobTitle": "Graphic Designer",
+  "description": "Graphic designer and creative professional from Dhaka, Bangladesh — brand identities, digital design, and photography post-production.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dhaka",
+    "addressCountry": "BD"
+  },
+  "knowsAbout": [
+    "Brand Identity Design",
+    "Digital Design",
+    "Motion Graphics",
+    "Social Media Design",
+    "Packaging Design",
+    "Event Design",
+    "Video Editing"
+  ],
+  "sameAs": [
+    "https://www.linkedin.com/in/rifatnewajrazin/",
+    "https://www.behance.net/rifatnewajrazin",
+    "https://www.instagram.com/_razinn_/",
+    "https://www.facebook.com/rn.razin/",
+    "https://github.com/rifatnewajrazin"
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -32,7 +74,15 @@
   --border: rgba(255,255,255,0.08);
   --border-md: rgba(255,255,255,0.14);
   --accent: #9b17ff;
+  --accent-2: #d732fa;
+  --accent-3: #5f12c6;
   --accent-dim: rgba(155,23,255,0.16);
+  --grad: linear-gradient(120deg, #5f12c6 0%, #9b17ff 45%, #d732fa 100%);
+  --grad-bright: linear-gradient(120deg, #7b1fe0 0%, #b04dff 50%, #e85bd8 100%);
+  --grad-soft: linear-gradient(120deg, rgba(95,18,198,0.25), rgba(215,50,250,0.25));
+  --glow: 0 0 32px rgba(155,23,255,0.45);
+  --glow-strong: 0 0 48px rgba(155,23,255,0.55), 0 0 12px rgba(215,50,250,0.4);
+  --shadow-accent: 0 16px 40px -12px rgba(155,23,255,0.55);
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 90px; }
@@ -57,6 +107,18 @@ body {
 a { text-decoration: none; color: inherit; }
 ::selection { background: var(--accent); color: #fff; }
 
+/* Purple gradient text — solid colour is the fallback */
+.grad-text {
+  color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .grad-text { -webkit-text-fill-color: currentColor; }
+}
+
 /* ── CURSOR ── */
 #cur {
   position: fixed;
@@ -67,6 +129,7 @@ a { text-decoration: none; color: inherit; }
   z-index: 9999;
   transform: translate(-50%, -50%);
   transition: transform 0.1s;
+  box-shadow: 0 0 14px 2px rgba(155,23,255,0.7);
 }
 #cur-ring {
   position: fixed;
@@ -128,19 +191,20 @@ nav.scrolled {
   content: '';
   position: absolute;
   bottom: -4px; left: 0;
-  width: 0; height: 1px;
-  background: var(--accent);
+  width: 0; height: 2px;
+  background: var(--grad-bright);
+  border-radius: 2px;
   transition: width 0.3s ease;
 }
 .nav-links a:hover { color: var(--text); }
-.nav-links a:hover::after { width: 100%; }
+.nav-links a:hover::after { width: 100%; box-shadow: var(--glow); }
 .nav-cta {
   padding: 10px 20px;
   border: 1px solid var(--border-md);
   border-radius: 100px;
   font-size: 11px !important;
 }
-.nav-cta:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+.nav-cta:hover { border-color: var(--accent) !important; color: var(--accent) !important; box-shadow: var(--glow); }
 .nav-cta::after { display: none; }
 
 .nav-toggle {
@@ -180,8 +244,22 @@ nav.scrolled {
   content: '';
   position: absolute;
   top: -20%; right: -10%;
-  width: 640px; height: 640px;
-  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+  width: 680px; height: 680px;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(215,50,250,0.28) 0%, transparent 55%),
+    radial-gradient(circle at 65% 60%, rgba(95,18,198,0.32) 0%, transparent 60%),
+    radial-gradient(circle, rgba(155,23,255,0.20) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30%; left: -15%;
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(123,31,224,0.18) 0%, transparent 70%);
+  filter: blur(20px);
   pointer-events: none;
   z-index: 0;
 }
@@ -210,10 +288,10 @@ nav.scrolled {
 }
 .status-dot {
   width: 6px; height: 6px;
-  background: var(--accent);
+  background: var(--grad-bright);
   border-radius: 50%;
   animation: blink 2.4s ease-in-out infinite;
-  box-shadow: 0 0 8px var(--accent);
+  box-shadow: 0 0 10px 2px rgba(155,23,255,0.8), 0 0 20px rgba(215,50,250,0.5);
 }
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -224,6 +302,10 @@ nav.scrolled {
   font-size: 11px;
   letter-spacing: 0.2em;
   color: var(--accent);
+  background: var(--grad-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-transform: uppercase;
   margin-bottom: 22px;
   opacity: 0;
@@ -252,7 +334,33 @@ nav.scrolled {
   transform: translateY(110%);
 }
 .hero-name-row:nth-child(1) span { animation: slideUp 1s 0.35s cubic-bezier(0.22,1,0.36,1) forwards; }
-.hero-name-row:nth-child(2) span { animation: slideUp 1s 0.5s cubic-bezier(0.22,1,0.36,1) forwards; color: var(--accent); }
+.hero-name-row:nth-child(2) span {
+  animation: slideUp 1s 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+  color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+/* glyph-shaped glow: a blurred copy of the same gradient text, behind */
+.hero-name-row:nth-child(2) span::before {
+  content: "Razin";
+  position: absolute;
+  left: 0; top: 0;
+  background: var(--grad-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(26px);
+  opacity: 0.65;
+  z-index: -1;
+  pointer-events: none;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-name-row:nth-child(2) span { -webkit-text-fill-color: var(--accent); }
+  .hero-name-row:nth-child(2) span::before { display: none; }
+}
 
 .hero-footer {
   display: flex;
@@ -288,15 +396,27 @@ nav.scrolled {
   border-radius: 100px;
 }
 .btn-fill {
-  background: var(--accent);
+  background: var(--grad-bright);
+  background-size: 150% 150%;
   color: #fff;
+  box-shadow: var(--shadow-accent), inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: all 0.25s cubic-bezier(0.22,1,0.36,1), background-position 0.5s ease;
 }
-.btn-fill:hover { background: #b04dff; transform: translateY(-2px); }
+.btn-fill:hover {
+  transform: translateY(-2px);
+  background-position: 100% 50%;
+  box-shadow: 0 22px 50px -12px rgba(155,23,255,0.7), var(--glow-strong), inset 0 1px 0 rgba(255,255,255,0.25);
+}
 .btn-ghost {
   border: 1px solid var(--border-md);
   color: var(--muted);
 }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
 
 .scroll-cue {
   position: absolute;
@@ -321,7 +441,8 @@ nav.scrolled {
   position: absolute;
   left: -100%; top: 0;
   width: 100%; height: 100%;
-  background: var(--accent);
+  background: var(--grad-bright);
+  box-shadow: var(--glow);
   animation: scrollLine 2s ease-in-out infinite;
 }
 @keyframes scrollLine {
@@ -345,8 +466,10 @@ nav.scrolled {
 }
 .section-label::before {
   content: '';
-  width: 24px; height: 1px;
-  background: var(--accent);
+  width: 24px; height: 2px;
+  border-radius: 2px;
+  background: var(--grad-bright);
+  box-shadow: var(--glow);
 }
 
 /* ── ABOUT ── */
@@ -376,7 +499,7 @@ nav.scrolled {
   text-transform: uppercase;
   transition: border-color 0.25s, color 0.25s, background 0.25s;
 }
-.pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); box-shadow: var(--glow); }
 
 /* ── STATS STRIP ── */
 .stats {
@@ -394,6 +517,10 @@ nav.scrolled {
   font-size: clamp(30px, 3vw, 44px);
   font-weight: 800;
   color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: -0.02em;
 }
 .stat-label {
@@ -419,7 +546,13 @@ nav.scrolled {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
-.expertise-heading span { color: var(--accent); }
+.expertise-heading span {
+  color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 .expertise-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -437,12 +570,13 @@ nav.scrolled {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 2px;
-  background: var(--accent);
+  background: var(--grad-bright);
+  box-shadow: var(--glow);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
-.exp-card:hover { background: var(--surface); }
+.exp-card:hover { background: var(--surface); box-shadow: inset 0 0 60px rgba(155,23,255,0.08); }
 .exp-card:hover::before { transform: scaleX(1); }
 .exp-n {
   font-size: 11px;
@@ -483,7 +617,8 @@ nav.scrolled {
   left: -16px; top: 50%;
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--grad-bright);
+  box-shadow: var(--glow);
   transform: translateY(-50%) scale(0);
   transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
 }
@@ -550,8 +685,9 @@ nav.scrolled {
 }
 .brand-tile:hover {
   opacity: 1;
-  background: var(--accent-dim);
+  background: var(--grad-soft);
   transform: translateY(-2px);
+  box-shadow: inset 0 0 50px rgba(155,23,255,0.12), var(--glow);
 }
 .brand-tile svg { max-width: min(140px, 100%); max-height: 48px; width: auto; height: auto; display: block; }
 .brand-tile:hover svg { fill: var(--accent) !important; }
@@ -567,7 +703,30 @@ nav.scrolled {
   line-height: 0.95;
   margin-bottom: 24px;
 }
-.connect-heading span { color: var(--accent); }
+.connect-heading span {
+  color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+.connect-heading span::before {
+  content: "Connect.";
+  position: absolute;
+  left: 0; top: 0;
+  background: var(--grad-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: blur(34px);
+  opacity: 0.6;
+  z-index: -1;
+  pointer-events: none;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .connect-heading span::before { display: none; }
+}
 .connect-sub { font-size: 14px; color: var(--muted); max-width: 340px; line-height: 1.8; }
 .connect-grid { border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); }
 .connect-item {
@@ -582,7 +741,7 @@ nav.scrolled {
 }
 .connect-item:nth-child(3n) { border-right: none; }
 .connect-item:nth-child(4), .connect-item:nth-child(5), .connect-item:nth-child(6) { border-bottom: none; }
-.connect-item:hover { background: var(--surface); }
+.connect-item:hover { background: var(--surface); box-shadow: inset 3px 0 0 0 var(--accent), inset 0 0 40px rgba(155,23,255,0.08); }
 .connect-item-left { display: flex; align-items: center; gap: 18px; }
 .connect-icon {
   font-size: 22px;
@@ -608,7 +767,15 @@ footer {
 }
 .foot-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; }
 .foot-copy { font-size: 11px; color: var(--dim); letter-spacing: 0.06em; }
-.foot-copy span { color: var(--accent); }
+.foot-copy span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--grad-bright);
+  box-shadow: var(--glow);
+  vertical-align: middle;
+  font-size: 0;
+}
 
 /* ── REVEAL ── */
 .reveal {
@@ -617,6 +784,16 @@ footer {
   transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
 }
 .reveal.in { opacity: 1; transform: translateY(0); }
+
+/* Fallback for browsers without background-clip:text — show solid purple */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-tag, .stat-num, .expertise-heading span, .connect-heading span,
+  .hero-name-row:nth-child(2) span {
+    -webkit-text-fill-color: var(--accent);
+    color: var(--accent);
+    filter: none;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -627,6 +804,7 @@ footer {
   }
   .reveal { opacity: 1; transform: none; }
   .hero-tag, .hero-bio, .hero-actions { opacity: 1; animation: none; }
+  .hero-name-row { overflow: visible; }
   .hero-name-row span { opacity: 1; transform: none; animation: none; }
 }
 
@@ -751,6 +929,7 @@ footer {
 <noscript><style>
   .reveal { opacity: 1 !important; transform: none !important; }
   .hero-tag, .hero-bio, .hero-actions { opacity: 1 !important; animation: none !important; }
+  .hero-name-row { overflow: visible !important; }
   .hero-name-row span { opacity: 1 !important; transform: none !important; animation: none !important; }
 </style></noscript>
 
@@ -953,7 +1132,7 @@ footer {
 <!-- ── BRANDS GRID ── -->
 <section id="brands">
   <div class="brands-head">
-    <h2 class="brands-heading reveal">Brands I've <span style="color:var(--accent)">worked with</span></h2>
+    <h2 class="brands-heading reveal">Brands I've <span class="grad-text">worked with</span></h2>
     <span class="brands-count reveal">12+ Collaborations</span>
   </div>
   <div class="brands-grid reveal">
@@ -1099,6 +1278,12 @@ footer {
   }
   setHeroSize();
   window.addEventListener('resize', setHeroSize);
+
+  /* The name rows are clipped (overflow:hidden) for the slide-up intro;
+     release them afterwards so the gradient glow isn't boxed off. */
+  setTimeout(function () {
+    document.querySelectorAll('.hero-name-row').forEach(function (r) { r.style.overflow = 'visible'; });
+  }, 1800);
 
   /* Cursor (disabled on touch devices) */
   const cur = document.getElementById('cur');
