@@ -68,9 +68,9 @@
 :root {
   --bg: #0a1826;
   --surface: #0f2236;
-  --text: #eef4f8;
-  --muted: #9fb6c6;
-  --dim: #3f5162;
+  --text: #f2f7fb;
+  --muted: #c3d5e1;
+  --dim: #7a92a3;
   --border: rgba(255,255,255,0.08);
   --border-md: rgba(255,255,255,0.14);
   --accent: #5aa8dc;
@@ -159,7 +159,7 @@ a { text-decoration: none; color: inherit; }
   height: 320%;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.16;
+  opacity: 0.1;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
@@ -178,17 +178,8 @@ a { text-decoration: none; color: inherit; }
   .bg-cursor-glow { transition: none; }
 }
 
-/* Purple gradient text — solid colour is the fallback */
-.grad-text {
-  color: var(--accent);
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .grad-text { -webkit-text-fill-color: currentColor; }
-}
+/* Accent-word highlight — kept solid and light for readability */
+.grad-text { color: #dcecf8; }
 
 /* ── CURSOR ── */
 #cur {
@@ -314,23 +305,8 @@ nav.scrolled {
 .hero::before {
   content: '';
   position: absolute;
-  top: -20%; right: -10%;
-  width: 680px; height: 680px;
-  background:
-    radial-gradient(circle at 35% 35%, rgba(169,216,240,0.28) 0%, transparent 55%),
-    radial-gradient(circle at 65% 60%, rgba(28,75,112,0.32) 0%, transparent 60%),
-    radial-gradient(circle, rgba(90,168,220,0.20) 0%, transparent 70%);
-  filter: blur(10px);
-  pointer-events: none;
-  z-index: 0;
-}
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -30%; left: -15%;
-  width: 460px; height: 460px;
-  background: radial-gradient(circle, rgba(63,143,196,0.18) 0%, transparent 70%);
-  filter: blur(20px);
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(6,16,28,0.35) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -372,11 +348,7 @@ nav.scrolled {
 .hero-tag {
   font-size: 11px;
   letter-spacing: 0.2em;
-  color: var(--accent);
-  background: var(--grad-bright);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #cfe4f3;
   text-transform: uppercase;
   margin-bottom: 22px;
   opacity: 0;
@@ -408,30 +380,7 @@ nav.scrolled {
 .hero-name-row:nth-child(1) span { animation: slideUp 1s 0.35s cubic-bezier(0.22,1,0.36,1) forwards; }
 .hero-name-row:nth-child(2) span {
   animation: slideUp 1s 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
-  color: var(--accent);
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: relative;
-}
-/* glyph-shaped glow: a blurred copy of the same gradient text, behind */
-.hero-name-row:nth-child(2) span::before {
-  content: "Razin";
-  position: absolute;
-  left: 0; top: 0;
-  background: var(--grad-bright);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: blur(26px);
-  opacity: 0.65;
-  z-index: -1;
-  pointer-events: none;
-}
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .hero-name-row:nth-child(2) span { -webkit-text-fill-color: var(--accent); }
-  .hero-name-row:nth-child(2) span::before { display: none; }
+  color: #eaf3fb;
 }
 
 .hero-footer {
@@ -588,11 +537,7 @@ nav.scrolled {
   font-family: 'Syne', sans-serif;
   font-size: clamp(30px, 3vw, 44px);
   font-weight: 800;
-  color: var(--accent);
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
   letter-spacing: -0.02em;
 }
 .stat-label {
@@ -618,13 +563,7 @@ nav.scrolled {
   font-weight: 700;
   letter-spacing: -0.03em;
 }
-.expertise-heading span {
-  color: var(--accent);
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+.expertise-heading span { color: #dcecf8; }
 .expertise-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -775,30 +714,7 @@ nav.scrolled {
   line-height: 0.95;
   margin-bottom: 24px;
 }
-.connect-heading span {
-  color: var(--accent);
-  background: var(--grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: relative;
-}
-.connect-heading span::before {
-  content: "Connect.";
-  position: absolute;
-  left: 0; top: 0;
-  background: var(--grad-bright);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: blur(34px);
-  opacity: 0.6;
-  z-index: -1;
-  pointer-events: none;
-}
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .connect-heading span::before { display: none; }
-}
+.connect-heading span { color: #dcecf8; }
 .connect-sub { font-size: 14px; color: var(--muted); max-width: 340px; line-height: 1.8; }
 .connect-grid { border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); }
 .connect-item {
@@ -856,16 +772,6 @@ footer {
   transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
 }
 .reveal.in { opacity: 1; transform: translateY(0); }
-
-/* Fallback for browsers without background-clip:text — show solid purple */
-@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-  .hero-tag, .stat-num, .expertise-heading span, .connect-heading span,
-  .hero-name-row:nth-child(2) span {
-    -webkit-text-fill-color: var(--accent);
-    color: var(--accent);
-    filter: none;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
