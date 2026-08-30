@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 # in-progress redesign prototype — not for indexing
 Disallow: /redesign/
+# internal HoneyComb Inc. tool — not for indexing
+Disallow: /honeycomb-content-planner/
 
 Sitemap: https://www.rifatnewajrazin.com/sitemap.xml
