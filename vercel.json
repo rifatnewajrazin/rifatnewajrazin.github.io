@@ -18,6 +18,14 @@
   ],
   "rewrites": [
     {
+      "source": "/honeycomb-content-planner/",
+      "destination": "https://honeycomb-content-planner.vercel.app/index.html"
+    },
+    {
+      "source": "/honeycomb-content-planner",
+      "destination": "https://honeycomb-content-planner.vercel.app/index.html"
+    },
+    {
       "source": "/honeycomb-content-planner/:path*",
       "destination": "https://honeycomb-content-planner.vercel.app/:path*"
     }
