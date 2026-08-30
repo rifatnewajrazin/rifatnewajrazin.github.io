@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/redesign",
+      "destination": "/redesign/",
+      "permanent": false
+    },
+    {
+      "source": "/redesign/work",
+      "destination": "/redesign/work/",
+      "permanent": false
+    }
+  ]
+}
