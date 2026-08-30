@@ -9,6 +9,17 @@
       "source": "/redesign/work",
       "destination": "/redesign/work/",
       "permanent": false
+    },
+    {
+      "source": "/honeycomb-content-planner",
+      "destination": "/honeycomb-content-planner/",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/honeycomb-content-planner/:path*",
+      "destination": "https://honeycomb-content-planner.vercel.app/:path*"
     }
   ]
 }
