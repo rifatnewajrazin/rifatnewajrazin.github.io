@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# in-progress redesign prototype — not for indexing
+Disallow: /redesign/
 
 Sitemap: https://www.rifatnewajrazin.com/sitemap.xml
