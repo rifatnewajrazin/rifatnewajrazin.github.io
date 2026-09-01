@@ -17,6 +17,15 @@
 
 <div class="grain" aria-hidden="true"></div>
 
+<!-- ============ PAGE TRANSITION ============
+     Shared cross-page nav overlay (see main.js pageTransitions()). Hidden by
+     default; the inline script below only matters when arriving from another
+     page on this site — it paints the overlay already covering the viewport
+     BEFORE first paint, using a synchronous read, so there is no flash of the
+     page underneath before main.js (loaded at the very end) can take over. -->
+<div class="page-transition" id="pageTransition" aria-hidden="true"></div>
+<script>try{if(sessionStorage.getItem('rnr-nav')==='1'){document.getElementById('pageTransition').style.transform='translateY(0)'}}catch(e){}</script>
+
 <!-- ============ INTRO ============ -->
 <div class="intro" id="intro" aria-hidden="true">
   <span class="intro-mark">RNR<span>.</span></span>
@@ -76,33 +85,33 @@
       <span class="count">Placeholder — real projects to come</span>
     </div>
 
-    <div class="work-grid">
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+    <div class="work-grid" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2026</span>
         <span class="wc-title">Lorem Ipsum Studio</span>
         <span class="wc-cat">Brand Identity · Packaging</span>
       </a>
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2025</span>
         <span class="wc-title">Dolor Sit Beverages</span>
         <span class="wc-cat">Packaging · Art Direction</span>
       </a>
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2025</span>
         <span class="wc-title">Consectetur Festival</span>
         <span class="wc-cat">Event Design · Motion</span>
       </a>
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2024</span>
         <span class="wc-title">Adipiscing Tech</span>
         <span class="wc-cat">Brand Identity · Web</span>
       </a>
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2024</span>
         <span class="wc-title">Eiusmod Skincare</span>
         <span class="wc-cat">Packaging · Social</span>
       </a>
-      <a class="work-cell" href="./work/sample-project.html" data-anim>
+      <a class="work-cell" href="./work/sample-project.html">
         <span class="wc-year">2023</span>
         <span class="wc-title">Tempor Incididunt Co.</span>
         <span class="wc-cat">Brand Identity</span>

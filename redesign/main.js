@@ -9,6 +9,69 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 
+  /* ---------- page transitions (cross-page nav; independent of GSAP) ----------
+     Exit: an intercepted click on an internal link covers the viewport in ink,
+     then navigates. Entry: if the page we're arriving at was reached that way
+     (a sessionStorage flag set right before navigating), the overlay — already
+     painted "covering" by the inline script in <body>, so there is no flash —
+     lifts away to reveal the page. Everything here runs off plain CSS
+     transitions and rAF, never GSAP, so it can never be left half-finished by
+     a library that failed to load. */
+  var NAV_KEY = 'rnr-nav';
+  function navFlagGet() { try { return sessionStorage.getItem(NAV_KEY); } catch (e) { return null; } }
+  function navFlagSet(v) { try { v === null ? sessionStorage.removeItem(NAV_KEY) : sessionStorage.setItem(NAV_KEY, v); } catch (e) {} }
+
+  (function pageTransitions() {
+    var overlay = document.getElementById('pageTransition');
+    var flag = navFlagGet();
+    var incoming = !reduce && !!overlay && flag === '1';
+    if (flag !== null) navFlagSet(null); // consume at most once
+    window.__rnrIncomingNav = incoming;
+
+    if (incoming) {
+      // force the browser to commit the "covering" frame the inline head
+      // script already set, THEN animate away from it — otherwise the style
+      // change below can get coalesced into the same frame and never
+      // visibly transition.
+      void overlay.offsetHeight;
+      var lifted = false;
+      function lift() { if (lifted) return; lifted = true; overlay.style.transform = 'translateY(-100%)'; }
+      requestAnimationFrame(function () { requestAnimationFrame(lift); });
+      // failsafe: rAF can be throttled or suspended (e.g. a backgrounded tab)
+      // — the overlay must never be left stuck covering the page.
+      setTimeout(lift, 80);
+    }
+
+    // a page restored from bfcache (browser back/forward) can carry whatever
+    // transform was left on it — always resolve back to fully hidden.
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted && overlay) overlay.style.transform = 'translateY(-100%)';
+    });
+
+    if (!overlay || reduce) return;
+
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      var href = a.getAttribute('href');
+      if (!href || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+      var url;
+      try { url = new URL(href, location.href); } catch (err) { return; }
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname && url.hash) return; // in-page anchor — Lenis handles it
+
+      e.preventDefault();
+      navFlagSet('1');
+      if (window.__lenis) window.__lenis.stop();
+      overlay.style.transform = 'translateY(0)';
+      var gone = false;
+      function go() { if (gone) return; gone = true; location.href = url.href; }
+      overlay.addEventListener('transitionend', go, { once: true });
+      setTimeout(go, 700); // failsafe: never let a stalled transition block navigation
+    });
+  })();
+
   /* ---------- hero scroll effect (independent of GSAP / rAF) ----------
      A plain scroll listener writes two 0..1 progress values as CSS variables;
      all the movement is expressed in CSS. Scroll events fire reliably even
@@ -280,9 +343,11 @@
   });
 
   /* ---------- INTRO ---------- */
-  // Only pages that actually carry the intro panel get the blur-in reveal;
-  // otherwise the page would start blurred for no reason.
-  if (!document.getElementById('intro')) {
+  // Only a cold/direct load of the homepage gets the full "RNR." panel-lift
+  // reveal. Pages without the intro panel, and any page reached via an
+  // internal link (the page-transition overlay already handled the reveal —
+  // see pageTransitions() above), skip straight to starting the site.
+  if (!document.getElementById('intro') || window.__rnrIncomingNav) {
     document.body.classList.add('intro-done');
     startSite();
     return;
@@ -338,8 +403,10 @@
     fitHero();
     // name + flank labels are simply present — the panel lift IS the reveal.
     // (separate entrance tweens on these are what kept flickering)
-    gsap.set('.hero-name', { opacity: 1, clearProps: 'transform' });
-    gsap.set('.hero-flank, .hero-flank span', { opacity: 1, clearProps: 'transform' });
+    // Guarded: pages without a hero (the work/case-study template) don't
+    // carry these elements, and gsap.set on an empty selector just warns.
+    if (document.querySelector('.hero-name')) gsap.set('.hero-name', { opacity: 1, clearProps: 'transform' });
+    if (document.querySelector('.hero-flank')) gsap.set('.hero-flank, .hero-flank span', { opacity: 1, clearProps: 'transform' });
     buildScroll();
     startSafetyNet();
   }
@@ -351,7 +418,9 @@
   function startSafetyNet() {
     // intro rescue now lives at the intro itself (see finishIntro failsafe);
     // this only guarantees the hero name is never left transparent.
-    setTimeout(function () { gsap.set('.hero-name', { opacity: 1 }); }, 500);
+    setTimeout(function () {
+      if (document.querySelector('.hero-name')) gsap.set('.hero-name', { opacity: 1 });
+    }, 500);
   }
 
   /* ---------- scroll-driven ---------- */
