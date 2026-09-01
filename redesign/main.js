@@ -358,7 +358,7 @@
       document.body.style.overflow = '';
     }
     document.addEventListener('click', function (e) {
-      var img = e.target.closest && e.target.closest('.shot img');
+      var img = e.target.closest && e.target.closest('.shot img, .instax-img img');
       if (img) { open(img.src, img.alt); return; }
       if (e.target === lb || e.target.id === 'lightboxClose') close();
     });
@@ -524,6 +524,55 @@
     });
   }
 
+  /* ---------- "other versions" doodads (home view) ----------
+     Decorative SVGs that drift inside the #versions section and parallax a
+     little on scroll. Rebuilt on every home load (the .vers-doodads box is
+     inside <main>, so a swap gives us a fresh, empty one). Purely ambient:
+     the layer is pointer-events:none. Skipped without GSAP / on narrow
+     layouts / under reduced motion. */
+  function buildVersionsDoodads() {
+    var box = document.querySelector('.vers-doodads');
+    if (!box || !haveGSAP || reduce) return;
+    if (matchMedia('(max-width: 820px)').matches) return;
+    box.innerHTML = '';
+
+    var S = {
+      note: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 24V7l14-3v14"/><circle cx="8" cy="24" r="4"/><circle cx="22" cy="21" r="4"/></svg>',
+      phones: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20v-4a11 11 0 0 1 22 0v4"/><rect x="3" y="19" width="6" height="9" rx="2"/><rect x="23" y="19" width="6" height="9" rx="2"/></svg>',
+      tape: '<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="2" width="36" height="24" rx="3"/><circle cx="14" cy="14" r="4"/><circle cx="26" cy="14" r="4"/><path d="M12 22h16"/></svg>',
+      bike: '<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="6"/><circle cx="31" cy="20" r="6"/><path d="M9 20l7-11h9l-6 11M16 9h-3M25 9l3 4"/></svg>',
+      pace: '<svg viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l8 6-8 6M14 6l8 6-8 6"/></svg>',
+      spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>'
+    };
+    var ITEMS = [
+      { svg: S.note,   w: 30, ax: 0.06, ay: 0.13 },
+      { svg: S.phones, w: 34, ax: 0.94, ay: 0.10 },
+      { svg: S.bike,   w: 46, ax: 0.91, ay: 0.52 },
+      { svg: S.tape,   w: 42, ax: 0.05, ay: 0.55 },
+      { svg: S.pace,   w: 32, ax: 0.95, ay: 0.87 },
+      { svg: S.spark,  w: 22, ax: 0.09, ay: 0.9  }
+    ];
+    ITEMS.forEach(function (cfg) {
+      var el = document.createElement('div');
+      el.className = 'vers-doodad';
+      el.style.width = cfg.w + 'px';
+      el.innerHTML = cfg.svg;
+      box.appendChild(el);
+      var rot = Math.random() * 24 - 12;
+      gsap.set(el, { left: (cfg.ax * 100) + '%', top: (cfg.ay * 100) + '%', xPercent: -50, yPercent: -50, rotation: rot });
+      gsap.to(el, {
+        x: '+=' + (Math.random() * 20 - 10),
+        y: '+=' + (Math.random() * 28 - 14),
+        rotation: rot + (Math.random() * 10 - 5),
+        duration: 4 + Math.random() * 4, ease: 'sine.inOut', repeat: -1, yoyo: true
+      });
+    });
+    gsap.to(box.children, {
+      yPercent: -20, ease: 'none',
+      scrollTrigger: { trigger: '.versions', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  }
+
   // nav hide on scroll-down — always active, every view. Deliberate, not
   // jumpy: requires a sustained scroll of THRESHOLD px in one direction
   // before it reacts, so a small wheel/trackpad wobble can't flicker it.
@@ -549,6 +598,145 @@
         else if (accum > THRESHOLD) { setHidden(true); accum = 0; }
         else if (accum < -THRESHOLD) { setHidden(false); accum = 0; }
       }
+    });
+  }
+
+  /* ============================================================
+     FLOATIES — draggable "desktop clutter" over the whole site.
+     The #floaties layer lives outside <main>, so it is built ONCE
+     (here) and then persists untouched through every client-side
+     swap. Requires GSAP; skipped on narrow/touch layouts and under
+     reduced motion (the CSS hides the layer there too, this just
+     avoids doing the work). Each object floats on a slow yoyo tween
+     that a drag interrupts; on release it gets a short inertia throw
+     and then resumes bobbing around wherever it landed.
+     ============================================================ */
+  function initFloaties() {
+    var layer = document.getElementById('floaties');
+    if (!layer || !haveGSAP || reduce) return;
+    if (layer.dataset.ready) return;
+    if (matchMedia('(max-width: 820px)').matches || matchMedia('(pointer: coarse)').matches) return;
+    layer.dataset.ready = '1';
+
+    var FOLDER =
+      '<svg viewBox="0 0 48 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M2 7h15l4 5h25v25a1 1 0 0 1-1 1H2z" fill="#f4f1e9" ' +
+      'stroke="#565248" stroke-width="2" stroke-linejoin="round"/></svg>';
+
+    // type: 'card' (framed photo — swap src / add entries as you like, GIFs
+    // included), 'glyph' (plain display-face text), or 'svg' (inline markup).
+    // ax/ay are the anchor as a fraction of the viewport, kept away from the
+    // horizontal centre where the headline sits.
+    var ITEMS = [
+      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_s0743bs0743bs074.jpeg', w: 148, h: 116, ax: 0.09, ay: 0.24 },
+      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_dhwd31dhwd31dhwd.jpeg', w: 122, h: 150, ax: 0.9,  ay: 0.18 },
+      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_iub7luiub7luiub7.jpeg', w: 132, h: 104, ax: 0.13, ay: 0.72 },
+      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_3l5b3t3l5b3t3l5b.jpeg', w: 138, h: 138, ax: 0.88, ay: 0.7  },
+      { type: 'glyph', text: '\\( ^_^ )/', size: 20, ax: 0.5, ay: 0.9 },
+      { type: 'glyph', text: '{ ˆ-ˆ }', size: 20, ax: 0.06, ay: 0.47 },
+      { type: 'svg',   svg: FOLDER, w: 46, ax: 0.94, ay: 0.44 }
+    ];
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+    var objs = [];
+
+    function build(cfg) {
+      var el = document.createElement('div');
+      el.className = 'floatie is-' + cfg.type;
+      if (cfg.type === 'card') {
+        el.style.width = cfg.w + 'px';
+        el.innerHTML = '<img src="' + esc(cfg.src) + '" alt="" draggable="false" ' +
+          'style="height:' + (cfg.h || Math.round(cfg.w * 0.8)) + 'px">';
+      } else if (cfg.type === 'glyph') {
+        el.style.fontSize = (cfg.size || 20) + 'px';
+        el.textContent = cfg.text;
+      } else {
+        el.style.width = cfg.w + 'px';
+        el.innerHTML = cfg.svg;
+      }
+      layer.appendChild(el);
+      return el;
+    }
+
+    function place(o) {
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var r = o.el.getBoundingClientRect();
+      o.x = clamp(o.cfg.ax * vw - r.width / 2, 8, vw - r.width - 8);
+      o.y = clamp(o.cfg.ay * vh - r.height / 2, 8, vh - r.height - 8);
+      gsap.set(o.el, { x: o.x, y: o.y, rotation: o.rot });
+    }
+
+    function bob(o) {
+      if (o.tween) o.tween.kill();
+      o.tween = gsap.to(o.el, {
+        x: '+=' + rand(-16, 16), y: '+=' + rand(-22, 22), rotation: o.rot + rand(-4, 4),
+        duration: rand(4, 7), ease: 'sine.inOut', repeat: -1, yoyo: true
+      });
+    }
+
+    ITEMS.forEach(function (cfg) {
+      var o = { cfg: cfg, el: build(cfg), rot: cfg.type === 'glyph' ? 0 : rand(-9, 9), tween: null };
+      place(o);
+      objs.push(o);
+    });
+
+    gsap.from(layer.children, { autoAlpha: 0, duration: 0.6, stagger: 0.06, delay: 0.25,
+      onComplete: function () { objs.forEach(bob); } });
+
+    // ---------- drag (plain Pointer Events, no plugin) ----------
+    objs.forEach(function (o) {
+      var el = o.el, dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+      var lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
+
+      el.addEventListener('pointerdown', function (e) {
+        dragging = true;
+        el.setPointerCapture(e.pointerId);
+        if (o.tween) o.tween.kill();
+        gsap.killTweensOf(el);
+        o.x = gsap.getProperty(el, 'x'); o.y = gsap.getProperty(el, 'y');
+        sx = e.clientX; sy = e.clientY; ox = o.x; oy = o.y;
+        lastX = e.clientX; lastY = e.clientY; lastT = e.timeStamp; vx = vy = 0;
+        el.style.zIndex = String(++initFloaties._top);
+      });
+
+      el.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var vw = window.innerWidth, vh = window.innerHeight, r = el.getBoundingClientRect();
+        o.x = clamp(ox + (e.clientX - sx), -r.width * 0.4, vw - r.width * 0.6);
+        o.y = clamp(oy + (e.clientY - sy), -r.height * 0.4, vh - r.height * 0.6);
+        gsap.set(el, { x: o.x, y: o.y });
+        var dt = e.timeStamp - lastT;
+        if (dt > 0) { vx = (e.clientX - lastX) / dt; vy = (e.clientY - lastY) / dt; }
+        lastX = e.clientX; lastY = e.clientY; lastT = e.timeStamp;
+      });
+
+      function end(e) {
+        if (!dragging) return;
+        dragging = false;
+        try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+        var vw = window.innerWidth, vh = window.innerHeight, r = el.getBoundingClientRect();
+        o.x = clamp(o.x + vx * 90, 8, vw - r.width - 8);
+        o.y = clamp(o.y + vy * 90, 8, vh - r.height - 8);
+        gsap.to(el, {
+          x: o.x, y: o.y, duration: 0.7, ease: 'power2.out',
+          onComplete: function () {
+            o.cfg.ax = (o.x + r.width / 2) / window.innerWidth;
+            o.cfg.ay = (o.y + r.height / 2) / window.innerHeight;
+            bob(o);
+          }
+        });
+      }
+      el.addEventListener('pointerup', end);
+      el.addEventListener('pointercancel', end);
+    });
+    initFloaties._top = 15;
+
+    var frt;
+    window.addEventListener('resize', function () {
+      clearTimeout(frt);
+      frt = setTimeout(function () { objs.forEach(function (o) { bob(o); place(o); }); }, 200);
     });
   }
 
@@ -584,7 +772,7 @@
         var hero = document.querySelector('.hero');
         if (hero) { heroResizeObserver = new ResizeObserver(function () { fitHero(); }); heroResizeObserver.observe(hero); }
       }
-      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); }
+      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); buildVersionsDoodads(); }
     } else if (view === 'case') {
       populateCaseView(url);
     }
@@ -612,6 +800,11 @@
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
   gsap.ticker.lagSmoothing(0);
+
+  // Built once here so it covers every GSAP boot path below (intro, no-intro
+  // cold load, cold load of the case view) without being tied to initView,
+  // which re-runs on every swap.
+  initFloaties();
 
   /* ---------- INTRO ---------- */
   // Only a cold/direct load of the homepage gets the full "RNR." panel-lift

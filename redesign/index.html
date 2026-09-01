@@ -10,12 +10,17 @@
 <meta name="robots" content="noindex, nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Unica+One&family=Prompt:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Unica+One&family=Prompt:wght@400;500;600&family=Caveat:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
 
 <div class="grain" aria-hidden="true"></div>
+
+<!-- ============ FLOATIES ============ draggable desktop clutter, built and
+     wired in main.js. Kept outside <main> (like the grain / lightbox) so it
+     survives client-side navigation and is shared by every view. -->
+<div class="floaties" id="floaties" aria-hidden="true"></div>
 
 <!-- ============ PAGE TRANSITION ============
      Shared cover/lift overlay for client-side navigation between this page
@@ -135,6 +140,90 @@
         <div><dt>Brands</dt><dd data-count="12" data-suffix="+">0</dd></div>
         <div><dt>Roles now</dt><dd data-count="2" data-suffix="">0</dd></div>
       </dl>
+    </div>
+  </section>
+
+  <!-- OTHER VERSIONS — alternating Instax photocard + handwritten note.
+       Photo slots are empty placeholders: drop <img src="/redesign/uploads/…"
+       alt="…"> inside a .instax-img and the gradient/label is covered.
+       .flip on a row puts the photo on the right instead of the left.
+       Decorative .vers-doodads are built per home load in main.js. -->
+  <section id="versions" class="versions">
+    <div class="section-head" data-anim>
+      <h2 id="versionsTitle">The B-Sides</h2>
+      <span class="count">Same person, different soundtrack</span>
+    </div>
+
+    <div class="vers-doodads" aria-hidden="true"></div>
+
+    <div class="vers-row" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-a" data-ph="add photo"></div>
+        <figcaption>Backstage, not on stage</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>The artist manager</h3>
+        <p>When a release is due I'm three inboxes deep at 2am — deadlines, splits,
+          artwork approvals — so the artist only has to think about the music.</p>
+      </div>
+    </div>
+
+    <div class="vers-row flip" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-b" data-ph="add photo"></div>
+        <figcaption>km 32, still smiling</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>The tour manager</h3>
+        <p>Vans, visas, load-ins, day sheets. If the show starts on time and
+          everyone's fed and accounted for, I did the job right.</p>
+      </div>
+    </div>
+
+    <div class="vers-row" data-anim>
+      <div class="instax-reel">
+        <figure class="instax">
+          <div class="instax-img g-c" data-ph="add photo"></div>
+          <figcaption>5am club</figcaption>
+        </figure>
+        <figure class="instax">
+          <div class="instax-img g-d" data-ph="add photo"></div>
+          <figcaption>chasing a PB</figcaption>
+        </figure>
+        <figure class="instax">
+          <div class="instax-img g-e" data-ph="add photo"></div>
+          <figcaption>podium-adjacent</figcaption>
+        </figure>
+      </div>
+      <div class="vers-note">
+        <h3>On two wheels &amp; two feet</h3>
+        <p>Long rides and longer runs are where the actual thinking happens.
+          Half the ideas on this site were worked out somewhere around km 20.</p>
+      </div>
+    </div>
+
+    <div class="vers-row flip" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-f" data-ph="add photo"></div>
+        <figcaption>where did we park?</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>In the friend circle</h3>
+        <p>The designated planner, driver and photo-taker. Someone has to book
+          the table, keep the plan alive, and remember where we left the car.</p>
+      </div>
+    </div>
+
+    <div class="vers-row" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-g" data-ph="add photo"></div>
+        <figcaption>depends on the day</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>Introvert / extrovert</h3>
+        <p>Loud in a room of six, invisible in a room of sixty. Both are me —
+          just on different days, and I've stopped apologising for either.</p>
+      </div>
     </div>
   </section>
 
