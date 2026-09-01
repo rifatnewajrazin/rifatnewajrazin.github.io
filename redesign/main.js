@@ -696,9 +696,10 @@
       gsap.set(o.el, { x: o.px, y: o.py });
     }
 
-    // idle life: a slow drift on x/y, plus a rotation tween — smooth for
-    // most, but a "jitter" subset ticks in steps (rotate a few degrees,
-    // snap back) so they read as fidgety / alive rather than gliding.
+    // idle life: a slow x/y drift + a STEPPED rotation on every object so it
+    // ticks between poses (stop-motion feel) instead of gliding. Each gets
+    // its own step count (2 or 3), swing (small or a bit wider), speed and
+    // pause, so no two tick together.
     function bob(o) {
       if (o.drift) o.drift.kill();
       if (o.spin) o.spin.kill();
@@ -707,18 +708,13 @@
         x: rand(-10, 10), y: rand(-14, 14),
         duration: rand(4.5, 8), ease: 'sine.inOut', repeat: -1, yoyo: true
       });
-      if (o.jitter) {
-        o.spin = gsap.to(o.inner, {
-          rotation: o.rot + rand(4, 9) * (Math.random() < 0.5 ? -1 : 1),
-          duration: rand(0.6, 1.3), ease: 'steps(2)',
-          repeat: -1, yoyo: true, repeatDelay: rand(0.2, 1.1)
-        });
-      } else {
-        o.spin = gsap.to(o.inner, {
-          rotation: o.rot + rand(-5, 5),
-          duration: rand(3.5, 6.5), ease: 'sine.inOut', repeat: -1, yoyo: true
-        });
-      }
+      var steps = Math.random() < 0.5 ? 2 : 3;
+      var swing = rand(3, 13) * (Math.random() < 0.5 ? -1 : 1);
+      o.spin = gsap.to(o.inner, {
+        rotation: o.rot + swing,
+        duration: rand(0.7, 1.9), ease: 'steps(' + steps + ')',
+        repeat: -1, yoyo: true, repeatDelay: rand(0, 1.3)
+      });
     }
 
     ITEMS.forEach(function (cfg) {
@@ -726,17 +722,16 @@
       var o = {
         cfg: cfg, el: made.el, inner: made.inner, drift: null, spin: null,
         rot: cfg.type === 'kao' ? rand(-8, 8) : rand(-14, 14),
-        depth: cfg.type === 'kao' ? rand(0.5, 0.9) : rand(0.5, 1.3),
-        jitter: Math.random() < 0.45
+        depth: cfg.type === 'kao' ? rand(0.5, 0.9) : rand(0.5, 1.3)
       };
       place(o);
       objs.push(o);
     });
 
-    gsap.from(layer.children, {
-      autoAlpha: 0, duration: 0.6, stagger: 0.05, delay: 0.2,
-      onComplete: function () { objs.forEach(bob); }
-    });
+    // idle motion starts immediately; the entrance fade runs independently
+    // on the outer node (autoAlpha) and never touches the inner bob.
+    objs.forEach(bob);
+    gsap.from(layer.children, { autoAlpha: 0, duration: 0.6, stagger: 0.05, delay: 0.2 });
 
     // ---------- mouse parallax (whole layer, while not dragging) ----------
     var PARALLAX = 34;
