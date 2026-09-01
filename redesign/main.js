@@ -190,6 +190,10 @@
             '<span class="wc-cat">' + esc(item.category) + '</span>';
           grid.appendChild(a);
         });
+        // the fallback copy ("Placeholder — real projects to come") is
+        // stale the moment real data loads — swap it for an accurate count.
+        var count = document.querySelector('.work-head .count');
+        if (count) count.textContent = items.length + (items.length === 1 ? ' project' : ' projects');
       })
       .catch(function () { /* keep the static fallback cards */ });
   })();
