@@ -158,9 +158,20 @@
       var samePage = !!kind && kind === routeKind(location.pathname) && url.search === location.search;
       if (samePage && url.hash) {
         e.preventDefault();
-        if (url.hash === '#' || url.hash === '#top') { if (lenis) lenis.scrollTo(0); else window.scrollTo({ top: 0 }); return; }
+        // keep the address bar in sync with where we just scrolled, so a
+        // refresh restores THIS position instead of an older hash. replace
+        // (not push) — these are scrolls, not history steps, and popstate
+        // here does a full view swap which is overkill for a scroll.
+        if (url.hash === '#' || url.hash === '#top') {
+          if (lenis) lenis.scrollTo(0); else window.scrollTo({ top: 0 });
+          history.replaceState(history.state, '', url.pathname + url.search);
+          return;
+        }
         var t = document.querySelector(url.hash);
-        if (t) { if (lenis) lenis.scrollTo(t, { offset: 0 }); else t.scrollIntoView(); }
+        if (t) {
+          if (lenis) lenis.scrollTo(t, { offset: 0 }); else t.scrollIntoView();
+          history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+        }
         return;
       }
       if (samePage) return; // link to exactly where we already are
