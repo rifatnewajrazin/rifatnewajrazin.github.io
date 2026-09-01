@@ -1,88 +1,106 @@
 {
   "items": [
     {
-      "slug": "lorem-ipsum-studio",
-      "year": "2026",
-      "title": "Lorem Ipsum Studio",
-      "category": "Brand Identity · Packaging",
-      "role": "Identity, Packaging",
-      "deliverables": "Logo, System, Boxes",
-      "client": "Placeholder Co.",
-      "cover": "",
-      "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
       "approach": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+      "slug": "lorem-ipsum-studio",
+      "client": "Placeholder Co.",
       "outcome": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
-      "gallery": ["", ""]
+      "gallery": [
+        "",
+        ""
+      ],
+      "deliverables": "Logo, System, Boxes",
+      "role": "Identity, Packaging",
+      "cover": "",
+      "title": "Lorem Ipsum Studio",
+      "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
+      "year": "2026",
+      "category": "Brand Identity · Packaging"
     },
     {
-      "slug": "dolor-sit-beverages",
-      "year": "2025",
-      "title": "Dolor Sit Beverages",
-      "category": "Packaging · Art Direction",
-      "role": "Packaging, Art Direction",
-      "deliverables": "Bottle System, Labels",
-      "client": "Placeholder Co.",
-      "cover": "",
-      "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "approach": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "slug": "dolor-sit-beverages",
+      "client": "Placeholder Co.",
       "outcome": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      "gallery": ["", ""]
-    },
-    {
-      "slug": "consectetur-festival",
+      "gallery": [
+        "/redesign/uploads/gemini_generated_image_3l5b3t3l5b3t3l5b.jpeg",
+        "/redesign/uploads/gemini_generated_image_dhwd31dhwd31dhwd.jpeg"
+      ],
+      "deliverables": "Bottle System, Labels",
+      "role": "Packaging, Art Direction",
+      "cover": "/redesign/uploads/gemini_generated_image_s0743bs0743bs074.jpeg",
+      "title": "Dolor Sit Beverages",
+      "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "year": "2025",
-      "title": "Consectetur Festival",
-      "category": "Event Design · Motion",
-      "role": "Event Design, Motion",
-      "deliverables": "Signage, Motion Titles",
-      "client": "Placeholder Co.",
-      "cover": "",
-      "brief": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "category": "Packaging · Art Direction"
+    },
+    {
       "approach": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
+      "slug": "consectetur-festival",
+      "client": "Placeholder Co.",
       "outcome": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
-      "gallery": ["", ""]
+      "gallery": [
+        "",
+        ""
+      ],
+      "deliverables": "Signage, Motion Titles",
+      "role": "Event Design, Motion",
+      "cover": "",
+      "title": "Consectetur Festival",
+      "brief": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "year": "2025",
+      "category": "Event Design · Motion"
     },
     {
-      "slug": "adipiscing-tech",
-      "year": "2024",
-      "title": "Adipiscing Tech",
-      "category": "Brand Identity · Web",
-      "role": "Identity, Web",
-      "deliverables": "Logo, Site Design",
-      "client": "Placeholder Co.",
-      "cover": "",
-      "brief": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
       "approach": "Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.",
+      "slug": "adipiscing-tech",
+      "client": "Placeholder Co.",
       "outcome": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
-      "gallery": ["", ""]
-    },
-    {
-      "slug": "eiusmod-skincare",
+      "gallery": [
+        "",
+        ""
+      ],
+      "deliverables": "Logo, Site Design",
+      "role": "Identity, Web",
+      "cover": "",
+      "title": "Adipiscing Tech",
+      "brief": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
       "year": "2024",
-      "title": "Eiusmod Skincare",
-      "category": "Packaging · Social",
-      "role": "Packaging, Social",
-      "deliverables": "Bottle System, Social Kit",
-      "client": "Placeholder Co.",
-      "cover": "",
-      "brief": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque.",
-      "approach": "Et harum quidem rerum facilis est et expedita distinctio nam libero tempore, cum soluta nobis est eligendi.",
-      "outcome": "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae.",
-      "gallery": ["", ""]
+      "category": "Brand Identity · Web"
     },
     {
-      "slug": "tempor-incididunt-co",
-      "year": "2023",
-      "title": "Tempor Incididunt Co.",
-      "category": "Brand Identity",
-      "role": "Identity",
-      "deliverables": "Logo, Guidelines",
+      "approach": "Et harum quidem rerum facilis est et expedita distinctio nam libero tempore, cum soluta nobis est eligendi.",
+      "slug": "eiusmod-skincare",
       "client": "Placeholder Co.",
+      "outcome": "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae.",
+      "gallery": [
+        "",
+        ""
+      ],
+      "deliverables": "Bottle System, Social Kit",
+      "role": "Packaging, Social",
       "cover": "",
-      "brief": "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur.",
+      "title": "Eiusmod Skincare",
+      "brief": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque.",
+      "year": "2024",
+      "category": "Packaging · Social"
+    },
+    {
       "approach": "Aut perferendis doloribus asperiores repellat. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.",
+      "slug": "tempor-incididunt-co",
+      "client": "Placeholder Co.",
       "outcome": "Accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto.",
-      "gallery": ["", ""]
+      "gallery": [
+        "",
+        ""
+      ],
+      "deliverables": "Logo, Guidelines",
+      "role": "Identity",
+      "cover": "",
+      "title": "Tempor Incididunt Co.",
+      "brief": "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur.",
+      "year": "2023",
+      "category": "Brand Identity"
     }
   ]
 }
