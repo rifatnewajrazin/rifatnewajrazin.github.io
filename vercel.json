@@ -1,4 +1,5 @@
 {
+  "cleanUrls": false,
   "redirects": [
     {
       "source": "/redesign",
@@ -8,6 +9,11 @@
     {
       "source": "/redesign/work",
       "destination": "/redesign/work/",
+      "permanent": false
+    },
+    {
+      "source": "/redesign/admin",
+      "destination": "/redesign/admin/",
       "permanent": false
     },
     {

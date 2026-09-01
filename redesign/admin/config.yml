@@ -1,0 +1,73 @@
+backend:
+  name: github
+  repo: rifatnewajrazin/rifatnewajrazin.github.io
+  branch: main
+  base_url: https://www.rifatnewajrazin.com
+  auth_endpoint: api/auth
+
+# Images you upload in the CMS are committed into this repo folder and
+# served at the matching public path.
+media_folder: "redesign/uploads"
+public_folder: "/redesign/uploads"
+
+collections:
+  - name: "work"
+    label: "Work"
+    files:
+      - file: "redesign/data/work.json"
+        label: "Work Section"
+        name: "work"
+        fields:
+          - label: "Projects"
+            name: "items"
+            widget: "list"
+            collapsed: true
+            summary: "{{fields.year}} — {{fields.title}}"
+            fields:
+              - label: "Slug"
+                name: "slug"
+                widget: "string"
+                hint: "Used in the project's URL — lowercase, hyphens, no spaces (e.g. acme-rebrand)."
+              - label: "Year"
+                name: "year"
+                widget: "string"
+              - label: "Title"
+                name: "title"
+                widget: "string"
+              - label: "Category"
+                name: "category"
+                widget: "string"
+                hint: "Shown on the card, e.g. Brand Identity · Packaging"
+              - label: "Role"
+                name: "role"
+                widget: "string"
+                required: false
+              - label: "Deliverables"
+                name: "deliverables"
+                widget: "string"
+                required: false
+              - label: "Client"
+                name: "client"
+                widget: "string"
+                required: false
+              - label: "Cover Image"
+                name: "cover"
+                widget: "image"
+                required: false
+              - label: "Brief"
+                name: "brief"
+                widget: "text"
+                required: false
+              - label: "Approach"
+                name: "approach"
+                widget: "text"
+                required: false
+              - label: "Outcome"
+                name: "outcome"
+                widget: "text"
+                required: false
+              - label: "Gallery Images"
+                name: "gallery"
+                widget: "list"
+                required: false
+                field: { label: "Image", name: "image", widget: "image" }

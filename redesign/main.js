@@ -157,6 +157,43 @@
     window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 200); });
   })();
 
+  /* ---------- work grid (data-driven; independent of GSAP) ----------
+     Renders project cards from data/work.json, which is exactly what the
+     CMS at /redesign/admin edits — so uploading images/text there updates
+     this grid (and the case-study page) with no code changes. The static
+     cards already in the HTML are the no-JS/fetch-failure fallback and are
+     only replaced once real data has loaded successfully. */
+  (function renderWorkGrid() {
+    var grid = document.querySelector('.work-grid');
+    if (!grid) return;
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    fetch('./data/work.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var items = data && data.items;
+        if (!items || !items.length) return; // keep the static fallback cards
+        grid.innerHTML = '';
+        items.forEach(function (item, i) {
+          var a = document.createElement('a');
+          a.className = 'work-cell';
+          a.href = './work/case.html?slug=' + encodeURIComponent(item.slug || '');
+          a.style.transitionDelay = (i * 0.06).toFixed(2) + 's'; // stagger, replaces the old fixed nth-child list
+          a.innerHTML =
+            '<span class="wc-year">' + esc(item.year) + '</span>' +
+            '<span class="wc-title">' + esc(item.title) + '</span>' +
+            '<span class="wc-cat">' + esc(item.category) + '</span>';
+          grid.appendChild(a);
+        });
+      })
+      .catch(function () { /* keep the static fallback cards */ });
+  })();
+
   if (!haveGSAP || reduce) {
     document.body.classList.add('intro-done');
     showEverything();

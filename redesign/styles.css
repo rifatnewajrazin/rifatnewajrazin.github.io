@@ -220,12 +220,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 .js-ready .work-grid.in .work-cell{opacity:1;transform:none}
 .js-ready.reveal-all .work-grid .work-cell{opacity:1;transform:none}
-.work-grid .work-cell:nth-child(1){transition-delay:.02s}
-.work-grid .work-cell:nth-child(2){transition-delay:.08s}
-.work-grid .work-cell:nth-child(3){transition-delay:.14s}
-.work-grid .work-cell:nth-child(4){transition-delay:.20s}
-.work-grid .work-cell:nth-child(5){transition-delay:.26s}
-.work-grid .work-cell:nth-child(6){transition-delay:.32s}
+/* stagger delay is set inline per-cell by main.js renderWorkGrid(), since the
+   card count is now data-driven rather than a fixed six */
 
 /* ---------- about ---------- */
 .about{padding-top:12vh;padding-bottom:14vh}
