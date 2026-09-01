@@ -617,13 +617,15 @@
      ============================================================ */
   function initFloaties() {
     var hero = document.querySelector('.hero');
-    var layer = hero && hero.querySelector('.floaties');
-    if (!layer || !haveGSAP || reduce) return;
+    var layer = document.querySelector('.floaties');
+    if (!layer || !hero || !haveGSAP || reduce) return;
     if (matchMedia('(max-width: 820px)').matches || matchMedia('(pointer: coarse)').matches) return;
 
     // rebuild clean (kill any tweens from a previous home visit first)
     layer.querySelectorAll('.floatie, .floatie-in').forEach(function (n) { gsap.killTweensOf(n); });
     layer.innerHTML = '';
+    // the layer is a sibling of .hero, so give it the hero's height
+    layer.style.height = (hero.offsetHeight || window.innerHeight) + 'px';
 
     function rand(a, b) { return a + Math.random() * (b - a); }
     function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
@@ -687,28 +689,45 @@
     }
 
     function place(o) {
-      var b = hero.getBoundingClientRect();
+      var b = layer.getBoundingClientRect();
       var r = o.el.getBoundingClientRect();
       o.px = clamp(o.cfg.ax * b.width - r.width / 2, 6, b.width - r.width - 6);
       o.py = clamp(o.cfg.ay * b.height - r.height / 2, 6, b.height - r.height - 6);
       gsap.set(o.el, { x: o.px, y: o.py });
     }
 
+    // idle life: a slow drift on x/y, plus a rotation tween — smooth for
+    // most, but a "jitter" subset ticks in steps (rotate a few degrees,
+    // snap back) so they read as fidgety / alive rather than gliding.
     function bob(o) {
-      if (o.tween) o.tween.kill();
+      if (o.drift) o.drift.kill();
+      if (o.spin) o.spin.kill();
       gsap.set(o.inner, { rotation: o.rot });
-      o.tween = gsap.to(o.inner, {
-        x: rand(-10, 10), y: rand(-14, 14), rotation: o.rot + rand(-5, 5),
+      o.drift = gsap.to(o.inner, {
+        x: rand(-10, 10), y: rand(-14, 14),
         duration: rand(4.5, 8), ease: 'sine.inOut', repeat: -1, yoyo: true
       });
+      if (o.jitter) {
+        o.spin = gsap.to(o.inner, {
+          rotation: o.rot + rand(4, 9) * (Math.random() < 0.5 ? -1 : 1),
+          duration: rand(0.6, 1.3), ease: 'steps(2)',
+          repeat: -1, yoyo: true, repeatDelay: rand(0.2, 1.1)
+        });
+      } else {
+        o.spin = gsap.to(o.inner, {
+          rotation: o.rot + rand(-5, 5),
+          duration: rand(3.5, 6.5), ease: 'sine.inOut', repeat: -1, yoyo: true
+        });
+      }
     }
 
     ITEMS.forEach(function (cfg) {
       var made = build(cfg);
       var o = {
-        cfg: cfg, el: made.el, inner: made.inner, tween: null,
+        cfg: cfg, el: made.el, inner: made.inner, drift: null, spin: null,
         rot: cfg.type === 'kao' ? rand(-8, 8) : rand(-14, 14),
-        depth: cfg.type === 'kao' ? rand(0.5, 0.9) : rand(0.5, 1.3)
+        depth: cfg.type === 'kao' ? rand(0.5, 0.9) : rand(0.5, 1.3),
+        jitter: Math.random() < 0.45
       };
       place(o);
       objs.push(o);
@@ -720,10 +739,10 @@
     });
 
     // ---------- mouse parallax (whole layer, while not dragging) ----------
-    var PARALLAX = 26;
+    var PARALLAX = 34;
     hero.addEventListener('pointermove', function (e) {
       if (e.pointerType === 'touch') return;
-      var b = hero.getBoundingClientRect();
+      var b = layer.getBoundingClientRect();
       var fx = (e.clientX - b.left) / b.width - 0.5;
       var fy = (e.clientY - b.top) / b.height - 0.5;
       objs.forEach(function (o) {
@@ -761,9 +780,11 @@
 
       el.addEventListener('pointermove', function (e) {
         if (!o.dragging) return;
-        var b = hero.getBoundingClientRect(), r = el.getBoundingClientRect();
-        o.px = clamp(ox + (e.clientX - sx), -r.width * 0.35, b.width - r.width * 0.65);
-        o.py = clamp(oy + (e.clientY - sy), -r.height * 0.35, b.height - r.height * 0.65);
+        // generous bounds: an object can be shoved ~75% off any edge, so it
+        // roams the whole viewport but can never be lost entirely.
+        var b = layer.getBoundingClientRect(), r = el.getBoundingClientRect();
+        o.px = clamp(ox + (e.clientX - sx), -r.width * 0.75, b.width - r.width * 0.25);
+        o.py = clamp(oy + (e.clientY - sy), -r.height * 0.75, b.height - r.height * 0.25);
         gsap.set(el, { x: o.px, y: o.py });
         var dt = e.timeStamp - lastT;
         if (dt > 0) { vx = (e.clientX - lastX) / dt; vy = (e.clientY - lastY) / dt; }
@@ -774,9 +795,9 @@
         if (!o.dragging) return;
         o.dragging = false;
         try { el.releasePointerCapture(e.pointerId); } catch (err) {}
-        var b = hero.getBoundingClientRect(), r = el.getBoundingClientRect();
-        o.px = clamp(o.px + vx * 80, 6, b.width - r.width - 6);
-        o.py = clamp(o.py + vy * 80, 6, b.height - r.height - 6);
+        var b = layer.getBoundingClientRect(), r = el.getBoundingClientRect();
+        o.px = clamp(o.px + vx * 80, -r.width * 0.55, b.width - r.width * 0.45);
+        o.py = clamp(o.py + vy * 80, -r.height * 0.55, b.height - r.height * 0.45);
         o.cfg.ax = (o.px + r.width / 2) / b.width;
         o.cfg.ay = (o.py + r.height / 2) / b.height;
         gsap.to(el, { x: o.px, y: o.py, duration: 0.7, ease: 'power2.out' });
@@ -789,12 +810,16 @@
     // on whatever the latest build produced.
     initFloaties._objs = objs;
     initFloaties._place = place;
+    initFloaties._layer = layer;
+    initFloaties._hero = hero;
     if (!initFloaties._resizeWired) {
       initFloaties._resizeWired = true;
       var frt;
       window.addEventListener('resize', function () {
         clearTimeout(frt);
         frt = setTimeout(function () {
+          var ly = initFloaties._layer, h = initFloaties._hero;
+          if (ly && h) ly.style.height = (h.offsetHeight || window.innerHeight) + 'px';
           (initFloaties._objs || []).forEach(function (o) {
             if (!o.dragging) initFloaties._place(o);
           });

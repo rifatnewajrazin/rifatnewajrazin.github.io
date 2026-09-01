@@ -40,12 +40,15 @@
 
 <main id="top">
 
+  <!-- Draggable "desktop clutter" for the hero, built in main.js
+       initFloaties(). A full-bleed SIBLING of .hero (not a child — the
+       hero's 1200px max-width and overflow:hidden would otherwise cage the
+       drag area). It overlays the hero band, is JS-sized to the hero's
+       height, clips its own overflow, and scrolls away with the page. -->
+  <div class="floaties" aria-hidden="true"></div>
+
   <!-- HERO -->
   <section class="hero">
-    <!-- Draggable "desktop clutter", built in main.js initFloaties(). Inside
-         .hero (position:relative; overflow:hidden) so it is clipped to the
-         hero and scrolls away with it. -->
-    <div class="floaties" aria-hidden="true"></div>
     <div class="hero-flank" aria-hidden="true">
       <span class="flank-l">Graphic Designer</span>
       <span class="flank-r">Based in<br>Dhaka, Bangladesh</span>

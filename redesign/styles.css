@@ -49,14 +49,20 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- floaties ----------
    Draggable "desktop clutter" scattered across the hero. The layer is a
-   child of .hero (position:relative; overflow:hidden), absolutely filling
-   it, so the objects clip to the hero and scroll away with it. z-index 1
-   keeps them behind .hero-name (z-index 2) even where they cross it. The
-   layer is click-through; only the objects catch the pointer. Built and
-   animated in main.js (initFloaties); skipped without GSAP, on narrow/touch
-   layouts, and under reduced-motion. Outer .floatie = position + drag +
-   parallax; inner .floatie-in = idle bob + base rotation. */
-.floaties{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+   full-bleed sibling of .hero inside <main> (main is position:relative):
+   top-left aligned, full viewport width, JS-sized to the hero's height,
+   clipping its own overflow. Being a sibling (not a child) is what frees
+   the drag area from the hero's 1200px column and overflow:hidden. It
+   scrolls away with the page. isolation:isolate makes it its own stacking
+   context so a dragged object's raised z-index still stays behind
+   .hero-name. The layer is click-through; only the objects catch the
+   pointer. Built/animated in main.js (initFloaties); skipped without GSAP,
+   on narrow/touch layouts, and under reduced-motion. Outer .floatie =
+   position + drag + parallax; inner .floatie-in = idle bob + rotation. */
+.floaties{
+  position:absolute;top:0;left:0;width:100%;
+  z-index:1;isolation:isolate;pointer-events:none;overflow:hidden;
+}
 .floatie{
   position:absolute;top:0;left:0;pointer-events:auto;color:var(--ink);
   cursor:grab;touch-action:none;will-change:transform;
