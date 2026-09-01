@@ -59,22 +59,37 @@
   var overlay = document.getElementById('pageTransition');
   var lenis = null; // set once GSAP/Lenis boot below; router checks it defensively
 
-  function cover() {
+  /* Directional wipe. dir 'up' (default, used going deeper — home -> case):
+     the panel enters from the BOTTOM, covers, then exits off the TOP, so
+     the whole move reads as an upward sweep. dir 'down' (going back to
+     home): enters from the TOP, exits off the BOTTOM — the exact reverse.
+     cover() hard-resets the panel to its off-screen start edge (transition
+     briefly disabled) so the direction is consistent no matter where the
+     previous transition left it. */
+  function cover(dir) {
     return new Promise(function (resolve) {
       if (!overlay || reduce) { resolve(); return; }
       if (lenis) lenis.stop();
-      overlay.style.transform = 'translateY(0)';
+      var from = dir === 'down' ? '-100%' : '100%';
+      overlay.style.transition = 'none';
+      overlay.style.transform = 'translateY(' + from + ')';
+      void overlay.offsetHeight;      // commit the start edge with no animation
+      overlay.style.transition = '';  // back to the stylesheet's transition
       var done = false;
       function go() { if (done) return; done = true; resolve(); }
       overlay.addEventListener('transitionend', go, { once: true });
       setTimeout(go, 700); // failsafe: never let a stalled transition block navigation
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { overlay.style.transform = 'translateY(0)'; });
+      });
     });
   }
-  function lift() {
+  function lift(dir) {
     if (!overlay || reduce) return;
     void overlay.offsetHeight; // commit the "covering" frame before animating away
+    var to = dir === 'down' ? '100%' : '-100%';
     var lifted = false;
-    function go() { if (lifted) return; lifted = true; overlay.style.transform = 'translateY(-100%)'; }
+    function go() { if (lifted) return; lifted = true; overlay.style.transform = 'translateY(' + to + ')'; }
     requestAnimationFrame(function () { requestAnimationFrame(go); });
     setTimeout(go, 80); // failsafe: rAF can be throttled/suspended (backgrounded tab)
   }
@@ -99,10 +114,10 @@
     return view;
   }
 
-  function goTo(url, push) {
+  function goTo(url, push, dir) {
     if (routing) return;
     routing = true;
-    cover().then(function () {
+    cover(dir).then(function () {
       return fetch(fetchTarget(url), { cache: 'no-store' });
     }).then(function (r) {
       if (!r.ok) throw new Error('bad response ' + r.status);
@@ -112,7 +127,7 @@
       var view = swapMainTo(doc);
       if (push) history.pushState({ rnrSpa: true }, '', url.href);
       initView(view, url);
-      lift();
+      lift(dir);
       routing = false;
     }).catch(function () {
       // fetch/parse failed for some reason — a real navigation always works
@@ -152,21 +167,24 @@
 
       e.preventDefault();
       if (!kind) { location.href = url.href; return; } // unrecognised route — plain nav, always works
-      goTo(url, true);
+      // going to home = downward wipe; going deeper (case / next project) = upward
+      goTo(url, true, kind === 'home' ? 'down' : 'up');
     });
 
     window.addEventListener('popstate', function () {
       var url = new URL(location.href);
-      if (!routeKind(url.pathname)) return; // left our SPA routes entirely; let the browser handle it
+      var kind = routeKind(url.pathname);
+      if (!kind) return; // left our SPA routes entirely; let the browser handle it
       if (routing) return;
       routing = true;
-      cover().then(function () { return fetch(fetchTarget(url), { cache: 'no-store' }); })
+      var dir = kind === 'home' ? 'down' : 'up';
+      cover(dir).then(function () { return fetch(fetchTarget(url), { cache: 'no-store' }); })
         .then(function (r) { return r.text(); })
         .then(function (html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
           var view = swapMainTo(doc);
           initView(view, url);
-          lift();
+          lift(dir);
           routing = false;
         })
         .catch(function () {
