@@ -1,5 +1,17 @@
 /* Rifat Newaj Razin — animated redesign prototype
-   GSAP + ScrollTrigger + Lenis. Degrades gracefully if any fail. */
+   GSAP + ScrollTrigger + Lenis. Degrades gracefully if any fail.
+
+   ---------- client-side navigation ----------
+   The two templates (home, case study) are swapped in-place with fetch +
+   DOMParser instead of doing real page loads, and every internal link goes
+   through the SAME cover -> swap -> lift transition, driven by pushState.
+   The browser's own back/forward button also fires that same transition
+   (via popstate), so "back" is a genuine, consistent reverse of "forward" —
+   not a different, uncontrolled browser behaviour. Direct/cold loads of
+   either template still work standalone (this file boots the current view
+   the same way whether it was just parsed by the browser or just swapped
+   in), and a failed/blocked fetch always falls back to a plain full
+   navigation, so nothing here can strand the user on a dead page. */
 (function () {
   var root = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -9,47 +21,106 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
 
-  /* ---------- page transitions (cross-page nav; independent of GSAP) ----------
-     Exit: an intercepted click on an internal link covers the viewport in ink,
-     then navigates. Entry: if the page we're arriving at was reached that way
-     (a sessionStorage flag set right before navigating), the overlay — already
-     painted "covering" by the inline script in <body>, so there is no flash —
-     lifts away to reveal the page. Everything here runs off plain CSS
-     transitions and rAF, never GSAP, so it can never be left half-finished by
-     a library that failed to load. */
-  var NAV_KEY = 'rnr-nav';
-  function navFlagGet() { try { return sessionStorage.getItem(NAV_KEY); } catch (e) { return null; } }
-  function navFlagSet(v) { try { v === null ? sessionStorage.removeItem(NAV_KEY) : sessionStorage.setItem(NAV_KEY, v); } catch (e) {} }
-
-  (function pageTransitions() {
-    var overlay = document.getElementById('pageTransition');
-    var flag = navFlagGet();
-    var incoming = !reduce && !!overlay && flag === '1';
-    if (flag !== null) navFlagSet(null); // consume at most once
-    window.__rnrIncomingNav = incoming;
-
-    if (incoming) {
-      // force the browser to commit the "covering" frame the inline head
-      // script already set, THEN animate away from it — otherwise the style
-      // change below can get coalesced into the same frame and never
-      // visibly transition.
-      void overlay.offsetHeight;
-      var lifted = false;
-      function lift() { if (lifted) return; lifted = true; overlay.style.transform = 'translateY(-100%)'; }
-      requestAnimationFrame(function () { requestAnimationFrame(lift); });
-      // failsafe: rAF can be throttled or suspended (e.g. a backgrounded tab)
-      // — the overlay must never be left stuck covering the page.
-      setTimeout(lift, 80);
-    }
-
-    // a page restored from bfcache (browser back/forward) can carry whatever
-    // transform was left on it — always resolve back to fully hidden.
-    window.addEventListener('pageshow', function (e) {
-      if (e.persisted && overlay) overlay.style.transform = 'translateY(-100%)';
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
 
+  /* ---------- route matching ----------
+     Suffix-based so it works the same whether the site is hosted at the
+     domain root or under /redesign/, and both locally and in production. */
+  function routeKind(pathname) {
+    if (/\/work\/case(\.html)?$/.test(pathname)) return 'case';
+    if (/\/(index\.html)?$/.test(pathname)) return 'home';
+    return null;
+  }
+  function detectView(doc) {
+    return doc.querySelector('.case-hero') ? 'case' : 'home';
+  }
+
+  // The URL shown in the address bar (bare "/redesign/") can differ from
+  // what we actually fetch: relying on a host's directory-index behaviour
+  // to resolve "/redesign/" to its index.html is one more thing that can
+  // vary by host/config, so fetch the explicit filename instead.
+  function fetchTarget(url) {
+    var path = url.pathname;
+    if (routeKind(path) === 'home' && !/\/index\.html$/.test(path)) {
+      path = path.replace(/\/$/, '') + '/index.html';
+    }
+    return url.origin + path + url.search;
+  }
+
+  /* ============================================================
+     PAGE TRANSITION OVERLAY — independent of GSAP, plain CSS
+     transitions + rAF, so it can never be left half-finished by a
+     library that failed to load.
+     ============================================================ */
+  var overlay = document.getElementById('pageTransition');
+  var lenis = null; // set once GSAP/Lenis boot below; router checks it defensively
+
+  function cover() {
+    return new Promise(function (resolve) {
+      if (!overlay || reduce) { resolve(); return; }
+      if (lenis) lenis.stop();
+      overlay.style.transform = 'translateY(0)';
+      var done = false;
+      function go() { if (done) return; done = true; resolve(); }
+      overlay.addEventListener('transitionend', go, { once: true });
+      setTimeout(go, 700); // failsafe: never let a stalled transition block navigation
+    });
+  }
+  function lift() {
     if (!overlay || reduce) return;
+    void overlay.offsetHeight; // commit the "covering" frame before animating away
+    var lifted = false;
+    function go() { if (lifted) return; lifted = true; overlay.style.transform = 'translateY(-100%)'; }
+    requestAnimationFrame(function () { requestAnimationFrame(go); });
+    setTimeout(go, 80); // failsafe: rAF can be throttled/suspended (backgrounded tab)
+  }
 
+  /* ============================================================
+     ROUTER — fetch + swap <main>, instead of a real navigation.
+     ============================================================ */
+  var routing = false;
+
+  function swapMainTo(doc) {
+    var newMain = doc.querySelector('main');
+    if (!newMain) throw new Error('fetched document has no <main>');
+    // must read BEFORE replaceWith: it MOVES newMain out of doc (not a
+    // copy), so detecting the view from doc afterwards always finds nothing.
+    var view = detectView(doc);
+    if (window.ScrollTrigger) ScrollTrigger.getAll().forEach(function (st) { st.kill(); });
+    root.classList.remove('reveal-all');
+    document.title = doc.title;
+    document.querySelector('main').replaceWith(newMain);
+    window.scrollTo(0, 0);
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    return view;
+  }
+
+  function goTo(url, push) {
+    if (routing) return;
+    routing = true;
+    cover().then(function () {
+      return fetch(fetchTarget(url), { cache: 'no-store' });
+    }).then(function (r) {
+      if (!r.ok) throw new Error('bad response ' + r.status);
+      return r.text();
+    }).then(function (html) {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var view = swapMainTo(doc);
+      if (push) history.pushState({ rnrSpa: true }, '', url.href);
+      initView(view, url);
+      lift();
+      routing = false;
+    }).catch(function () {
+      // fetch/parse failed for some reason — a real navigation always works
+      location.href = url.href;
+    });
+  }
+
+  (function wireRouterLinks() {
     document.addEventListener('click', function (e) {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var a = e.target.closest && e.target.closest('a[href]');
@@ -59,122 +130,145 @@
       var url;
       try { url = new URL(href, location.href); } catch (err) { return; }
       if (url.origin !== location.origin) return;
-      if (url.pathname === location.pathname && url.hash) return; // in-page anchor — Lenis handles it
+
+      // "same page" means the same route (by KIND, not raw pathname — a
+      // link to "/redesign/" and a cold load at "/redesign/index.html" are
+      // the same page, just two valid URL forms for it) AND the same query
+      // string, so e.g. "Next project" (same kind, different ?slug=) is
+      // correctly treated as real navigation, not an in-page anchor. The
+      // nav bar lives outside <main> and never gets swapped, so its links
+      // always use absolute paths precisely so this comparison stays
+      // reliable no matter which view is showing.
+      var kind = routeKind(url.pathname);
+      var samePage = !!kind && kind === routeKind(location.pathname) && url.search === location.search;
+      if (samePage && url.hash) {
+        e.preventDefault();
+        if (url.hash === '#' || url.hash === '#top') { if (lenis) lenis.scrollTo(0); else window.scrollTo({ top: 0 }); return; }
+        var t = document.querySelector(url.hash);
+        if (t) { if (lenis) lenis.scrollTo(t, { offset: 0 }); else t.scrollIntoView(); }
+        return;
+      }
+      if (samePage) return; // link to exactly where we already are
 
       e.preventDefault();
-      navFlagSet('1');
-      if (window.__lenis) window.__lenis.stop();
-      overlay.style.transform = 'translateY(0)';
-      var gone = false;
-      function go() { if (gone) return; gone = true; location.href = url.href; }
-      overlay.addEventListener('transitionend', go, { once: true });
-      setTimeout(go, 700); // failsafe: never let a stalled transition block navigation
+      if (!kind) { location.href = url.href; return; } // unrecognised route — plain nav, always works
+      goTo(url, true);
+    });
+
+    window.addEventListener('popstate', function () {
+      var url = new URL(location.href);
+      if (!routeKind(url.pathname)) return; // left our SPA routes entirely; let the browser handle it
+      if (routing) return;
+      routing = true;
+      cover().then(function () { return fetch(fetchTarget(url), { cache: 'no-store' }); })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var view = swapMainTo(doc);
+          initView(view, url);
+          lift();
+          routing = false;
+        })
+        .catch(function () {
+          // fetch/parse failed — the address bar already shows the target
+          // URL (the browser updates it before firing popstate), so a real
+          // reload of it is the only way to avoid stranding stale content
+          // under the new URL.
+          location.reload();
+        });
+    });
+
+    // a page restored from bfcache can carry whatever transform was left on
+    // it — always resolve back to fully hidden.
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted && overlay) overlay.style.transform = 'translateY(-100%)';
     });
   })();
 
-  /* ---------- hero scroll effect (independent of GSAP / rAF) ----------
-     A plain scroll listener writes two 0..1 progress values as CSS variables;
-     all the movement is expressed in CSS. Scroll events fire reliably even
-     when rAF is throttled, so the hero can never be left mid-animation. */
-  (function heroScrollEffect() {
-    var hero = document.querySelector('.hero');
-    if (!hero) return;
-    var ticking = false;
+  /* ============================================================
+     PER-VIEW SETUP — every one of these is safe to call again after
+     a swap: they either re-query the live DOM fresh each time (no
+     stale element references survive a swap) or are naturally
+     idempotent. window/document-level listeners are wired exactly
+     once, in wireGlobalOnce(), and internally re-query the current
+     DOM rather than capturing elements via closure.
+     ============================================================ */
 
+  // ---------- reveal-on-scroll (independent of GSAP) ----------
+  var revealIO = null;
+  var revealAllTimer = null;
+  function revealObserverInit() {
+    root.classList.add('js-ready');
+    if (revealIO) revealIO.disconnect();
+    var items = [].slice.call(document.querySelectorAll('[data-anim]'));
+    clearTimeout(revealAllTimer);
+    if (!items.length) return;
+    function revealAll() { root.classList.add('reveal-all'); }
+    if (!('IntersectionObserver' in window)) { revealAll(); return; }
+    revealIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+    items.forEach(function (el) { revealIO.observe(el); });
+    revealAllTimer = setTimeout(revealAll, 5000); // hard fallback: nothing stays hidden past 5s
+  }
+
+  // ---------- hero scroll effect (independent of GSAP / rAF) ----------
+  // Queries `.hero` fresh on every tick rather than capturing it once, so
+  // it keeps working correctly across repeated swaps into/out of home.
+  (function wireHeroScrollEffect() {
+    var ticking = false;
     function apply() {
       ticking = false;
+      var hero = document.querySelector('.hero');
+      if (!hero) return;
       var h = hero.offsetHeight || window.innerHeight;
-      var p = Math.min(1, Math.max(0, window.scrollY / h));      // 0..1 over the hero
-      var pf = Math.min(1, p / 0.18);                            // labels leave early
+      var p = Math.min(1, Math.max(0, window.scrollY / h));
+      var pf = Math.min(1, p / 0.18);
       hero.style.setProperty('--hp', p.toFixed(4));
       hero.style.setProperty('--hpf', pf.toFixed(4));
     }
     function onScroll() {
       if (ticking) return;
       ticking = true;
-      // rAF when available (smoothest), timeout as a guaranteed fallback
       if (window.requestAnimationFrame) requestAnimationFrame(apply);
       else setTimeout(apply, 16);
       setTimeout(function () { if (ticking) apply(); }, 120);
     }
-    apply();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', apply);
+    window.__rnrApplyHeroScroll = apply;
   })();
 
-  /* ---------- content reveal (independent of GSAP / rAF) ----------
-     CSS handles the transition; IntersectionObserver just toggles a class.
-     Runs even if the animation libraries never load, so content can never be
-     left invisible. */
-  (function revealObserver() {
-    var root = document.documentElement;
-    root.classList.add('js-ready');
-
-    var items = [].slice.call(document.querySelectorAll('[data-anim]'));
-    if (!items.length) return;
-
-    function revealAll() { root.classList.add('reveal-all'); }
-
-    if (!('IntersectionObserver' in window)) { revealAll(); return; }
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
-
-    items.forEach(function (el) { io.observe(el); });
-
-    // hard fallback: whatever happens, nothing stays hidden past 5s
-    setTimeout(revealAll, 5000);
-  })();
-
-  /* ---------- nav dark-section invert (independent of GSAP) ----------
-     Swaps the nav to a light-on-dark "negative" look while it's actually
-     sitting over a dark section (currently just .statement), using an
-     IntersectionObserver against a thin strip at the nav's own screen
-     position — so it reflects whatever is truly behind it. Replaces the old
-     mix-blend-mode:multiply trick, which crushed to black-on-black over a
-     dark band and made the nav unreadable rather than legible-in-negative. */
-  (function navInvert() {
+  // ---------- nav dark-section invert (independent of GSAP) ----------
+  var navInvertIO = null;
+  function navInvertRebuild() {
     var nav = document.getElementById('nav');
     var darkSections = document.querySelectorAll('.statement');
-    if (!nav || !darkSections.length || !('IntersectionObserver' in window)) return;
-
-    var io;
-    function build() {
-      if (io) io.disconnect();
-      var navH = nav.offsetHeight || 70;
-      var bottom = Math.max(0, Math.round(window.innerHeight - navH));
-      io = new IntersectionObserver(function (entries) {
-        var onDark = entries.some(function (e) { return e.isIntersecting; });
-        nav.classList.toggle('on-dark', onDark);
-      }, { rootMargin: '0px 0px -' + bottom + 'px 0px', threshold: 0 });
-      darkSections.forEach(function (el) { io.observe(el); });
-    }
-    build();
+    if (navInvertIO) { navInvertIO.disconnect(); navInvertIO = null; }
+    if (!nav) return;
+    if (!darkSections.length || !('IntersectionObserver' in window)) { nav.classList.remove('on-dark'); return; }
+    var navH = nav.offsetHeight || 70;
+    var bottom = Math.max(0, Math.round(window.innerHeight - navH));
+    navInvertIO = new IntersectionObserver(function (entries) {
+      var onDark = entries.some(function (e) { return e.isIntersecting; });
+      nav.classList.toggle('on-dark', onDark);
+    }, { rootMargin: '0px 0px -' + bottom + 'px 0px', threshold: 0 });
+    darkSections.forEach(function (el) { navInvertIO.observe(el); });
+  }
+  (function () {
     var rt;
-    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 200); });
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(navInvertRebuild, 200); });
   })();
 
-  /* ---------- work grid (data-driven; independent of GSAP) ----------
-     Renders project cards from data/work.json, which is exactly what the
-     CMS at /redesign/admin edits — so uploading images/text there updates
-     this grid (and the case-study page) with no code changes. The static
-     cards already in the HTML are the no-JS/fetch-failure fallback and are
-     only replaced once real data has loaded successfully. */
-  (function renderWorkGrid() {
+  // ---------- work grid (data-driven; independent of GSAP) ----------
+  function renderWorkGrid() {
     var grid = document.querySelector('.work-grid');
-    if (!grid) return;
-
-    function esc(s) {
-      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-      });
-    }
-
-    fetch('./data/work.json', { cache: 'no-store' })
+    if (!grid) return Promise.resolve();
+    return fetch('/redesign/data/work.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
       .then(function (data) {
         var items = data && data.items;
         if (!items || !items.length) return; // keep the static fallback cards
@@ -182,191 +276,187 @@
         items.forEach(function (item, i) {
           var a = document.createElement('a');
           a.className = 'work-cell';
-          a.href = './work/case.html?slug=' + encodeURIComponent(item.slug || '');
-          a.style.transitionDelay = (i * 0.06).toFixed(2) + 's'; // stagger, replaces the old fixed nth-child list
+          a.href = '/redesign/work/case.html?slug=' + encodeURIComponent(item.slug || '');
+          a.style.transitionDelay = (i * 0.06).toFixed(2) + 's';
           a.innerHTML =
             '<span class="wc-year">' + esc(item.year) + '</span>' +
             '<span class="wc-title">' + esc(item.title) + '</span>' +
             '<span class="wc-cat">' + esc(item.category) + '</span>';
           grid.appendChild(a);
         });
-        // the fallback copy ("Placeholder — real projects to come") is
-        // stale the moment real data loads — swap it for an accurate count.
         var count = document.querySelector('.work-head .count');
         if (count) count.textContent = items.length + (items.length === 1 ? ' project' : ' projects');
+      });
+  }
+
+  // ---------- case-study populate (independent of GSAP) ----------
+  function paragraphs(text) {
+    return String(text || '').split(/\n\s*\n/).map(function (p) {
+      return '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+  function setShot(el, src, fallbackClass) {
+    if (!el || !src) return;
+    el.innerHTML = '<img src="' + esc(src) + '" alt="">';
+    el.classList.remove(fallbackClass);
+  }
+  function populateCaseView(url) {
+    var slug = new URLSearchParams(url.search).get('slug');
+    return fetch('/redesign/data/work.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var items = (data && data.items) || [];
+        if (!items.length) return;
+        var i = items.findIndex(function (it) { return it.slug === slug; });
+        if (i === -1) i = 0;
+        var item = items[i];
+        var next = items[(i + 1) % items.length];
+
+        document.title = item.title + ' — Rifat Newaj Razin';
+        var pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) pageTitle.textContent = document.title;
+        setText('caseTitle', item.title);
+        setText('metaYear', item.year || '—');
+        setText('metaRole', item.role || '—');
+        setText('metaDeliverables', item.deliverables || '—');
+        setText('metaClient', item.client || '—');
+        setHTML('briefText', paragraphs(item.brief));
+        setHTML('approachText', paragraphs(item.approach));
+        setHTML('outcomeText', paragraphs(item.outcome));
+
+        setShot(document.getElementById('shotCover'), item.cover, 'a');
+        var gallery = item.gallery || [];
+        setShot(document.getElementById('shotB'), gallery[0], 'b');
+        setShot(document.getElementById('shotC'), gallery[1], 'c');
+
+        var nextLink = document.getElementById('nextProjectLink');
+        if (nextLink) {
+          nextLink.textContent = (next.title || '') + ' ↗';
+          nextLink.href = '/redesign/work/case.html?slug=' + encodeURIComponent(next.slug || '');
+        }
       })
-      .catch(function () { /* keep the static fallback cards */ });
+      .catch(function () { /* static "—" placeholders stay as a safe fallback */ });
+  }
+  function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+  function setHTML(id, v) { var el = document.getElementById(id); if (el) el.innerHTML = v; }
+
+  // ---------- lightbox (independent of GSAP) — wired once, delegated ----------
+  (function wireLightbox() {
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lightboxImg');
+    if (!lb || !lbImg) return;
+    function open(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('click', function (e) {
+      var img = e.target.closest && e.target.closest('.shot img');
+      if (img) { open(img.src, img.alt); return; }
+      if (e.target === lb || e.target.id === 'lightboxClose') close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
   })();
 
-  if (!haveGSAP || reduce) {
-    document.body.classList.add('intro-done');
-    showEverything();
-    wirePlainAnchors();
-    fitHeroPlain();
-    return;
-  }
-
-  function fitHeroPlain() {
-    var name = document.querySelector('.hero-name');
-    if (!name) return;
-    var run = function () {
-      var lines = [].slice.call(name.querySelectorAll('.line'));
-      if (!lines.length) return;
-      var hero = name.closest('.hero') || name.parentElement;
-      var hcs = getComputedStyle(hero);
-      var full = hero.clientWidth - parseFloat(hcs.paddingLeft || 0) - parseFloat(hcs.paddingRight || 0);
-      var avail = full;
-      if (window.innerWidth > 820) {
-        var fl = document.querySelector('.flank-l'), fr = document.querySelector('.flank-r');
-        if (fl && fr && fl.offsetParent) {
-          var fp = fl.offsetParent.getBoundingClientRect().left;
-          var c = document.documentElement.clientWidth / 2;
-          var inner = 2 * (Math.min(c - (fp + fl.offsetLeft + fl.offsetWidth),
-                                    (fp + fr.offsetLeft) - c) - 40);
-          if (inner > 120) avail = Math.min(full, inner);
-        }
-      }
-      if (!(avail > 0)) return;
-      var target = avail * 0.98;
-      var cap = Math.max(48, (hero.clientHeight || innerHeight) * 0.34);
-      lines.forEach(function (l) { l.style.fontSize = ''; });
-      for (var p = 0; p < 6; p++) {
-        var worst = 0;
-        lines.forEach(function (l) {
-          var w = l.getBoundingClientRect().width;
-          if (!(w > 0)) return;
-          var fs = parseFloat(getComputedStyle(l).fontSize);
-          l.style.fontSize = Math.min(cap, fs * target / w).toFixed(3) + 'px';
-          worst = Math.max(worst, Math.abs(w - target));
-        });
-        if (worst < 1) break;
-      }
-    };
-    run();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run);
-    window.addEventListener('resize', run);
-    if (window.ResizeObserver) {
-      var h = document.querySelector('.hero');
-      if (h) new ResizeObserver(run).observe(h);
+  // ---------- marquee builder (independent of GSAP) ----------
+  function buildMarquee() {
+    var track = document.getElementById('marqueeTrack');
+    var seq = document.getElementById('marqueeSeq');
+    if (!track || !seq) return;
+    if (!seq.dataset.html) seq.dataset.html = seq.innerHTML;
+    seq.innerHTML = seq.dataset.html;
+    while (track.children.length > 1) track.removeChild(track.lastChild);
+    var unit = seq.dataset.html;
+    var guard = 0;
+    while (seq.scrollWidth < window.innerWidth && guard++ < 20) {
+      seq.insertAdjacentHTML('beforeend', unit);
     }
+    var clone = seq.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+    track.style.setProperty('--marquee-dur', (seq.scrollWidth / 55).toFixed(2) + 's');
   }
+  (function () {
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(buildMarquee, 250); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildMarquee);
+  })();
 
-  root.classList.add('js-ready');
-  gsap.registerPlugin(ScrollTrigger);
-
-  /* ---------- split helpers ---------- */
-  function splitChars(el) {
-    var targets = el.querySelectorAll('.line');
-    if (!targets.length) targets = [el];
-    targets.forEach(function (t) {
-      var txt = t.textContent, frag = document.createDocumentFragment();
-      t.textContent = '';
-      txt.split('').forEach(function (ch) {
-        var s = document.createElement('span');
-        s.className = 'char';
-        s.textContent = ch === ' ' ? ' ' : ch;
-        frag.appendChild(s);
+  // ---------- magnetic buttons (re-wired per swap: elements are new) ----------
+  function wireMagnetic() {
+    document.querySelectorAll('.magnetic').forEach(function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        gsap.to(el, {
+          x: (e.clientX - r.left - r.width / 2) * 0.3,
+          y: (e.clientY - r.top - r.height / 2) * 0.3,
+          duration: 0.4, ease: 'power3.out'
+        });
       });
-      t.appendChild(frag);
+      el.addEventListener('pointerleave', function () {
+        gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1,0.4)' });
+      });
     });
-    return el.querySelectorAll('.char');
   }
-  function splitWords(el) {
-    var txt = el.textContent.trim().replace(/\s+/g, ' ');
-    var frag = document.createDocumentFragment();
-    el.textContent = '';
-    txt.split(' ').forEach(function (w) {
-      var s = document.createElement('span');
-      s.className = 'word';
-      s.textContent = w;
-      frag.appendChild(s);
-    });
-    el.appendChild(frag);
-    return el.querySelectorAll('.word');
-  }
-  document.querySelectorAll('[data-split="chars"]').forEach(splitChars);
-  document.querySelectorAll('[data-split="words"]').forEach(splitWords);
 
   /* ---------- fit hero lines to one shared width ----------
      Every line is scaled to span the SAME target width — the space actually
-     available in the hero — so the two lines read as one justified block.
-     (Matching the narrowest line instead made the name tiny on small screens.) */
-  var FLANK_BREAKPOINT = 820;   // below this the labels stack under the name
+     available in the hero — so the two lines read as one justified block. */
+  var FLANK_BREAKPOINT = 820;
+  var heroResizeObserver = null;
 
-  /* Ceiling for the fitted font size. A short line like "RAZIN" needs a much
-     larger size than "RIFAT NEWAJ" to span the same width, so a fixed cap
-     would stop it matching. Derive the cap from the hero's height instead, so
-     the two-line block always stays comfortably inside the viewport. */
   function fitMaxFontSize() {
     var hero = document.querySelector('.hero');
     var h = (hero ? hero.clientHeight : window.innerHeight) || window.innerHeight;
     return Math.max(48, h * 0.34);
   }
-
-  /* Give both hero labels the same box width so their inner edges mirror each
-     other about the page centre — otherwise the longer label eats into one
-     side and the clearance around the name is visibly uneven. */
   function equaliseFlanks() {
     var fl = document.querySelector('.flank-l');
     var fr = document.querySelector('.flank-r');
     if (!fl || !fr) return;
     fl.style.width = ''; fr.style.width = '';
-    if (window.innerWidth <= FLANK_BREAKPOINT) return;   // stacked on mobile
-    // offsetWidth is layout-based: unaffected by the scroll-driven translate
+    if (window.innerWidth <= FLANK_BREAKPOINT) return;
     var w = Math.max(fl.offsetWidth, fr.offsetWidth);
     if (w > 0) { fl.style.width = w + 'px'; fr.style.width = w + 'px'; }
   }
-
   function heroAvailableWidth() {
     var hero = document.querySelector('.hero');
     var hcs = getComputedStyle(hero);
-    var full = hero.clientWidth
-      - parseFloat(hcs.paddingLeft || 0)
-      - parseFloat(hcs.paddingRight || 0);
-
-    // Below the breakpoint the labels sit under the name, so it may use the
-    // whole width. Above it, the name must fit BETWEEN the two labels.
+    var full = hero.clientWidth - parseFloat(hcs.paddingLeft || 0) - parseFloat(hcs.paddingRight || 0);
     if (window.innerWidth <= FLANK_BREAKPOINT) return full;
-
     var fl = document.querySelector('.flank-l');
     var fr = document.querySelector('.flank-r');
     if (!fl || !fr) return full;
-
-    // IMPORTANT: measure the labels' LAYOUT positions (offsetLeft/offsetWidth),
-    // not getBoundingClientRect. The scroll effect translates the labels off to
-    // the sides, so a rect read while scrolled would report a huge phantom gap
-    // and the name would be sized enormously (e.g. landing on #work directly).
     var flank = fl.offsetParent || fr.offsetParent;
     if (!flank) return full;
     var flankLeft = flank.getBoundingClientRect().left;
     var lRight = flankLeft + fl.offsetLeft + fl.offsetWidth;
-    var rLeft  = flankLeft + fr.offsetLeft;
-
-    // The two labels have different text widths, so their inner edges are not
-    // symmetric about the page centre. Size the name from the SMALLER of the
-    // two half-gaps, so the clearance left and right is always equal.
-    var gap = 40;                                   // breathing room per side
+    var rLeft = flankLeft + fr.offsetLeft;
+    var gap = 40;
     var centre = document.documentElement.clientWidth / 2;
     var inner = 2 * (Math.min(centre - lRight, rLeft - centre) - gap);
     return (inner > 120) ? Math.min(full, inner) : full;
   }
-
   function fitHero() {
     var name = document.querySelector('.hero-name');
     if (!name) return;
     var lines = [].slice.call(name.querySelectorAll('.line'));
     if (!lines.length) return;
-
     equaliseFlanks();
     var avail = heroAvailableWidth();
     if (!(avail > 0)) return;
-
     var target = avail * 0.98;
     var maxFs = fitMaxFontSize();
-
-    // Iterate until every line is within 1px of the target. One or two passes
-    // leave a visible mismatch because letter-spacing and font metrics do not
-    // scale perfectly linearly with font-size.
     lines.forEach(function (l) { l.style.fontSize = ''; });
     for (var pass = 0; pass < 6; pass++) {
       var worst = 0;
@@ -381,131 +471,31 @@
       if (worst < 1) break;
     }
   }
-  fitHero();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHero);
-  var fitRT;
-  function scheduleFit() { clearTimeout(fitRT); fitRT = setTimeout(fitHero, 120); }
-  window.addEventListener('resize', scheduleFit);
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleFit);
-  // ResizeObserver catches layout changes that never fire a window resize
-  // (device emulation, zoom, scrollbar appearing, container reflow)
-  if (window.ResizeObserver) {
-    var hero = document.querySelector('.hero');
-    if (hero) new ResizeObserver(scheduleFit).observe(hero);
-  }
+  (function () {
+    var fitRT;
+    function scheduleFit() { clearTimeout(fitRT); fitRT = setTimeout(fitHero, 120); }
+    window.addEventListener('resize', scheduleFit);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleFit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHero);
+    window.__rnrScheduleFit = scheduleFit;
+  })();
 
-  /* ---------- Lenis smooth scroll ---------- */
-  var lenis = new Lenis({ duration: 1.15, smoothWheel: true, wheelMultiplier: 0.9 });
-  window.__lenis = lenis;            // handle for QC / debugging
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
-  gsap.ticker.lagSmoothing(0);
-
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var id = a.getAttribute('href');
-      e.preventDefault();
-      if (id === '#' || id === '#top') { lenis.scrollTo(0); return; }
-      var t = document.querySelector(id);
-      if (t) lenis.scrollTo(t, { offset: 0 });
+  /* ---------- split helpers ---------- */
+  function splitWords(el) {
+    var txt = el.textContent.trim().replace(/\s+/g, ' ');
+    var frag = document.createDocumentFragment();
+    el.textContent = '';
+    txt.split(' ').forEach(function (w) {
+      var s = document.createElement('span');
+      s.className = 'word';
+      s.textContent = w;
+      frag.appendChild(s);
     });
-  });
-
-  /* ---------- INTRO ---------- */
-  // Only a cold/direct load of the homepage gets the full "RNR." panel-lift
-  // reveal. Pages without the intro panel, and any page reached via an
-  // internal link (the page-transition overlay already handled the reveal —
-  // see pageTransitions() above), skip straight to starting the site.
-  if (!document.getElementById('intro') || window.__rnrIncomingNav) {
-    document.body.classList.add('intro-done');
-    startSite();
-    return;
+    el.appendChild(frag);
   }
 
-  lenis.stop();
-
-  // homepage starts soft-focused; it "settles" into focus as the panel lifts.
-  // NOTE: no y-offset here — translating <main> reads as a scroll jump.
-  gsap.set('main, .foot', { filter: 'blur(16px)', autoAlpha: 0.35 });
-  gsap.set('.intro-mark', { opacity: 0, y: 10 });
-
-  // Wait for webfonts before showing anything — otherwise "RNR." paints in the
-  // fallback face and visibly re-renders when Unica One arrives (FOUT).
-  var fontsReady = (document.fonts && document.fonts.ready)
-    ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 2500); })])
-    : Promise.resolve();
-
-  // Finishing the intro is idempotent and can be triggered either by the
-  // timeline completing or by the independent failsafe timer below.
-  var introFinished = false;
-  function finishIntro() {
-    if (introFinished) return;
-    introFinished = true;
-    document.body.classList.add('intro-done');
-    // drop only the filter (a lingering blur filter creates a containing block);
-    // never clear transform here — that is what produced the snap.
-    gsap.set('main, .foot', { autoAlpha: 1, clearProps: 'filter' });
-    lenis.start();
-    startSite();
-  }
-
-  /* FAILSAFE — registered NOW, not inside the timeline's onComplete.
-     If rAF is throttled the timeline never completes, and a rescue that lived
-     inside onComplete could never run: the page would stay blurred forever. */
-  setTimeout(finishIntro, 4200);
-
-  fontsReady.then(function () {
-    fitHero();                       // measure with the real font metrics
-    if (introFinished) return;       // failsafe already took over
-    gsap.timeline({ onComplete: finishIntro, defaults: { ease: 'power2.inOut' } })
-      .to('.intro-mark', { opacity: 1, y: 0, duration: 0.5 })
-      .to({}, { duration: 0.7 })
-      .to('.intro-mark', { opacity: 0, duration: 0.35 }, 'reveal')
-      // panel rises slowly out of frame
-      .to('#intro', { yPercent: -100, duration: 1.25, ease: 'expo.inOut' }, 'reveal')
-      // …and the homepage focuses in, a touch behind the panel
-      .to('main, .foot', { filter: 'blur(0px)', autoAlpha: 1, duration: 1.1, ease: 'power3.out' }, 'reveal+=0.25');
-  });
-
-  /* ---------- hero reveal ---------- */
-  function startSite() {
-    fitHero();
-    // name + flank labels are simply present — the panel lift IS the reveal.
-    // (separate entrance tweens on these are what kept flickering)
-    // Guarded: pages without a hero (the work/case-study template) don't
-    // carry these elements, and gsap.set on an empty selector just warns.
-    if (document.querySelector('.hero-name')) gsap.set('.hero-name', { opacity: 1, clearProps: 'transform' });
-    if (document.querySelector('.hero-flank')) gsap.set('.hero-flank, .hero-flank span', { opacity: 1, clearProps: 'transform' });
-    buildScroll();
-    startSafetyNet();
-  }
-
-  /* ---------- safety net ----------
-     If rAF is throttled (backgrounded tab) GSAP tweens can stall. Timers still
-     run, so force the intro's final state regardless. Content reveal itself is
-     handled by CSS + IntersectionObserver (see revealObserver), never by GSAP. */
-  function startSafetyNet() {
-    // intro rescue now lives at the intro itself (see finishIntro failsafe);
-    // this only guarantees the hero name is never left transparent.
-    setTimeout(function () {
-      if (document.querySelector('.hero-name')) gsap.set('.hero-name', { opacity: 1 });
-    }, 500);
-  }
-
-  /* ---------- scroll-driven ---------- */
-  function buildScroll() {
-
-    // (hero drift + label retreat are driven by a plain scroll handler writing
-    //  CSS variables — see heroScrollEffect. Deliberately not GSAP scrub: a
-    //  stalled scrub leaves the name displaced and the labels invisible.)
-
-    // (content reveal is CSS + IntersectionObserver — see revealObserver below)
-
-    // Headings outside the hero use the CSS reveal (their wrapper carries
-    // [data-anim]). No per-character tween: a stalled one would leave the
-    // letters displaced, and there is no overflow mask to hide that.
-
-    // statement: words go grey -> light as you scroll through the dark band
+  /* ---------- scroll-driven GSAP effects (home view only) ---------- */
+  function buildHomeScrollFx() {
     var stWords = document.querySelectorAll('.statement-text .word');
     if (stWords.length) {
       gsap.to(stWords, {
@@ -513,8 +503,6 @@
         scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
       });
     }
-
-    // about lead: words fade in on scrub
     var abWords = document.querySelectorAll('.about-lead .word');
     if (abWords.length) {
       gsap.set(abWords, { opacity: 0.25 });
@@ -523,15 +511,9 @@
         scrollTrigger: { trigger: '.about-lead', start: 'top 80%', end: 'bottom 72%', scrub: true }
       });
     }
-
-    // (marquee is CSS-driven — see the inline builder in index.html)
-
-    // (work cells reveal via the CSS/IntersectionObserver path — no GSAP tween
-    //  here, because an inline opacity:0 from a stalled tween would hide them)
-
-    // stat count-up
     document.querySelectorAll('[data-count]').forEach(function (el) {
       var end = +el.dataset.count, suf = el.dataset.suffix || '', o = { v: 0 };
+      el.textContent = '0' + suf;
       ScrollTrigger.create({
         trigger: el, start: 'top 88%', once: true,
         onEnter: function () {
@@ -540,70 +522,135 @@
         }
       });
     });
-
-    // nav hide on scroll-down — deliberate, not jumpy: requires a sustained
-    // scroll of THRESHOLD px in one direction before it reacts, so a small
-    // wheel/trackpad wobble can't flicker it in and out. Direction reverses
-    // reset the accumulator immediately.
-    (function () {
-      var nav = document.getElementById('nav');
-      if (!nav) return;
-      var HIDE_AT = 140;   // never hide this close to the top
-      var THRESHOLD = 28;  // ignore scroll smaller than this
-      var lastY = window.scrollY || 0;
-      var accum = 0;
-      var navHidden = false;
-      function setHidden(v) {
-        if (v === navHidden) return;
-        navHidden = v;
-        gsap.to(nav, { yPercent: v ? -140 : 0, duration: 0.35 });
-      }
-      ScrollTrigger.create({
-        start: 0, end: 'max',
-        onUpdate: function (self) {
-          var y = self.scroll();
-          var dy = y - lastY;
-          lastY = y;
-          if (dy !== 0 && Math.sign(dy) !== Math.sign(accum)) accum = 0;
-          accum += dy;
-          if (y <= HIDE_AT) { setHidden(false); accum = 0; }
-          else if (accum > THRESHOLD) { setHidden(true); accum = 0; }
-          else if (accum < -THRESHOLD) { setHidden(false); accum = 0; }
-        }
-      });
-    })();
-
-    ScrollTrigger.refresh();
   }
 
-  /* ---------- magnetic buttons ---------- */
-  document.querySelectorAll('.magnetic').forEach(function (el) {
-    el.addEventListener('pointermove', function (e) {
-      var r = el.getBoundingClientRect();
-      gsap.to(el, {
-        x: (e.clientX - r.left - r.width / 2) * 0.3,
-        y: (e.clientY - r.top - r.height / 2) * 0.3,
-        duration: 0.4, ease: 'power3.out'
-      });
+  // nav hide on scroll-down — always active, every view. Deliberate, not
+  // jumpy: requires a sustained scroll of THRESHOLD px in one direction
+  // before it reacts, so a small wheel/trackpad wobble can't flicker it.
+  function buildNavHideOnScroll() {
+    var nav = document.getElementById('nav');
+    if (!nav) return;
+    var HIDE_AT = 140, THRESHOLD = 28;
+    var lastY = window.scrollY || 0, accum = 0, navHidden = false;
+    function setHidden(v) {
+      if (v === navHidden) return;
+      navHidden = v;
+      gsap.to(nav, { yPercent: v ? -140 : 0, duration: 0.35 });
+    }
+    ScrollTrigger.create({
+      start: 0, end: 'max',
+      onUpdate: function (self) {
+        var y = self.scroll();
+        var dy = y - lastY;
+        lastY = y;
+        if (dy !== 0 && Math.sign(dy) !== Math.sign(accum)) accum = 0;
+        accum += dy;
+        if (y <= HIDE_AT) { setHidden(false); accum = 0; }
+        else if (accum > THRESHOLD) { setHidden(true); accum = 0; }
+        else if (accum < -THRESHOLD) { setHidden(false); accum = 0; }
+      }
     });
-    el.addEventListener('pointerleave', function () {
-      gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1,0.4)' });
-    });
-  });
+  }
 
-  /* ---------- fallbacks ---------- */
-  function showEverything() {
+  /* ============================================================
+     BOOT / initView — the single entry point run on cold load AND
+     after every client-side swap.
+     ============================================================ */
+  function scrollToHash(url) {
+    if (!url.hash) return;
+    var t = document.querySelector(url.hash);
+    if (!t) return;
+    if (lenis) lenis.scrollTo(t, { offset: 0, immediate: true }); else t.scrollIntoView();
+  }
+
+  function initView(view, url) {
+    // cover() stops Lenis before every transition (so it can't fight the
+    // page-transition scroll reset) — resume it before scrollToHash needs
+    // it. Harmless/idempotent on a cold boot, where Lenis was never stopped.
+    if (lenis) lenis.start();
+    revealObserverInit();
+    navInvertRebuild();
+
+    if (view === 'home') {
+      document.querySelectorAll('[data-split="words"]').forEach(function (el) {
+        if (!el.querySelector('.word')) splitWords(el);
+      });
+      renderWorkGrid();
+      buildMarquee();
+      fitHero();
+      if (window.__rnrApplyHeroScroll) window.__rnrApplyHeroScroll();
+      if (heroResizeObserver) heroResizeObserver.disconnect();
+      if (window.ResizeObserver) {
+        var hero = document.querySelector('.hero');
+        if (hero) { heroResizeObserver = new ResizeObserver(function () { fitHero(); }); heroResizeObserver.observe(hero); }
+      }
+      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); }
+    } else if (view === 'case') {
+      populateCaseView(url);
+    }
+
+    if (haveGSAP) { buildNavHideOnScroll(); ScrollTrigger.refresh(); }
+    scrollToHash(url);
+  }
+
+  /* ============================================================
+     Fallback path — GSAP/Lenis failed to load, or the visitor prefers
+     reduced motion. Content must still be fully usable.
+     ============================================================ */
+  if (!haveGSAP || reduce) {
+    document.body.classList.add('intro-done');
     document.querySelectorAll('[data-anim]').forEach(function (el) { el.style.opacity = 1; });
     document.querySelectorAll('.statement-text .word').forEach(function (w) { w.style.color = '#f4f1e9'; });
+    initView(detectView(document), new URL(location.href));
+    return;
   }
-  function wirePlainAnchors() {
-    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var id = a.getAttribute('href');
-        if (id === '#' || id === '#top') { e.preventDefault(); window.scrollTo({ top: 0 }); return; }
-        var t = document.querySelector(id);
-        if (t) { e.preventDefault(); t.scrollIntoView(); }
-      });
-    });
+
+  root.classList.add('js-ready');
+  gsap.registerPlugin(ScrollTrigger);
+  lenis = new Lenis({ duration: 1.15, smoothWheel: true, wheelMultiplier: 0.9 });
+  window.__lenis = lenis;
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  /* ---------- INTRO ---------- */
+  // Only a cold/direct load of the homepage gets the full "RNR." panel-lift
+  // reveal — it can never replay on client-side navigation, since that
+  // never reloads the document.
+  if (!document.getElementById('intro')) {
+    document.body.classList.add('intro-done');
+    initView(detectView(document), new URL(location.href));
+    return;
   }
+
+  lenis.stop();
+  gsap.set('main, .foot', { filter: 'blur(16px)', autoAlpha: 0.35 });
+  gsap.set('.intro-mark', { opacity: 0, y: 10 });
+
+  var fontsReady = (document.fonts && document.fonts.ready)
+    ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 2500); })])
+    : Promise.resolve();
+
+  var introFinished = false;
+  function finishIntro() {
+    if (introFinished) return;
+    introFinished = true;
+    document.body.classList.add('intro-done');
+    gsap.set('main, .foot', { autoAlpha: 1, clearProps: 'filter' });
+    lenis.start();
+    initView('home', new URL(location.href));
+    setTimeout(function () { gsap.set('.hero-name', { opacity: 1 }); }, 500);
+  }
+  setTimeout(finishIntro, 4200); // failsafe — registered now, not inside onComplete
+
+  fontsReady.then(function () {
+    fitHero();
+    if (introFinished) return;
+    gsap.timeline({ onComplete: finishIntro, defaults: { ease: 'power2.inOut' } })
+      .to('.intro-mark', { opacity: 1, y: 0, duration: 0.5 })
+      .to({}, { duration: 0.7 })
+      .to('.intro-mark', { opacity: 0, duration: 0.35 }, 'reveal')
+      .to('#intro', { yPercent: -100, duration: 1.25, ease: 'expo.inOut' }, 'reveal')
+      .to('main, .foot', { filter: 'blur(0px)', autoAlpha: 1, duration: 1.1, ease: 'power3.out' }, 'reveal+=0.25');
+  });
 })();

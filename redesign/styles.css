@@ -8,6 +8,7 @@
 :root{
   --paper:#f4f1e9;
   --paper-line:rgba(23,22,26,0.06);
+  --ink-line:rgba(244,241,233,0.08);
   --ink:#17161a;
   --ink-soft:#565248;
   --ink-mute:#a8a297;
@@ -45,13 +46,43 @@ a{color:inherit;text-decoration:none}
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
 }
 
-/* ---------- page transition (cross-page nav overlay) ---------- */
+/* ---------- page transition (cross-page nav overlay) ----------
+   Same grid-line texture as the paper background, just inverted for the
+   dark fill, so the transition still reads as "this site" rather than a
+   flat, unbranded curtain. */
 .page-transition{
   position:fixed;inset:0;z-index:150;background:var(--ink);
+  background-image:
+    linear-gradient(var(--ink-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--ink-line) 1px,transparent 1px);
+  background-size:64px 64px;
   transform:translateY(100%);
   transition:transform .65s cubic-bezier(.76,0,.24,1);
   pointer-events:none;
 }
+
+/* ---------- lightbox (click a case-study photo to view it full-size) ----------
+   Lives outside <main> in both templates — see main.js swapMainTo() — so it
+   stays present (and its listeners stay wired) across client-side navigation
+   regardless of which page loaded first. */
+.lightbox{
+  position:fixed;inset:0;z-index:200;background:rgba(23,22,26,.94);
+  display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+  opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s;
+}
+.lightbox.open{opacity:1;visibility:visible;transition:opacity .35s ease}
+.lightbox img{
+  max-width:100%;max-height:100%;border-radius:4px;display:block;
+  transform:scale(.96);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+.lightbox.open img{transform:scale(1)}
+.lightbox-close{
+  position:absolute;top:22px;right:26px;width:40px;height:40px;
+  border:none;background:none;color:var(--paper);font-size:32px;line-height:1;
+  cursor:pointer;opacity:.75;transition:opacity .2s ease;font-family:var(--display);
+}
+.lightbox-close:hover{opacity:1}
 
 /* ---------- intro ---------- */
 .intro{
@@ -280,6 +311,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .js-ready [data-anim]{opacity:1}
   .js-ready .work-grid .work-cell{opacity:1;transform:none;transition:none}
   .page-transition{transition:none !important}
+  .lightbox,.lightbox img{transition:none !important}
   .statement-text .word{color:#f4f1e9 !important}
   .marquee-track{animation:none !important}
   }
