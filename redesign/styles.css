@@ -410,7 +410,10 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .shot.c{background:linear-gradient(135deg,#17161a,#5b5850)}
 .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .shot-row .shot:not(:has(img)){aspect-ratio:4/5}
-.next{border-top:1px solid var(--ink);padding:40px 0 64px;display:flex;justify-content:space-between;align-items:baseline}
+/* symmetric padding: the row sits between its own border-top and the
+   footer's border-top, and the display link's leading is centred, so equal
+   top/bottom padding reads as equal space above and below the text. */
+.next{border-top:1px solid var(--ink);padding:52px 0;display:flex;justify-content:space-between;align-items:baseline}
 .next a{font-family:var(--display);font-weight:400;font-size:clamp(20px,3vw,34px);letter-spacing:-.02em}
 .next a:hover{color:var(--accent)}
 .case-body p:empty,.case-body h3:has(+ p:empty){display:none}
