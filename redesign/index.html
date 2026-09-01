@@ -17,11 +17,6 @@
 
 <div class="grain" aria-hidden="true"></div>
 
-<!-- ============ FLOATIES ============ draggable desktop clutter, built and
-     wired in main.js. Kept outside <main> (like the grain / lightbox) so it
-     survives client-side navigation and is shared by every view. -->
-<div class="floaties" id="floaties" aria-hidden="true"></div>
-
 <!-- ============ PAGE TRANSITION ============
      Shared cover/lift overlay for client-side navigation between this page
      and /work/case.html — see main.js. Internal links never do a real page
@@ -47,6 +42,10 @@
 
   <!-- HERO -->
   <section class="hero">
+    <!-- Draggable "desktop clutter", built in main.js initFloaties(). Inside
+         .hero (position:relative; overflow:hidden) so it is clipped to the
+         hero and scrolls away with it. -->
+    <div class="floaties" aria-hidden="true"></div>
     <div class="hero-flank" aria-hidden="true">
       <span class="flank-l">Graphic Designer</span>
       <span class="flank-r">Based in<br>Dhaka, Bangladesh</span>

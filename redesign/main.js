@@ -602,142 +602,205 @@
   }
 
   /* ============================================================
-     FLOATIES — draggable "desktop clutter" over the whole site.
-     The #floaties layer lives outside <main>, so it is built ONCE
-     (here) and then persists untouched through every client-side
-     swap. Requires GSAP; skipped on narrow/touch layouts and under
-     reduced motion (the CSS hides the layer there too, this just
-     avoids doing the work). Each object floats on a slow yoyo tween
-     that a drag interrupts; on release it gets a short inertia throw
-     and then resumes bobbing around wherever it landed.
+     FLOATIES — playful "desktop clutter" scattered across the HERO
+     only. The .floaties layer lives inside <section class="hero">
+     (which is position:relative; overflow:hidden), so the objects
+     are clipped to the hero and scroll away with it — they do not
+     follow the visitor down the page and never appear on case
+     pages. Rebuilt on every home load (the layer is inside <main>,
+     so a swap hands us a fresh empty one). Skipped without GSAP, on
+     narrow/touch layouts, and under reduced motion.
+
+     Each object has an outer node (absolute position; the drag +
+     mouse-parallax target) and an inner node (a slow idle bob, so
+     the bob never fights the drag/parallax transform).
      ============================================================ */
   function initFloaties() {
-    var layer = document.getElementById('floaties');
+    var hero = document.querySelector('.hero');
+    var layer = hero && hero.querySelector('.floaties');
     if (!layer || !haveGSAP || reduce) return;
-    if (layer.dataset.ready) return;
     if (matchMedia('(max-width: 820px)').matches || matchMedia('(pointer: coarse)').matches) return;
-    layer.dataset.ready = '1';
 
-    var FOLDER =
-      '<svg viewBox="0 0 48 40" xmlns="http://www.w3.org/2000/svg">' +
-      '<path d="M2 7h15l4 5h25v25a1 1 0 0 1-1 1H2z" fill="#f4f1e9" ' +
-      'stroke="#565248" stroke-width="2" stroke-linejoin="round"/></svg>';
-
-    // type: 'card' (framed photo — swap src / add entries as you like, GIFs
-    // included), 'glyph' (plain display-face text), or 'svg' (inline markup).
-    // ax/ay are the anchor as a fraction of the viewport, kept away from the
-    // horizontal centre where the headline sits.
-    var ITEMS = [
-      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_s0743bs0743bs074.jpeg', w: 148, h: 116, ax: 0.09, ay: 0.24 },
-      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_dhwd31dhwd31dhwd.jpeg', w: 122, h: 150, ax: 0.9,  ay: 0.18 },
-      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_iub7luiub7luiub7.jpeg', w: 132, h: 104, ax: 0.13, ay: 0.72 },
-      { type: 'card',  src: '/redesign/uploads/gemini_generated_image_3l5b3t3l5b3t3l5b.jpeg', w: 138, h: 138, ax: 0.88, ay: 0.7  },
-      { type: 'glyph', text: '\\( ^_^ )/', size: 20, ax: 0.5, ay: 0.9 },
-      { type: 'glyph', text: '{ ˆ-ˆ }', size: 20, ax: 0.06, ay: 0.47 },
-      { type: 'svg',   svg: FOLDER, w: 46, ax: 0.94, ay: 0.44 }
-    ];
+    // rebuild clean (kill any tweens from a previous home visit first)
+    layer.querySelectorAll('.floatie, .floatie-in').forEach(function (n) { gsap.killTweensOf(n); });
+    layer.innerHTML = '';
 
     function rand(a, b) { return a + Math.random() * (b - a); }
     function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+    /* Hand-drawn-ish doodles as inline SVG (crisp, themeable via
+       currentColor, zero extra requests). To use your own raster art
+       instead, drop a transparent PNG in /redesign/uploads/ and change
+       that entry to { type: 'img', src: U + 'doodle-x.png', w: … }. */
+    var G = function (vb, body) {
+      return '<svg viewBox="0 0 ' + vb + '" xmlns="http://www.w3.org/2000/svg" fill="none" ' +
+        'stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+    };
+    var D = {
+      laptop:   G('120 96', '<path d="M30 8h60l14 46H16z"/><path d="M8 62h104l-8 24H16z"/><path d="M42 70h36M38 78h44"/>'),
+      monitor:  G('96 92', '<rect x="6" y="6" width="84" height="58" rx="6"/><path d="M40 64l-4 16h28l-4-16M28 82h40"/>'),
+      keyboard: G('132 74', '<rect x="4" y="18" width="104" height="46" rx="7"/><path d="M14 30h84M14 40h84M14 50h58M80 50h18M108 24c14-4 12-18 20-20"/>'),
+      mouse:    G('70 98', '<rect x="14" y="8" width="42" height="62" rx="21"/><path d="M35 8v26M22 20c0-9 26-9 26 0M35 70c-6 10 4 12 2 22"/>'),
+      cursor:   G('72 82', '<path d="M18 10l2 48 12-12 8 18 8-4-8-18 16-2z"/><path d="M8 22v8M4 26h8M60 12v6M57 15h6"/>'),
+      notebook: G('76 94', '<path d="M22 6h44a4 4 0 0 1 4 4v74a4 4 0 0 1-4 4H22z"/><rect x="32" y="16" width="26" height="14" rx="2"/><path d="M22 12c-10 0-10 8 0 8M22 30c-10 0-10 8 0 8M22 48c-10 0-10 8 0 8M22 66c-10 0-10 8 0 8"/>'),
+      wallet:   G('98 76', '<path d="M10 20h64v42a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z"/><path d="M74 34h16v16H74M20 20c2-11 15-13 25-6"/><circle cx="82" cy="42" r="2.6"/>'),
+      undo:     G('116 56', '<rect x="4" y="8" width="46" height="40" rx="8"/><rect x="70" y="8" width="42" height="40" rx="8"/><path d="M56 28h6M59 25v6M20 20a10 10 0 1 1-3 13M17 25v9h9M96 18l-9 20M87 18l9 20M87 18h15"/>')
+    };
+    var ITEMS = [
+      { type: 'svg', svg: D.laptop,   w: 128, ax: 0.13, ay: 0.30 },
+      { type: 'svg', svg: D.monitor,  w: 86,  ax: 0.87, ay: 0.23 },
+      { type: 'svg', svg: D.keyboard, w: 124, ax: 0.80, ay: 0.80 },
+      { type: 'svg', svg: D.mouse,    w: 56,  ax: 0.20, ay: 0.74 },
+      { type: 'svg', svg: D.cursor,   w: 44,  ax: 0.63, ay: 0.18 },
+      { type: 'svg', svg: D.notebook, w: 58,  ax: 0.07, ay: 0.58 },
+      { type: 'svg', svg: D.wallet,   w: 80,  ax: 0.93, ay: 0.56 },
+      { type: 'svg', svg: D.undo,     w: 96,  ax: 0.46, ay: 0.87 },
+      { type: 'kao', text: '\\( ^_^ )/', size: 30, ax: 0.50, ay: 0.12 },
+      { type: 'kao', text: '{ ˆ-ˆ }',    size: 28, ax: 0.31, ay: 0.50 },
+      { type: 'kao', text: '>_<',        size: 30, ax: 0.70, ay: 0.64 },
+      { type: 'kao', text: '; )',        size: 30, ax: 0.10, ay: 0.17 }
+    ];
 
     var objs = [];
 
     function build(cfg) {
       var el = document.createElement('div');
       el.className = 'floatie is-' + cfg.type;
-      if (cfg.type === 'card') {
+      var inner = document.createElement('div');
+      inner.className = 'floatie-in';
+      if (cfg.type === 'img') {
         el.style.width = cfg.w + 'px';
-        el.innerHTML = '<img src="' + esc(cfg.src) + '" alt="" draggable="false" ' +
-          'style="height:' + (cfg.h || Math.round(cfg.w * 0.8)) + 'px">';
-      } else if (cfg.type === 'glyph') {
-        el.style.fontSize = (cfg.size || 20) + 'px';
-        el.textContent = cfg.text;
+        var img = new Image();
+        img.src = cfg.src; img.alt = ''; img.draggable = false;
+        img.onerror = function () { el.remove(); objs = objs.filter(function (o) { return o.el !== el; }); };
+        inner.appendChild(img);
+      } else if (cfg.type === 'svg') {
+        el.style.width = cfg.w + 'px';
+        inner.innerHTML = cfg.svg;
       } else {
-        el.style.width = cfg.w + 'px';
-        el.innerHTML = cfg.svg;
+        inner.style.fontSize = (cfg.size || 26) + 'px';
+        inner.textContent = cfg.text;
       }
+      el.appendChild(inner);
       layer.appendChild(el);
-      return el;
+      return { el: el, inner: inner };
     }
 
     function place(o) {
-      var vw = window.innerWidth, vh = window.innerHeight;
+      var b = hero.getBoundingClientRect();
       var r = o.el.getBoundingClientRect();
-      o.x = clamp(o.cfg.ax * vw - r.width / 2, 8, vw - r.width - 8);
-      o.y = clamp(o.cfg.ay * vh - r.height / 2, 8, vh - r.height - 8);
-      gsap.set(o.el, { x: o.x, y: o.y, rotation: o.rot });
+      o.px = clamp(o.cfg.ax * b.width - r.width / 2, 6, b.width - r.width - 6);
+      o.py = clamp(o.cfg.ay * b.height - r.height / 2, 6, b.height - r.height - 6);
+      gsap.set(o.el, { x: o.px, y: o.py });
     }
 
     function bob(o) {
       if (o.tween) o.tween.kill();
-      o.tween = gsap.to(o.el, {
-        x: '+=' + rand(-16, 16), y: '+=' + rand(-22, 22), rotation: o.rot + rand(-4, 4),
-        duration: rand(4, 7), ease: 'sine.inOut', repeat: -1, yoyo: true
+      gsap.set(o.inner, { rotation: o.rot });
+      o.tween = gsap.to(o.inner, {
+        x: rand(-10, 10), y: rand(-14, 14), rotation: o.rot + rand(-5, 5),
+        duration: rand(4.5, 8), ease: 'sine.inOut', repeat: -1, yoyo: true
       });
     }
 
     ITEMS.forEach(function (cfg) {
-      var o = { cfg: cfg, el: build(cfg), rot: cfg.type === 'glyph' ? 0 : rand(-9, 9), tween: null };
+      var made = build(cfg);
+      var o = {
+        cfg: cfg, el: made.el, inner: made.inner, tween: null,
+        rot: cfg.type === 'kao' ? rand(-8, 8) : rand(-14, 14),
+        depth: cfg.type === 'kao' ? rand(0.5, 0.9) : rand(0.5, 1.3)
+      };
       place(o);
       objs.push(o);
     });
 
-    gsap.from(layer.children, { autoAlpha: 0, duration: 0.6, stagger: 0.06, delay: 0.25,
-      onComplete: function () { objs.forEach(bob); } });
+    gsap.from(layer.children, {
+      autoAlpha: 0, duration: 0.6, stagger: 0.05, delay: 0.2,
+      onComplete: function () { objs.forEach(bob); }
+    });
+
+    // ---------- mouse parallax (whole layer, while not dragging) ----------
+    var PARALLAX = 26;
+    hero.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
+      var b = hero.getBoundingClientRect();
+      var fx = (e.clientX - b.left) / b.width - 0.5;
+      var fy = (e.clientY - b.top) / b.height - 0.5;
+      objs.forEach(function (o) {
+        if (o.dragging) return;
+        gsap.to(o.el, {
+          x: o.px + fx * PARALLAX * o.depth,
+          y: o.py + fy * PARALLAX * o.depth,
+          duration: 0.7, ease: 'power2.out', overwrite: 'auto'
+        });
+      });
+    });
+    hero.addEventListener('pointerleave', function () {
+      objs.forEach(function (o) {
+        if (o.dragging) return;
+        gsap.to(o.el, { x: o.px, y: o.py, duration: 0.9, ease: 'power2.out', overwrite: 'auto' });
+      });
+    });
 
     // ---------- drag (plain Pointer Events, no plugin) ----------
+    initFloaties._top = 2;
     objs.forEach(function (o) {
-      var el = o.el, dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+      var el = o.el, sx = 0, sy = 0, ox = 0, oy = 0;
       var lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
 
       el.addEventListener('pointerdown', function (e) {
-        dragging = true;
-        el.setPointerCapture(e.pointerId);
-        if (o.tween) o.tween.kill();
+        e.preventDefault(); // don't start a text selection on the hero
+        o.dragging = true;
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
         gsap.killTweensOf(el);
-        o.x = gsap.getProperty(el, 'x'); o.y = gsap.getProperty(el, 'y');
-        sx = e.clientX; sy = e.clientY; ox = o.x; oy = o.y;
+        o.px = gsap.getProperty(el, 'x'); o.py = gsap.getProperty(el, 'y');
+        sx = e.clientX; sy = e.clientY; ox = o.px; oy = o.py;
         lastX = e.clientX; lastY = e.clientY; lastT = e.timeStamp; vx = vy = 0;
         el.style.zIndex = String(++initFloaties._top);
       });
 
       el.addEventListener('pointermove', function (e) {
-        if (!dragging) return;
-        var vw = window.innerWidth, vh = window.innerHeight, r = el.getBoundingClientRect();
-        o.x = clamp(ox + (e.clientX - sx), -r.width * 0.4, vw - r.width * 0.6);
-        o.y = clamp(oy + (e.clientY - sy), -r.height * 0.4, vh - r.height * 0.6);
-        gsap.set(el, { x: o.x, y: o.y });
+        if (!o.dragging) return;
+        var b = hero.getBoundingClientRect(), r = el.getBoundingClientRect();
+        o.px = clamp(ox + (e.clientX - sx), -r.width * 0.35, b.width - r.width * 0.65);
+        o.py = clamp(oy + (e.clientY - sy), -r.height * 0.35, b.height - r.height * 0.65);
+        gsap.set(el, { x: o.px, y: o.py });
         var dt = e.timeStamp - lastT;
         if (dt > 0) { vx = (e.clientX - lastX) / dt; vy = (e.clientY - lastY) / dt; }
         lastX = e.clientX; lastY = e.clientY; lastT = e.timeStamp;
       });
 
       function end(e) {
-        if (!dragging) return;
-        dragging = false;
+        if (!o.dragging) return;
+        o.dragging = false;
         try { el.releasePointerCapture(e.pointerId); } catch (err) {}
-        var vw = window.innerWidth, vh = window.innerHeight, r = el.getBoundingClientRect();
-        o.x = clamp(o.x + vx * 90, 8, vw - r.width - 8);
-        o.y = clamp(o.y + vy * 90, 8, vh - r.height - 8);
-        gsap.to(el, {
-          x: o.x, y: o.y, duration: 0.7, ease: 'power2.out',
-          onComplete: function () {
-            o.cfg.ax = (o.x + r.width / 2) / window.innerWidth;
-            o.cfg.ay = (o.y + r.height / 2) / window.innerHeight;
-            bob(o);
-          }
-        });
+        var b = hero.getBoundingClientRect(), r = el.getBoundingClientRect();
+        o.px = clamp(o.px + vx * 80, 6, b.width - r.width - 6);
+        o.py = clamp(o.py + vy * 80, 6, b.height - r.height - 6);
+        o.cfg.ax = (o.px + r.width / 2) / b.width;
+        o.cfg.ay = (o.py + r.height / 2) / b.height;
+        gsap.to(el, { x: o.px, y: o.py, duration: 0.7, ease: 'power2.out' });
       }
       el.addEventListener('pointerup', end);
       el.addEventListener('pointercancel', end);
     });
-    initFloaties._top = 15;
 
-    var frt;
-    window.addEventListener('resize', function () {
-      clearTimeout(frt);
-      frt = setTimeout(function () { objs.forEach(function (o) { bob(o); place(o); }); }, 200);
-    });
+    // resize listener is wired once (window persists across swaps); it acts
+    // on whatever the latest build produced.
+    initFloaties._objs = objs;
+    initFloaties._place = place;
+    if (!initFloaties._resizeWired) {
+      initFloaties._resizeWired = true;
+      var frt;
+      window.addEventListener('resize', function () {
+        clearTimeout(frt);
+        frt = setTimeout(function () {
+          (initFloaties._objs || []).forEach(function (o) {
+            if (!o.dragging) initFloaties._place(o);
+          });
+        }, 200);
+      });
+    }
   }
 
   /* ============================================================
@@ -772,7 +835,7 @@
         var hero = document.querySelector('.hero');
         if (hero) { heroResizeObserver = new ResizeObserver(function () { fitHero(); }); heroResizeObserver.observe(hero); }
       }
-      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); buildVersionsDoodads(); }
+      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); buildVersionsDoodads(); initFloaties(); }
     } else if (view === 'case') {
       populateCaseView(url);
     }
@@ -800,11 +863,6 @@
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
   gsap.ticker.lagSmoothing(0);
-
-  // Built once here so it covers every GSAP boot path below (intro, no-intro
-  // cold load, cold load of the case view) without being tied to initView,
-  // which re-runs on every swap.
-  initFloaties();
 
   /* ---------- INTRO ---------- */
   // Only a cold/direct load of the homepage gets the full "RNR." panel-lift
