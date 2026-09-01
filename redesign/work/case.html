@@ -26,18 +26,46 @@
   .case-body{max-width:640px;padding-bottom:6vh}
   .case-body h3{font-family:var(--display);font-weight:400;font-size:22px;margin:48px 0 14px;letter-spacing:-.01em}
   .case-body p{color:var(--ink-soft);margin-bottom:16px}
-  .shot{width:100%;aspect-ratio:16/10;border-radius:6px;margin:10px 0 40px;overflow:hidden}
-  .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .shot{width:100%;border-radius:6px;margin:10px 0 40px;overflow:hidden}
+  /* real photos show at their own natural aspect ratio — never cropped.
+     The fixed-ratio gradient boxes are only for the no-image placeholder
+     state (:not(:has(img))), so they still look intentional while empty. */
+  .shot:not(:has(img)){aspect-ratio:16/10}
+  .shot img{width:100%;height:auto;display:block;border-radius:inherit;cursor:zoom-in;transition:opacity .2s ease}
+  .shot img:hover{opacity:.92}
   .shot.a{background:linear-gradient(135deg,#2f43ff,#9db0ff)}
   .shot.b{background:linear-gradient(135deg,#d1602f,#f0b99e)}
   .shot.c{background:linear-gradient(135deg,#17161a,#5b5850)}
-  .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .shot-row .shot{aspect-ratio:4/5}
+  .shot-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  .shot-row .shot:not(:has(img)){aspect-ratio:4/5}
   .next{border-top:1px solid var(--ink);padding:36px 0 10vh;display:flex;justify-content:space-between;align-items:baseline}
   .next a{font-family:var(--display);font-weight:400;font-size:clamp(20px,3vw,34px);letter-spacing:-.02em}
   .next a:hover{color:var(--accent)}
   .case-body p:empty,.case-body h3:has(+ p:empty){display:none}
   @media(max-width:820px){.shot-row{grid-template-columns:1fr}}
+
+  /* ---------- lightbox (click a photo to view it full-size) ---------- */
+  .lightbox{
+    position:fixed;inset:0;z-index:200;background:rgba(23,22,26,.94);
+    display:flex;align-items:center;justify-content:center;padding:5vh 5vw;
+    opacity:0;visibility:hidden;transition:opacity .35s ease,visibility 0s linear .35s;
+  }
+  .lightbox.open{opacity:1;visibility:visible;transition:opacity .35s ease}
+  .lightbox img{
+    max-width:100%;max-height:100%;border-radius:4px;display:block;
+    transform:scale(.96);transition:transform .35s cubic-bezier(.2,.7,.2,1);
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+  }
+  .lightbox.open img{transform:scale(1)}
+  .lightbox-close{
+    position:absolute;top:22px;right:26px;width:40px;height:40px;
+    border:none;background:none;color:var(--paper);font-size:32px;line-height:1;
+    cursor:pointer;opacity:.75;transition:opacity .2s ease;font-family:var(--display);
+  }
+  .lightbox-close:hover{opacity:1}
+  @media(prefers-reduced-motion:reduce){
+    .lightbox,.lightbox img{transition:none}
+  }
 </style>
 </head>
 <body>
@@ -96,6 +124,43 @@
   <span>Dhaka, Bangladesh</span>
 </footer>
 
+<!-- ============ LIGHTBOX ============ click any photo to view it full-size -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+<script>
+/* Standalone — no GSAP dependency, so a photo can always be opened even if
+   the animation libraries fail to load. */
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightboxImg');
+  var closeBtn = document.getElementById('lightboxClose');
+  if (!lb || !lbImg) return;
+
+  function open(src, alt) {
+    lbImg.src = src;
+    lbImg.alt = alt || '';
+    lb.classList.add('open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    lb.classList.remove('open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest && e.target.closest('.shot img');
+    if (img) { open(img.src, img.alt); return; }
+    if (e.target === lb || e.target === closeBtn) close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+})();
+</script>
 <script>
 /* Populate this page from data/work.json, matched by the ?slug= in the URL.
    Runs standalone (no GSAP dependency) — the [data-anim] wrappers are
