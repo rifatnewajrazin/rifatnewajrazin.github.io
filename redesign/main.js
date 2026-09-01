@@ -129,6 +129,34 @@
     setTimeout(revealAll, 5000);
   })();
 
+  /* ---------- nav dark-section invert (independent of GSAP) ----------
+     Swaps the nav to a light-on-dark "negative" look while it's actually
+     sitting over a dark section (currently just .statement), using an
+     IntersectionObserver against a thin strip at the nav's own screen
+     position — so it reflects whatever is truly behind it. Replaces the old
+     mix-blend-mode:multiply trick, which crushed to black-on-black over a
+     dark band and made the nav unreadable rather than legible-in-negative. */
+  (function navInvert() {
+    var nav = document.getElementById('nav');
+    var darkSections = document.querySelectorAll('.statement');
+    if (!nav || !darkSections.length || !('IntersectionObserver' in window)) return;
+
+    var io;
+    function build() {
+      if (io) io.disconnect();
+      var navH = nav.offsetHeight || 70;
+      var bottom = Math.max(0, Math.round(window.innerHeight - navH));
+      io = new IntersectionObserver(function (entries) {
+        var onDark = entries.some(function (e) { return e.isIntersecting; });
+        nav.classList.toggle('on-dark', onDark);
+      }, { rootMargin: '0px 0px -' + bottom + 'px 0px', threshold: 0 });
+      darkSections.forEach(function (el) { io.observe(el); });
+    }
+    build();
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 200); });
+  })();
+
   if (!haveGSAP || reduce) {
     document.body.classList.add('intro-done');
     showEverything();
@@ -472,16 +500,37 @@
       });
     });
 
-    // nav hide on scroll-down
-    var lastY = 0;
-    ScrollTrigger.create({
-      start: 0, end: 'max',
-      onUpdate: function (self) {
-        var y = self.scroll();
-        gsap.to('#nav', { yPercent: (y > 140 && y > lastY) ? -140 : 0, duration: 0.35 });
-        lastY = y;
+    // nav hide on scroll-down — deliberate, not jumpy: requires a sustained
+    // scroll of THRESHOLD px in one direction before it reacts, so a small
+    // wheel/trackpad wobble can't flicker it in and out. Direction reverses
+    // reset the accumulator immediately.
+    (function () {
+      var nav = document.getElementById('nav');
+      if (!nav) return;
+      var HIDE_AT = 140;   // never hide this close to the top
+      var THRESHOLD = 28;  // ignore scroll smaller than this
+      var lastY = window.scrollY || 0;
+      var accum = 0;
+      var navHidden = false;
+      function setHidden(v) {
+        if (v === navHidden) return;
+        navHidden = v;
+        gsap.to(nav, { yPercent: v ? -140 : 0, duration: 0.35 });
       }
-    });
+      ScrollTrigger.create({
+        start: 0, end: 'max',
+        onUpdate: function (self) {
+          var y = self.scroll();
+          var dy = y - lastY;
+          lastY = y;
+          if (dy !== 0 && Math.sign(dy) !== Math.sign(accum)) accum = 0;
+          accum += dy;
+          if (y <= HIDE_AT) { setHidden(false); accum = 0; }
+          else if (accum > THRESHOLD) { setHidden(true); accum = 0; }
+          else if (accum < -THRESHOLD) { setHidden(false); accum = 0; }
+        }
+      });
+    })();
 
     ScrollTrigger.refresh();
   }

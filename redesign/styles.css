@@ -70,15 +70,25 @@ body.intro-done .intro{display:none}
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:20;
   display:flex;align-items:center;justify-content:space-between;
-  padding:22px clamp(28px,5vw,64px);mix-blend-mode:multiply;will-change:transform;
+  padding:22px clamp(28px,5vw,64px);will-change:transform;
+  transition:color .3s ease;
 }
 .mark{font-family:var(--display);font-weight:400;font-size:20px;letter-spacing:-.02em}
-.mark .dot{color:var(--accent)}
+.mark .dot{color:var(--accent);transition:color .3s ease}
 .nav-links{display:flex;gap:26px;font-size:13px}
 .nav-links a{position:relative;padding:4px 0;color:var(--ink-soft);transition:color .2s}
-.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:right;transition:transform .3s ease,background .3s ease}
 .nav-links a:hover{color:var(--ink)}
 .nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+
+/* "negative" look while the nav sits over a dark section — see main.js
+   navInvert(). Replaces the old mix-blend-mode:multiply trick, which
+   crushed to black-on-black over .statement instead of staying legible. */
+.nav.on-dark{color:var(--paper)}
+.nav.on-dark .mark .dot{color:var(--pop)}
+.nav.on-dark .nav-links a{color:rgba(244,241,233,.7)}
+.nav.on-dark .nav-links a:hover{color:var(--paper)}
+.nav.on-dark .nav-links a::after{background:var(--paper)}
 
 /* ---------- layout ---------- */
 main{position:relative;z-index:2}
