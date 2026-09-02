@@ -385,14 +385,22 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 /* Overlap is gentle on purpose: a card's caption must stay at least half
    visible. Vertical pull between pairs is small; horizontal pull within a
    pair is moderate (photo over photo, no text under it). */
-.instax-pair + .instax-pair{margin-top:clamp(-16px,-1.4vw,-8px)}
+.instax-pair + .instax-pair{margin-top:clamp(-12px,-1vw,-6px)}
 .instax-gallery .instax{width:clamp(148px,18vw,192px)}
-.instax-pair .instax:nth-child(2){margin-left:clamp(-34px,-3vw,-18px)}
-/* resting tilt — vary by position and by pair so the stack looks tossed */
-.instax-pair .instax:nth-child(1){transform:rotate(-3deg)}
-.instax-pair .instax:nth-child(2){transform:rotate(2.6deg)}
-.instax-pair:nth-child(even) .instax:nth-child(1){transform:rotate(1.8deg)}
-.instax-pair:nth-child(even) .instax:nth-child(2){transform:rotate(-2.4deg)}
+.instax-pair .instax:nth-child(2){margin-left:clamp(-32px,-2.8vw,-18px)}
+
+/* Break the 2x2 grid look: pairs zig-zag left/right, and within each pair
+   one card rides higher than the other, every card at its own angle — so
+   no two edges line up into a box. All done with `transform` (rotate +
+   translate), which the !important hover below fully resets, so a hovered
+   card still snaps upright and centred as it lifts out. A gallery with a
+   single pair stays put (a lone offset would just look like a mistake). */
+.instax-gallery .instax-pair:not(:only-child):nth-child(odd){transform:translateX(clamp(-20px,-1.6vw,-8px))}
+.instax-gallery .instax-pair:not(:only-child):nth-child(even){transform:translateX(clamp(8px,1.6vw,20px))}
+.instax-pair .instax:nth-child(1){transform:rotate(-4deg) translateY(-6px)}
+.instax-pair .instax:nth-child(2){transform:rotate(3.2deg) translateY(9px)}
+.instax-pair:nth-child(even) .instax:nth-child(1){transform:rotate(2.6deg) translateY(7px)}
+.instax-pair:nth-child(even) .instax:nth-child(2){transform:rotate(-3.4deg) translateY(-5px)}
 
 /* Hover "brings the card out": straighten, scale up, deeper shadow, lift
    above the stack. `transform` is marked !important so it beats every
