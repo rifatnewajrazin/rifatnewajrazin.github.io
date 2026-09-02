@@ -318,6 +318,54 @@
       });
   }
 
+  // ---------- "B-Sides" section (data-driven; independent of GSAP) ----------
+  // Rebuilds #versions from data/versions.json. The markup in index.html is
+  // the no-JS / fetch-failure fallback; when the JSON loads it's replaced
+  // with the CMS-editable rows. One photo => single Instax; two or more =>
+  // the fanned .instax-reel.
+  function versRowHTML(row, i) {
+    var photos = (row && row.photos) || [];
+    var cards = photos.map(function (p) {
+      var inner = p && p.image
+        ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt=""></div>'
+        : '<div class="instax-img" data-ph="add photo"></div>';
+      return '<figure class="instax">' + inner +
+        '<figcaption>' + esc(p && p.caption) + '</figcaption></figure>';
+    }).join('');
+    var media = photos.length > 1
+      ? '<div class="instax-reel">' + cards + '</div>'
+      : cards;
+    return '<div class="vers-row' + (row && row.flip ? ' flip' : '') + '" data-anim ' +
+        'style="transition-delay:' + (i * 0.06).toFixed(2) + 's">' +
+        media +
+        '<div class="vers-note"><h3>' + esc(row && row.heading) + '</h3>' +
+        '<p>' + esc(row && row.body) + '</p></div>' +
+      '</div>';
+  }
+  function renderVersions() {
+    var section = document.querySelector('.versions');
+    if (!section) return Promise.resolve();
+    return fetch('/redesign/data/versions.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (data) {
+        var rows = data && data.rows;
+        if (!rows || !rows.length) return; // keep the static fallback rows
+        if (data.title) {
+          var h = document.getElementById('versionsTitle');
+          if (h) h.textContent = data.title;
+        }
+        var count = section.querySelector('.section-head .count');
+        if (count && data.subtitle) count.textContent = data.subtitle;
+
+        // Drop the old rows, keep .section-head and .vers-doodads intact.
+        [].slice.call(section.querySelectorAll('.vers-row')).forEach(function (el) {
+          el.parentNode.removeChild(el);
+        });
+        section.insertAdjacentHTML('beforeend', rows.map(versRowHTML).join(''));
+      });
+  }
+
   // ---------- case-study populate (independent of GSAP) ----------
   function paragraphs(text) {
     return String(text || '').split(/\n\s*\n/).map(function (p) {
@@ -876,6 +924,10 @@
         if (!el.querySelector('.word')) splitWords(el);
       });
       renderWorkGrid();
+      renderVersions().then(function () {
+        revealObserverInit();
+        if (haveGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
+      });
       buildMarquee();
       fitHero();
       if (window.__rnrApplyHeroScroll) window.__rnrApplyHeroScroll();

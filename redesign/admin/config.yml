@@ -71,3 +71,49 @@ collections:
                 widget: "list"
                 required: false
                 field: { label: "Image", name: "image", widget: "image", required: false }
+
+  - name: "bsides"
+    label: "B-Sides"
+    files:
+      - file: "redesign/data/versions.json"
+        label: "B-Sides Section"
+        name: "bsides"
+        fields:
+          - label: "Section Title"
+            name: "title"
+            widget: "string"
+          - label: "Subtitle"
+            name: "subtitle"
+            widget: "string"
+            hint: "Small caps line under the title"
+          - label: "Rows"
+            name: "rows"
+            widget: "list"
+            collapsed: true
+            summary: "{{fields.heading}}"
+            fields:
+              - label: "Heading"
+                name: "heading"
+                widget: "string"
+              - label: "Body"
+                name: "body"
+                widget: "text"
+              - label: "Photo on the right"
+                name: "flip"
+                widget: "boolean"
+                default: false
+                hint: "Off = photo on the left, on = photo on the right"
+              - label: "Photos"
+                name: "photos"
+                widget: "list"
+                hint: "One photo shows a single Instax; two or more fan out as a reel."
+                summary: "{{fields.caption}}"
+                fields:
+                  - label: "Image"
+                    name: "image"
+                    widget: "image"
+                    required: false
+                  - label: "Caption"
+                    name: "caption"
+                    widget: "string"
+                    required: false
