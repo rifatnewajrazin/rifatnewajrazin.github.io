@@ -4,64 +4,57 @@
   "rows": [
     {
       "heading": "The Backstage Guy",
-      "body": "From designing shows to managing them, from creating visuals to running them live, the music industry has always been my favorite place to work. Forty-plus shows in the last four years and I'm still counting.",
+      "body": "from designing shows to managing them, from creating visuals to running them live, the music industry has always been my favorite place to work. forty-plus shows in the last four years and i'm still counting...",
       "flip": false,
       "photos": [
         {
-          "image": "/redesign/uploads/the-backstage-guy.png",
+          "image": "/redesign/uploads/the-backstage-guy.jpg",
           "caption": "the work nobody sees"
         }
       ]
     },
     {
-      "heading": "The tour manager",
-      "body": "Vans, visas, load-ins, day sheets. If the show starts on time and everyone's fed and accounted for, I did the job right.",
+      "heading": "The one who plans it",
+      "body": "i'm the guy in the group who plans and pushes everyone on tour. convincing people to commit isn't anyone's cup of tea. it needs ambition, patience, and a proper proposal. that's what i do.\n\nfrom pre-estimating tour budgets to executing the entire plan fluently and effortlessly, i do it all. i'm the one who takes all the pain but still enjoys it the most because it's a smile on everyone's face that gives me mine...",
       "flip": true,
       "photos": [
         {
-          "image": "",
-          "caption": "km 32, still smiling"
+          "image": "/redesign/uploads/the-one-who-plans-it.jpg",
+          "caption": "the one who enjoys it the most"
         }
       ]
     },
     {
-      "heading": "On two wheels & two feet",
-      "body": "Long rides and longer runs are where the actual thinking happens. Half the ideas on this site were worked out somewhere around km 20.",
+      "heading": "Miles and kilometers",
+      "body": "cycling's been my thing since college. eight, nine years and twenty-five thousand kilometers deep. running just happened recently but it grabbed me hard. i do marathons when they're on, but running and cycling are weekend regulars now.\n\nthe dopamine hit, the rhythm, the endurance keeps me moving. music makes it all flow without much effort. i wish i'd started sooner, but honestly, better late than never. both keep me sane. that's where i think. that's where i live...",
       "flip": false,
       "photos": [
         {
-          "image": "",
-          "caption": "5am club"
+          "image": "/redesign/uploads/7.5-km-run.jpg",
+          "caption": "running 7.5km"
         },
         {
-          "image": "",
-          "caption": "chasing a PB"
+          "image": "/redesign/uploads/cycling-on-victory-day.jpg",
+          "caption": "cycling on victory day"
         },
         {
-          "image": "",
-          "caption": "podium-adjacent"
+          "image": "/redesign/uploads/15-km-run.jpg",
+          "caption": "my first 15km"
         }
       ]
     },
     {
-      "heading": "In the friend circle",
-      "body": "The designated planner, driver and photo-taker. Someone has to book the table, keep the plan alive, and remember where we left the car.",
+      "heading": "The duality",
+      "body": "everyone around me thinks i'm an extrovert. the confidence, the way i speak publicly, how i lead. but it's all learned. i'm an introvert at my core. took years to practice being vocal in front of crowds. and yeah, i can do it now.\n\nbut that part of introversion is still inside me. i hate myself among a lot of people, a lot of unknown people especially...",
       "flip": true,
-      "photos": [
-        {
-          "image": "",
-          "caption": "where did we park?"
-        }
-      ]
-    },
-    {
-      "heading": "Introvert / extrovert",
-      "body": "Loud in a room of six, invisible in a room of sixty. Both are me — just on different days, and I've stopped apologising for either.",
-      "flip": false,
       "photos": [
         {
           "image": "",
           "caption": "depends on the day"
+        },
+        {
+          "image": "/redesign/uploads/sleeping.jpg",
+          "caption": "sleeping among 150+ people"
         }
       ]
     }
