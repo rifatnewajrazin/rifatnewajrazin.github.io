@@ -725,7 +725,7 @@
       wallet:   G('98 76', '<path d="M10 20h64v42a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6z"/><path d="M74 34h16v16H74M20 20c2-11 15-13 25-6"/><circle cx="82" cy="42" r="2.6"/>'),
       undo:     G('116 56', '<rect x="4" y="8" width="46" height="40" rx="8"/><rect x="70" y="8" width="42" height="40" rx="8"/><path d="M56 28h6M59 25v6M20 20a10 10 0 1 1-3 13M17 25v9h9M96 18l-9 20M87 18l9 20M87 18h15"/>')
     };
-    var ITEMS = [
+    var DEFAULT_ITEMS = [
       { type: 'svg', svg: D.laptop,   w: 128, ax: 0.13, ay: 0.30 },
       { type: 'svg', svg: D.monitor,  w: 86,  ax: 0.87, ay: 0.23 },
       { type: 'svg', svg: D.keyboard, w: 124, ax: 0.80, ay: 0.80 },
@@ -740,6 +740,55 @@
       { type: 'kao', text: '; )',        size: 30, ax: 0.10, ay: 0.17 }
     ];
 
+    // Optional CMS override: data/floaties.json. Each entry ->
+    //   { type:"doodle",  preset:"laptop", x:13, y:30, width:128 }
+    //   { type:"image",   src:"/redesign/uploads/x.svg", x:50, y:20, width:90 }
+    //   { type:"kaomoji", text:"\\( ^_^ )/", x:50, y:12, size:30 }
+    // x / y are percentages across the hero (0–100; 0–1 also accepted).
+    // A missing file, empty list, or malformed JSON just keeps DEFAULT_ITEMS.
+    function frac(v, dflt) {
+      var n = parseFloat(v);
+      if (!isFinite(n)) return dflt;
+      if (n > 1) n = n / 100;
+      return Math.min(1, Math.max(0, n));
+    }
+    function mapFloatieEntry(e) {
+      if (!e || typeof e !== 'object') return null;
+      var t = String(e.type || '').toLowerCase();
+      var ax = frac(e.x, 0.5), ay = frac(e.y, 0.5);
+      if (t === 'image') {
+        if (!e.src) return null;
+        return { type: 'img', src: String(e.src), w: +e.width || 90, ax: ax, ay: ay };
+      }
+      if (t === 'kaomoji' || t === 'kao') {
+        if (!e.text) return null;
+        return { type: 'kao', text: String(e.text), size: +e.size || 28, ax: ax, ay: ay };
+      }
+      // default: built-in doodle
+      var svg = D[String(e.preset || '').toLowerCase()];
+      if (!svg) return null;
+      return { type: 'svg', svg: svg, w: +e.width || 90, ax: ax, ay: ay };
+    }
+
+    var buildToken = (initFloaties._token = (initFloaties._token || 0) + 1);
+
+    return fetch('/redesign/data/floaties.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (data) {
+        // a newer initFloaties() call started while we were fetching — stand down
+        if (initFloaties._token !== buildToken) return;
+        layer.innerHTML = '';
+
+        var custom = data && Array.isArray(data.items)
+          ? data.items.map(mapFloatieEntry).filter(Boolean)
+          : [];
+        var ITEMS = custom.length ? custom : DEFAULT_ITEMS;
+
+        buildFloaties(ITEMS);
+      });
+
+    function buildFloaties(ITEMS) {
     var objs = [];
 
     function build(cfg) {
@@ -898,6 +947,7 @@
         }, 200);
       });
     }
+    } // buildFloaties
   }
 
   /* ============================================================
