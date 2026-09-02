@@ -30,7 +30,7 @@
       "flip": false,
       "photos": [
         {
-          "image": "/redesign/uploads/7.5-km-run.jpg",
+          "image": "/redesign/uploads/7.5-km-marathon.jpg",
           "caption": "running 7.5km"
         },
         {
@@ -65,18 +65,18 @@
       "photos": [
         {
           "image": "/redesign/uploads/lalakhal.jpg",
-          "caption": "Lalakhal, Sylhet"
+          "caption": "lalakhal, sylhet"
         },
         {
           "image": "/redesign/uploads/sundarbans.jpg",
-          "caption": "Sundarbans"
+          "caption": "sundarbans"
         },
         {
           "image": "/redesign/uploads/lama.jpg",
-          "caption": "Lama, Bandarban"
+          "caption": "lama, bandarban"
         },
         {
-          "caption": "Kaptai Lake",
+          "caption": "kaptai lake",
           "image": "/redesign/uploads/kaptai-lake.jpg"
         }
       ]
