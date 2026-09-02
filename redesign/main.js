@@ -759,12 +759,20 @@
         el.innerHTML = ART[set[got % set.length]] || ART.spark;
         box.appendChild(el);
 
-        var rot = rnd(-13, 13);
+        var rot = rnd(-16, 16);
         gsap.set(el, { rotation: rot });
+        // gentle drift…
         buildVersionsDoodads._tweens.push(gsap.to(el, {
-          x: '+=' + rnd(-6, 6).toFixed(1), y: '+=' + rnd(-8, 8).toFixed(1),
-          rotation: rot + rnd(-5, 5),
+          x: '+=' + rnd(-7, 7).toFixed(1), y: '+=' + rnd(-9, 9).toFixed(1),
           duration: rnd(4, 8), ease: 'sine.inOut', repeat: -1, yoyo: true
+        }));
+        // …and a livelier rock on its own slower clock, so it looks alive
+        // rather than static. Each doodad gets its own swing, speed and
+        // start delay so the cluster never rotates in unison.
+        buildVersionsDoodads._tweens.push(gsap.to(el, {
+          rotation: rot + (Math.random() < 0.5 ? -1 : 1) * rnd(7, 14),
+          duration: rnd(2.6, 5), ease: 'sine.inOut', repeat: -1, yoyo: true,
+          delay: rnd(0, 2)
         }));
         got++;
       }

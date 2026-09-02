@@ -335,8 +335,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .vers-note p + p{margin-top:.85em}
 
 /* Instax photocard — shows the whole photo (object-fit:contain in a fixed
-   4:3 frame), never a square crop. Portrait shots get white matting, which
-   reads as an intentional print border. */
+   2:3 frame), never a square crop. An odd-ratio photo gets white matting,
+   which reads as an intentional print border. */
 .instax{
   flex:none;width:clamp(220px,30vw,330px);
   position:relative;
@@ -382,25 +382,29 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   width:clamp(260px,40vw,440px);
 }
 .instax-pair{display:flex;justify-content:center;align-items:flex-start}
-.instax-pair + .instax-pair{margin-top:clamp(-34px,-3.4vw,-18px)}
-.instax-gallery .instax{width:clamp(150px,19vw,200px)}
-.instax-pair .instax:nth-child(2){margin-left:clamp(-46px,-4.5vw,-26px)}
+/* Overlap is gentle on purpose: a card's caption must stay at least half
+   visible. Vertical pull between pairs is small; horizontal pull within a
+   pair is moderate (photo over photo, no text under it). */
+.instax-pair + .instax-pair{margin-top:clamp(-16px,-1.4vw,-8px)}
+.instax-gallery .instax{width:clamp(148px,18vw,192px)}
+.instax-pair .instax:nth-child(2){margin-left:clamp(-34px,-3vw,-18px)}
 /* resting tilt — vary by position and by pair so the stack looks tossed */
 .instax-pair .instax:nth-child(1){transform:rotate(-3deg)}
 .instax-pair .instax:nth-child(2){transform:rotate(2.6deg)}
 .instax-pair:nth-child(even) .instax:nth-child(1){transform:rotate(1.8deg)}
 .instax-pair:nth-child(even) .instax:nth-child(2){transform:rotate(-2.4deg)}
 
-/* Hover "brings the card out": scale up + straighten + lift above the
-   stack, plus a deeper shadow. Transform + z-index + box-shadow only — no
-   margin/size change — so siblings never move and the pointer can't fall
-   into a gap. Pure scale-up from centre never pulls an edge inward past
-   the cursor, so it also can't flicker at a card's edge.
-   Placed AFTER every resting-transform rule above and at matching
-   specificity, so it wins the cascade tie on flip rows and gallery cards. */
-.vers-row .instax:hover,
-.instax-gallery .instax:hover{
-  transform:rotate(0) scale(1.06);
+/* Hover "brings the card out": straighten, scale up, deeper shadow, lift
+   above the stack. `transform` is marked !important so it beats every
+   resting-tilt rule above no matter their specificity — the recurring bug
+   was a resting selector (flip rows, even pairs) out-ranking a plain
+   `.instax:hover` and killing the animation on those cards. Resting rules
+   carry no !important, so this is unambiguous and every card animates.
+   Scale-up from centre can't pull an edge inward past the cursor and no
+   box-model property changes, so it can't flicker or start the old
+   spread-on-hover feedback loop. */
+.instax:hover{
+  transform:rotate(0) scale(1.06) !important;
   box-shadow:0 34px 60px -20px rgba(23,22,26,.42);
   z-index:5;
 }
@@ -486,10 +490,10 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   /* versions: stack photo over note, always reading left-aligned */
   .vers-row,.vers-row.flip{flex-direction:column;align-items:flex-start;gap:24px}
   .instax,.vers-row.flip .instax{width:min(320px,80vw);transform:rotate(-2deg)}
-  .instax-gallery{width:min(360px,90vw)}
-  .instax-gallery .instax{width:min(150px,42vw)}
-  .instax-pair .instax:nth-child(2){margin-left:min(-24px,-6vw)}
-  .instax-pair + .instax-pair{margin-top:-22px}
+  .instax-gallery{width:min(360px,92vw)}
+  .instax-gallery .instax{width:min(150px,43vw)}
+  .instax-pair .instax:nth-child(2){margin-left:min(-18px,-4vw)}
+  .instax-pair + .instax-pair{margin-top:-10px}
   .vers-note p{max-width:none}
   .vers-doodads{display:none}
 }
@@ -501,7 +505,6 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .lightbox,.lightbox img{transition:none !important}
   .statement-text .word{color:#f4f1e9 !important}
   .marquee-track{animation:none !important}
-  .instax,.vers-row .instax:hover,.vers-row.flip .instax,
-  .instax-gallery .instax{transition:none !important}
+  .instax,.instax:hover,.instax-gallery .instax{transition:none !important}
   .vers-doodads{display:none}
   }
