@@ -322,7 +322,8 @@
   // Rebuilds #versions from data/versions.json. The markup in index.html is
   // the no-JS / fetch-failure fallback; when the JSON loads it's replaced
   // with the CMS-editable rows. One photo => a single Instax card; two or
-  // more => a plain wrapped 2-up grid (.instax-gallery).
+  // more => .instax-gallery, laid out as centred rows of two (.instax-pair)
+  // that overlap slightly; a lone last card is centred, not left-hanging.
   function versCard(p) {
     var inner = p && p.image
       ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt="' +
@@ -338,10 +339,17 @@
     // the row, keep one slot so an unfilled row still shows a placeholder.
     var withImg = photos.filter(function (p) { return p && p.image; });
     var render = withImg.length ? withImg : photos.slice(0, 1);
-    var cards = render.map(versCard).join('');
-    var media = render.length > 1
-      ? '<div class="instax-gallery">' + cards + '</div>'
-      : cards;
+    var media;
+    if (render.length > 1) {
+      var pairs = '';
+      for (var g = 0; g < render.length; g += 2) {
+        pairs += '<div class="instax-pair">' +
+          render.slice(g, g + 2).map(versCard).join('') + '</div>';
+      }
+      media = '<div class="instax-gallery">' + pairs + '</div>';
+    } else {
+      media = versCard(render[0]);
+    }
     return '<div class="vers-row' + (row && row.flip ? ' flip' : '') + '" data-anim ' +
         'style="transition-delay:' + (i * 0.06).toFixed(2) + 's">' +
         media +
