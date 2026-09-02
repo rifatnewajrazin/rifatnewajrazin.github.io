@@ -49,12 +49,12 @@
       "flip": true,
       "photos": [
         {
-          "image": "",
-          "caption": "depends on the day"
-        },
-        {
           "image": "/redesign/uploads/sleeping.jpg",
           "caption": "sleeping among 150+ people"
+        },
+        {
+          "image": "/redesign/uploads/forced-to-speak.jpg",
+          "caption": "forced-to-speak"
         }
       ]
     },
