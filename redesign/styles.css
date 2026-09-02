@@ -332,22 +332,31 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   font-size:clamp(20px,2.5vw,27px);line-height:1.5;color:var(--ink-soft);
   max-width:42ch;
 }
+.vers-note p + p{margin-top:.85em}
 
-/* Instax photocard */
+/* Instax photocard — shows the whole photo (object-fit:contain in a fixed
+   4:3 frame), never a square crop. Portrait shots get white matting, which
+   reads as an intentional print border. */
 .instax{
   flex:none;width:clamp(220px,30vw,330px);
+  position:relative;
   background:#fff;padding:14px 14px 0;
   box-shadow:0 22px 44px -18px rgba(23,22,26,.32);
   transform:rotate(-2.2deg);
   transition:transform .35s cubic-bezier(.2,.7,.2,1);
 }
 .vers-row.flip .instax{transform:rotate(2.2deg)}
-.instax:hover{transform:rotate(0) scale(1.02)}
+/* Photos come out of the CMS at a uniform 2:3 portrait, so the frame is a
+   fixed 2:3 — cards are a consistent height and, crucially, the box is
+   reserved BEFORE the (lazy) image loads, so nothing reflows under the
+   drifting doodads. object-fit:contain means an odd-ratio image added later
+   is shown whole (matted) rather than cropped. */
 .instax-img{
-  aspect-ratio:1/1;overflow:hidden;position:relative;
+  aspect-ratio:2/3;overflow:hidden;position:relative;
   background:linear-gradient(135deg,#d7d1c4,#efe9db);
 }
-.instax-img img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.instax-img:has(img){background:#fff}
+.instax-img img{width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in}
 .instax-img[data-ph]::after{
   content:attr(data-ph);position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -360,19 +369,31 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   color:var(--ink-soft);padding:12px 6px 16px;
 }
 
-/* three overlapped cards that fan apart on hover */
-.instax-reel{flex:none;display:flex;padding:10px 0}
-.instax-reel .instax{
-  width:clamp(150px,19vw,210px);
-  margin-left:clamp(-70px,-6vw,-40px);
-  transition:transform .4s cubic-bezier(.2,.7,.2,1),margin .4s cubic-bezier(.2,.7,.2,1);
+/* two or more photos: a fixed 2-column grid. No overlap and no hover that
+   changes the layout — the old fanned .instax-reel did both, which made the
+   section vibrate when the pointer sat between cards. */
+.instax-gallery{
+  flex:none;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:clamp(14px,1.8vw,26px);
+  align-items:start;
+  width:clamp(260px,40vw,440px);
 }
-.instax-reel .instax:first-child{margin-left:0}
-.instax-reel .instax:nth-child(1){transform:rotate(-5deg)}
-.instax-reel .instax:nth-child(2){transform:rotate(2.5deg);margin-top:14px}
-.instax-reel .instax:nth-child(3){transform:rotate(-1.5deg);margin-top:4px}
-.instax-reel:hover .instax{margin-left:10px;transform:rotate(0)}
-.instax-reel:hover .instax:first-child{margin-left:0}
+.instax-gallery .instax{width:auto}
+.instax-gallery .instax:nth-child(4n+1){transform:rotate(-2.4deg)}
+.instax-gallery .instax:nth-child(4n+2){transform:rotate(1.8deg)}
+.instax-gallery .instax:nth-child(4n+3){transform:rotate(1.4deg)}
+.instax-gallery .instax:nth-child(4n){transform:rotate(-1.6deg)}
+
+/* Hover is transform-only (no box-model change) so it can never start a
+   hover/layout feedback loop; z-index lifts the card above its siblings.
+   Placed AFTER every resting-transform rule above (`.vers-row.flip .instax`,
+   `.instax-gallery .instax:nth-child()`) and matching their specificity, so
+   it wins the cascade on the tie — an earlier or weaker hover rule gets
+   overridden by those and the card just sits there on hover. */
+.vers-row .instax:hover,
+.instax-gallery .instax:hover{transform:rotate(0) scale(1.02);z-index:3}
 
 /* decorative drifting doodads (built in main.js; absolute within .versions) */
 .vers-doodads{position:absolute;inset:0;pointer-events:none;z-index:0}
@@ -454,9 +475,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 
   /* versions: stack photo over note, always reading left-aligned */
   .vers-row,.vers-row.flip{flex-direction:column;align-items:flex-start;gap:24px}
-  .instax,.vers-row.flip .instax{width:min(300px,78vw);transform:rotate(-2deg)}
-  .instax-reel{width:100%;justify-content:flex-start}
-  .instax-reel .instax{width:min(180px,42vw)}
+  .instax,.vers-row.flip .instax{width:min(320px,80vw);transform:rotate(-2deg)}
+  .instax-gallery{width:min(340px,84vw);gap:12px}
   .vers-note p{max-width:none}
   .vers-doodads{display:none}
 }
@@ -468,7 +488,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .lightbox,.lightbox img{transition:none !important}
   .statement-text .word{color:#f4f1e9 !important}
   .marquee-track{animation:none !important}
-  .instax,.instax:hover,.vers-row.flip .instax,
-  .instax-reel .instax,.instax-reel:hover .instax{transition:none !important}
+  .instax,.vers-row .instax:hover,.vers-row.flip .instax,
+  .instax-gallery .instax{transition:none !important}
   .vers-doodads{display:none}
   }

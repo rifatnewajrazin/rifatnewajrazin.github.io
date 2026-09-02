@@ -321,26 +321,34 @@
   // ---------- "B-Sides" section (data-driven; independent of GSAP) ----------
   // Rebuilds #versions from data/versions.json. The markup in index.html is
   // the no-JS / fetch-failure fallback; when the JSON loads it's replaced
-  // with the CMS-editable rows. One photo => single Instax; two or more =>
-  // the fanned .instax-reel.
+  // with the CMS-editable rows. One photo => a single Instax card; two or
+  // more => a plain wrapped 2-up grid (.instax-gallery).
+  function versCard(p) {
+    var inner = p && p.image
+      ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt="' +
+          esc(p.caption || '') + '" loading="lazy" decoding="async"></div>'
+      : '<div class="instax-img" data-ph="add photo"></div>';
+    return '<figure class="instax">' + inner +
+      (p && p.caption ? '<figcaption>' + esc(p.caption) + '</figcaption>' : '') +
+      '</figure>';
+  }
   function versRowHTML(row, i) {
     var photos = (row && row.photos) || [];
-    var cards = photos.map(function (p) {
-      var inner = p && p.image
-        ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt=""></div>'
-        : '<div class="instax-img" data-ph="add photo"></div>';
-      return '<figure class="instax">' + inner +
-        '<figcaption>' + esc(p && p.caption) + '</figcaption></figure>';
-    }).join('');
-    var media = photos.length > 1
-      ? '<div class="instax-reel">' + cards + '</div>'
+    // drop half-filled photo slots (caption but no image); if that empties
+    // the row, keep one slot so an unfilled row still shows a placeholder.
+    var withImg = photos.filter(function (p) { return p && p.image; });
+    var render = withImg.length ? withImg : photos.slice(0, 1);
+    var cards = render.map(versCard).join('');
+    var media = render.length > 1
+      ? '<div class="instax-gallery">' + cards + '</div>'
       : cards;
     return '<div class="vers-row' + (row && row.flip ? ' flip' : '') + '" data-anim ' +
         'style="transition-delay:' + (i * 0.06).toFixed(2) + 's">' +
         media +
         '<div class="vers-note"><h3>' + esc(row && row.heading) + '</h3>' +
-        '<p>' + esc(row && row.body) + '</p></div>' +
-      '</div>';
+        paragraphs(row && row.body) +
+        '</div>' +   // .vers-note
+      '</div>';       // .vers-row
   }
   function renderVersions() {
     var section = document.querySelector('.versions');
@@ -601,53 +609,188 @@
     });
   }
 
-  /* ---------- "other versions" doodads (home view) ----------
-     Decorative SVGs that drift inside the #versions section and parallax a
-     little on scroll. Rebuilt on every home load (the .vers-doodads box is
-     inside <main>, so a swap gives us a fresh, empty one). Purely ambient:
-     the layer is pointer-events:none. Skipped without GSAP / on narrow
-     layouts / under reduced motion. */
+  /* ---------- "B-Sides" doodads (home view) ----------
+     Each row gets 3–5 small line-art doodads themed to that row's text
+     (music / touring / running / introversion / photography …), scattered
+     ONLY in the side gutters beside the row — never over the note or the
+     photos. Rebuilt after renderVersions() and again on resize (positions
+     are measured in px). Ambient + pointer-events:none. Skipped without
+     GSAP, on narrow layouts, and under reduced motion. */
+  function versDoodadArt() {
+    function s(vb, body) {
+      return '<svg viewBox="0 0 ' + vb + '" fill="none" stroke="currentColor" ' +
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+    }
+    return {
+      // music / backstage
+      headphones: s('32 32', '<path d="M5 20v-4a11 11 0 0 1 22 0v4"/><rect x="3" y="19" width="6" height="9" rx="2"/><rect x="23" y="19" width="6" height="9" rx="2"/>'),
+      note:  s('32 32', '<path d="M12 24V7l14-3v14"/><circle cx="8" cy="24" r="4"/><circle cx="22" cy="21" r="4"/>'),
+      tape:  s('40 28', '<rect x="2" y="2" width="36" height="24" rx="3"/><circle cx="14" cy="14" r="4"/><circle cx="26" cy="14" r="4"/><path d="M12 22h16"/>'),
+      plug:  s('26 28', '<path d="M9 2v6M17 2v6M6 8h14v4a7 7 0 0 1-14 0zM13 19v7"/>'),
+      spark: s('24 24', '<path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>'),
+      // touring / planning
+      clipboard: s('28 30', '<rect x="5" y="4" width="18" height="23" rx="2"/><path d="M10 4V2h8v2M9 12h10M9 17h10M9 22h6"/>'),
+      pin:   s('28 30', '<path d="M14 27s9-8.5 9-16A9 9 0 0 0 5 11c0 7.5 9 16 9 16z"/><circle cx="14" cy="11" r="3.5"/>'),
+      calendar: s('32 32', '<rect x="4" y="6" width="24" height="22" rx="2"/><path d="M4 12h24M11 3v6M21 3v6"/>'),
+      tag:   s('32 32', '<path d="M4 4h10l14 14-10 10L4 14z"/><circle cx="10" cy="10" r="2.5"/>'),
+      compass: s('32 32', '<circle cx="16" cy="16" r="13"/><path d="M22 10l-4 12-6-6z"/>'),
+      // running / cycling
+      bike:  s('40 28', '<circle cx="9" cy="20" r="6"/><circle cx="31" cy="20" r="6"/><path d="M9 20l7-11h9l-6 11M16 9h-3M25 9l3 4"/>'),
+      shoe:  s('32 26', '<path d="M3 13c4 0 6-4 9-4s3 4 7 5 8 1 8 5v3H3z"/><path d="M3 20h24"/>'),
+      stopwatch: s('32 32', '<circle cx="16" cy="18" r="11"/><path d="M16 18v-7M13 3h6M24 8l2-2"/>'),
+      mountain: s('32 28', '<path d="M3 25l9-16 6 10 4-6 7 12z"/><path d="M10 14l2 3"/>'),
+      pace:  s('30 24', '<path d="M4 6l8 6-8 6M14 6l8 6-8 6"/>'),
+      // introvert / extrovert / crowd
+      masks: s('30 24', '<path d="M4 5h9v8a4.5 4.5 0 0 1-9 0zM15 5h9v8a4.5 4.5 0 0 1-9 0z"/><path d="M7 8h.01M10 8h.01M18 8h.01M21 8h.01"/>'),
+      bubble: s('28 26', '<path d="M4 5h20v13H12l-6 5v-5H4z"/>'),
+      crowd: s('30 26', '<circle cx="9" cy="8" r="3"/><circle cx="21" cy="8" r="3"/><path d="M3 23c0-5 3-8 6-8s6 3 6 8M15 23c0-5 3-8 6-8s6 3 6 8"/>'),
+      moon:  s('28 28', '<path d="M22 17A11 11 0 1 1 12 6a8 8 0 0 0 10 11z"/>'),
+      battery: s('30 24', '<rect x="3" y="7" width="21" height="12" rx="2"/><path d="M24 11h3v4h-3M7 10v6"/>'),
+      // photography / frames
+      camera: s('32 30', '<rect x="3" y="8" width="26" height="18" rx="2"/><circle cx="16" cy="17" r="5"/><path d="M10 8l2-3h8l2 3"/>'),
+      aperture: s('32 32', '<circle cx="16" cy="16" r="12"/><path d="M6 10l10 6M26 10l-10 6M16 28V16"/>'),
+      crop:  s('28 28', '<path d="M8 3v18h18M3 8h18v18"/>'),
+      sun:   s('30 30', '<circle cx="15" cy="15" r="5"/><path d="M15 3v3M15 24v3M3 15h3M24 15h3M6 6l2 2M22 22l2 2M24 6l-2 2M6 24l2-2"/>')
+    };
+  }
+  var VERS_THEMES = [
+    { test: /music|show|stage|backstage|band|live|gig|sound|visual.*run|artist/i,
+      set: ['headphones', 'note', 'tape', 'plug', 'spark'] },
+    { test: /plan|tour|budget|proposal|group|organi|logisti|schedul|push everyone|commit/i,
+      set: ['clipboard', 'pin', 'calendar', 'tag', 'compass'] },
+    { test: /cycl|\brun\b|runn|marathon|\bkm\b|kilomet|mile|ride|riding|pace|endur|dopamine/i,
+      set: ['bike', 'shoe', 'stopwatch', 'mountain', 'pace'] },
+    { test: /introvert|extrovert|crowd|people|alone|social|dualit|quiet|shy|confidence/i,
+      set: ['masks', 'bubble', 'crowd', 'moon', 'battery'] },
+    { test: /photo|frame|angle|lens|camera|shoot|picture|third eye|beautiful frame/i,
+      set: ['camera', 'aperture', 'crop', 'sun', 'mountain'] }
+  ];
+  var VERS_GENERIC = ['spark', 'note', 'pin', 'compass', 'sun'];
+
   function buildVersionsDoodads() {
-    var box = document.querySelector('.vers-doodads');
+    var section = document.querySelector('.versions');
+    var box = section && section.querySelector('.vers-doodads');
     if (!box || !haveGSAP || reduce) return;
-    if (matchMedia('(max-width: 820px)').matches) return;
+
+    // tear down a previous build (resize / repeat home visit)
+    if (buildVersionsDoodads._tweens) {
+      buildVersionsDoodads._tweens.forEach(function (t) { t.kill(); });
+    }
+    buildVersionsDoodads._tweens = [];
+    if (buildVersionsDoodads._st) { buildVersionsDoodads._st.kill(); buildVersionsDoodads._st = null; }
     box.innerHTML = '';
 
-    var S = {
-      note: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 24V7l14-3v14"/><circle cx="8" cy="24" r="4"/><circle cx="22" cy="21" r="4"/></svg>',
-      phones: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20v-4a11 11 0 0 1 22 0v4"/><rect x="3" y="19" width="6" height="9" rx="2"/><rect x="23" y="19" width="6" height="9" rx="2"/></svg>',
-      tape: '<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="2" width="36" height="24" rx="3"/><circle cx="14" cy="14" r="4"/><circle cx="26" cy="14" r="4"/><path d="M12 22h16"/></svg>',
-      bike: '<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="6"/><circle cx="31" cy="20" r="6"/><path d="M9 20l7-11h9l-6 11M16 9h-3M25 9l3 4"/></svg>',
-      pace: '<svg viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l8 6-8 6M14 6l8 6-8 6"/></svg>',
-      spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>'
-    };
-    var ITEMS = [
-      { svg: S.note,   w: 30, ax: 0.06, ay: 0.13 },
-      { svg: S.phones, w: 34, ax: 0.94, ay: 0.10 },
-      { svg: S.bike,   w: 46, ax: 0.91, ay: 0.52 },
-      { svg: S.tape,   w: 42, ax: 0.05, ay: 0.55 },
-      { svg: S.pace,   w: 32, ax: 0.95, ay: 0.87 },
-      { svg: S.spark,  w: 22, ax: 0.09, ay: 0.9  }
-    ];
-    ITEMS.forEach(function (cfg) {
-      var el = document.createElement('div');
-      el.className = 'vers-doodad';
-      el.style.width = cfg.w + 'px';
-      el.innerHTML = cfg.svg;
-      box.appendChild(el);
-      var rot = Math.random() * 24 - 12;
-      gsap.set(el, { left: (cfg.ax * 100) + '%', top: (cfg.ay * 100) + '%', xPercent: -50, yPercent: -50, rotation: rot });
-      gsap.to(el, {
-        x: '+=' + (Math.random() * 20 - 10),
-        y: '+=' + (Math.random() * 28 - 14),
-        rotation: rot + (Math.random() * 10 - 5),
-        duration: 4 + Math.random() * 4, ease: 'sine.inOut', repeat: -1, yoyo: true
+    if (matchMedia('(max-width: 820px)').matches) return;
+
+    var ART = versDoodadArt();
+    var secRect = section.getBoundingClientRect();
+    var cs = getComputedStyle(section);
+    var zoneL = (parseFloat(cs.paddingLeft) || 0) + 4;
+    var zoneR = secRect.width - (parseFloat(cs.paddingRight) || 0) - 4;
+
+    function pickSet(row) {
+      var h = row.querySelector('h3'), p = row.querySelector('p');
+      var t = (h ? h.textContent : '') + ' ' + (p ? p.textContent : '');
+      for (var i = 0; i < VERS_THEMES.length; i++) {
+        if (VERS_THEMES[i].test.test(t)) return VERS_THEMES[i].set;
+      }
+      return VERS_GENERIC;
+    }
+    function rnd(a, b) { return a + Math.random() * (b - a); }
+
+    // rectangles (section-local, inflated) that a doodad must never touch:
+    // the prose, the photos, and the section heading.
+    var KEEP = 18;
+    var avoid = [].slice.call(section.querySelectorAll('.vers-note, .instax, .section-head'))
+      .map(function (el) {
+        var r = el.getBoundingClientRect();
+        return {
+          l: r.left - secRect.left - KEEP, r: r.right - secRect.left + KEEP,
+          t: r.top - secRect.top - KEEP, b: r.bottom - secRect.top + KEEP
+        };
       });
+    function isFree(x, y, w) {
+      if (x < zoneL || x + w > zoneR || y < 4 || y + w > secRect.height - 4) return false;
+      for (var i = 0; i < avoid.length; i++) {
+        var a = avoid[i];
+        if (x + w > a.l && x < a.r && y + w > a.t && y < a.b) return false;
+      }
+      // don't stack doodads on each other
+      for (var j = 0; j < box.children.length; j++) {
+        var c = box.children[j];
+        var cx = parseFloat(c.style.left), cy = parseFloat(c.style.top), cw = parseFloat(c.style.width);
+        if (x + w > cx - 12 && x < cx + cw + 12 && y + w > cy - 12 && y < cy + cw + 12) return false;
+      }
+      return true;
+    }
+
+    [].slice.call(section.querySelectorAll('.vers-row')).forEach(function (row) {
+      var set = pickSet(row);
+      var rRect = row.getBoundingClientRect();
+      // reach into the gap ABOVE the row (the big row margin) and a little below
+      var yLo = Math.max(4, (rRect.top - secRect.top) - 96);
+      var yHi = Math.min(secRect.height - 4, (rRect.bottom - secRect.top) + 44);
+
+      var want = 3 + Math.floor(Math.random() * 3); // 3–5
+      var got = 0, tries = 0;
+      while (got < want && tries++ < 500) {
+        var w = rnd(24, 44);
+        var x = rnd(zoneL, zoneR - w);
+        var y = rnd(yLo, Math.max(yLo + 1, yHi - w));
+        if (!isFree(x, y, w)) continue;
+
+        var el = document.createElement('div');
+        el.className = 'vers-doodad';
+        el.style.width = w.toFixed(1) + 'px';
+        el.style.left = x.toFixed(1) + 'px';
+        el.style.top = y.toFixed(1) + 'px';
+        el.innerHTML = ART[set[got % set.length]] || ART.spark;
+        box.appendChild(el);
+
+        var rot = rnd(-13, 13);
+        gsap.set(el, { rotation: rot });
+        buildVersionsDoodads._tweens.push(gsap.to(el, {
+          x: '+=' + rnd(-6, 6).toFixed(1), y: '+=' + rnd(-8, 8).toFixed(1),
+          rotation: rot + rnd(-5, 5),
+          duration: rnd(4, 8), ease: 'sine.inOut', repeat: -1, yoyo: true
+        }));
+        got++;
+      }
     });
-    gsap.to(box.children, {
-      yPercent: -20, ease: 'none',
-      scrollTrigger: { trigger: '.versions', start: 'top bottom', end: 'bottom top', scrub: true }
-    });
+
+    if (box.children.length) {
+      buildVersionsDoodads._st = gsap.to(box.children, {
+        yPercent: -14, ease: 'none',
+        scrollTrigger: { trigger: '.versions', start: 'top bottom', end: 'bottom top', scrub: true }
+      }).scrollTrigger;
+    }
+
+    // Rebuild when the section's box changes — window resize, font swap, or
+    // an image finally loading and pushing rows around. Debounced; the
+    // rebuild reads fresh geometry, so doodads never end up stranded on top
+    // of text after a reflow. Wired once (window/observer persist swaps).
+    if (!buildVersionsDoodads._reflowWired) {
+      buildVersionsDoodads._reflowWired = true;
+      var vdt;
+      var kick = function () {
+        clearTimeout(vdt);
+        vdt = setTimeout(function () {
+          if (document.querySelector('.versions .vers-doodads')) buildVersionsDoodads();
+        }, 240);
+      };
+      window.addEventListener('resize', kick);
+      if (window.ResizeObserver) {
+        buildVersionsDoodads._ro = new ResizeObserver(kick);
+      }
+    }
+    // (re)attach the observer only when the section element itself changes
+    // (first build, or a client-side swap gave us a new one) — never on an
+    // ordinary rebuild, or observe()'s initial callback would loop.
+    if (buildVersionsDoodads._ro && buildVersionsDoodads._roTarget !== section) {
+      buildVersionsDoodads._ro.disconnect();
+      buildVersionsDoodads._ro.observe(section);
+      buildVersionsDoodads._roTarget = section;
+    }
   }
 
   // nav hide on scroll-down — always active, every view. Deliberate, not
@@ -975,7 +1118,10 @@
       });
       renderWorkGrid();
       renderVersions().then(function () {
+        // the real rows exist now — reveal them and build their doodads
+        // against the actual laid-out geometry (not the static fallback).
         revealObserverInit();
+        if (haveGSAP) buildVersionsDoodads();
         if (haveGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
       });
       buildMarquee();
@@ -986,7 +1132,9 @@
         var hero = document.querySelector('.hero');
         if (hero) { heroResizeObserver = new ResizeObserver(function () { fitHero(); }); heroResizeObserver.observe(hero); }
       }
-      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); buildVersionsDoodads(); initFloaties(); }
+      // buildVersionsDoodads() runs in the renderVersions().then() above,
+      // once the real rows are in the DOM and laid out.
+      if (haveGSAP) { wireMagnetic(); buildHomeScrollFx(); initFloaties(); }
     } else if (view === 'case') {
       populateCaseView(url);
     }
