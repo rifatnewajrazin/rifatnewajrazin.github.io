@@ -1,13 +1,16 @@
 {
   "title": "The B-Sides",
-  "subtitle": "Same person, different soundtrack",
+  "subtitle": "Same person, different versions",
   "rows": [
     {
-      "heading": "The artist manager",
-      "body": "When a release is due I'm three inboxes deep at 2am — deadlines, splits, artwork approvals — so the artist only has to think about the music.",
+      "heading": "The Backstage Guy",
+      "body": "From designing shows to managing them, from creating visuals to running them live, the music industry has always been my favorite place to work. Forty-plus shows in the last four years and I'm still counting.",
       "flip": false,
       "photos": [
-        { "image": "", "caption": "Backstage, not on stage" }
+        {
+          "image": "/redesign/uploads/the-backstage-guy.png",
+          "caption": "the work nobody sees"
+        }
       ]
     },
     {
@@ -15,7 +18,10 @@
       "body": "Vans, visas, load-ins, day sheets. If the show starts on time and everyone's fed and accounted for, I did the job right.",
       "flip": true,
       "photos": [
-        { "image": "", "caption": "km 32, still smiling" }
+        {
+          "image": "",
+          "caption": "km 32, still smiling"
+        }
       ]
     },
     {
@@ -23,9 +29,18 @@
       "body": "Long rides and longer runs are where the actual thinking happens. Half the ideas on this site were worked out somewhere around km 20.",
       "flip": false,
       "photos": [
-        { "image": "", "caption": "5am club" },
-        { "image": "", "caption": "chasing a PB" },
-        { "image": "", "caption": "podium-adjacent" }
+        {
+          "image": "",
+          "caption": "5am club"
+        },
+        {
+          "image": "",
+          "caption": "chasing a PB"
+        },
+        {
+          "image": "",
+          "caption": "podium-adjacent"
+        }
       ]
     },
     {
@@ -33,7 +48,10 @@
       "body": "The designated planner, driver and photo-taker. Someone has to book the table, keep the plan alive, and remember where we left the car.",
       "flip": true,
       "photos": [
-        { "image": "", "caption": "where did we park?" }
+        {
+          "image": "",
+          "caption": "where did we park?"
+        }
       ]
     },
     {
@@ -41,7 +59,10 @@
       "body": "Loud in a room of six, invisible in a room of sixty. Both are me — just on different days, and I've stopped apologising for either.",
       "flip": false,
       "photos": [
-        { "image": "", "caption": "depends on the day" }
+        {
+          "image": "",
+          "caption": "depends on the day"
+        }
       ]
     }
   ]
