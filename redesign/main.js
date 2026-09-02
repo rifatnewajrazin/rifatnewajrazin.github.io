@@ -465,12 +465,12 @@
   })();
 
   /* ---------- click doodles ----------
-     A quick hand-drawn scribble is stamped wherever you click: it "draws"
-     itself on, holds a beat, then fades and removes. Vanilla, wired once;
-     the host layer is a fixed, pointer-events:none sibling of <main>, so it
-     rides over every view and survives client-side swaps without re-wiring.
-     Mouse/pen only (a doodle on every touch-tap would fight scrolling) and
-     skipped entirely under reduced motion. */
+     A quick hand-drawn line is drawn wherever you click — just the stroke
+     writing itself on, a brief hold, then a quiet fade-out. No scale/pop.
+     Vanilla, wired once; the host layer is a fixed, pointer-events:none
+     sibling of <main>, so it rides over every view and survives client-side
+     swaps without re-wiring. Mouse/pen only (a doodle on every touch-tap
+     would fight scrolling) and skipped entirely under reduced motion. */
   (function wireClickDoodles() {
     if (reduce) return;
     var NS = 'http://www.w3.org/2000/svg';
@@ -514,8 +514,8 @@
         'position:absolute;left:' + (x - size / 2).toFixed(1) + 'px;' +
         'top:' + (y - size / 2).toFixed(1) + 'px;' +
         'width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) + 'px;' +
-        'color:var(--warm,#d1602f);opacity:0;' +
-        'transform:rotate(' + rot + 'deg) scale(.55);will-change:transform,opacity';
+        'color:var(--warm,#d1602f);opacity:1;' +
+        'transform:rotate(' + rot + 'deg);will-change:opacity';
       host.appendChild(svg);
 
       var len = path.getTotalLength();
@@ -523,18 +523,16 @@
       path.style.strokeDashoffset = len;
 
       requestAnimationFrame(function () {
-        path.style.transition = 'stroke-dashoffset .34s cubic-bezier(.2,.7,.2,1)';
+        // just the line writing itself on
+        path.style.transition = 'stroke-dashoffset .38s cubic-bezier(.3,.7,.2,1)';
         path.style.strokeDashoffset = '0';
-        svg.style.transition = 'transform .34s cubic-bezier(.2,.7,.2,1),opacity .18s ease';
-        svg.style.transform = 'rotate(' + rot + 'deg) scale(1)';
-        svg.style.opacity = '1';
       });
       setTimeout(function () {
-        svg.style.transition = 'transform .5s ease,opacity .5s ease';
-        svg.style.transform = 'rotate(' + rot + 'deg) scale(1.18)';
+        // …then it quietly goes
+        svg.style.transition = 'opacity .45s ease';
         svg.style.opacity = '0';
-        setTimeout(function () { if (svg.parentNode) svg.parentNode.removeChild(svg); }, 520);
-      }, 500);
+        setTimeout(function () { if (svg.parentNode) svg.parentNode.removeChild(svg); }, 470);
+      }, 620);
     }
 
     window.addEventListener('pointerdown', function (e) {
