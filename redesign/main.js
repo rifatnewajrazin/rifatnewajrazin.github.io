@@ -325,9 +325,13 @@
   // more => .instax-gallery, laid out as centred rows of two (.instax-pair)
   // that overlap slightly; a lone last card is centred, not left-hanging.
   function versCard(p) {
+    // onerror: a dangling image path (e.g. the file was deleted in the CMS
+    // but still referenced) degrades to the "add photo" placeholder instead
+    // of a broken-image icon — the card keeps its size and the layout holds.
     var inner = p && p.image
       ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt="' +
-          esc(p.caption || '') + '" loading="lazy" decoding="async"></div>'
+          esc(p.caption || '') + '" loading="lazy" decoding="async" ' +
+          'onerror="var d=this.parentNode;this.remove();if(d)d.setAttribute(\'data-ph\',\'add photo\')"></div>'
       : '<div class="instax-img" data-ph="add photo"></div>';
     return '<figure class="instax">' + inner +
       (p && p.caption ? '<figcaption>' + esc(p.caption) + '</figcaption>' : '') +
