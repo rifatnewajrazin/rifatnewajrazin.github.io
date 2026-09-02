@@ -687,7 +687,7 @@
       { type: 'svg', svg: D.wallet,   w: 80,  ax: 0.93, ay: 0.56 },
       { type: 'svg', svg: D.undo,     w: 96,  ax: 0.46, ay: 0.87 },
       { type: 'kao', text: '\\( ^_^ )/', size: 30, ax: 0.50, ay: 0.12 },
-      { type: 'kao', text: '{ ˆ-ˆ }',    size: 28, ax: 0.31, ay: 0.50 },
+      { type: 'kao', text: '{ ˆ-ˆ }',    size: 28, ax: 0.33, ay: 0.65 },
       { type: 'kao', text: '>_<',        size: 30, ax: 0.70, ay: 0.64 },
       { type: 'kao', text: '; )',        size: 30, ax: 0.10, ay: 0.17 }
     ];
