@@ -477,8 +477,8 @@
     // two loose marks in a 0..48 box, roughly centred so a random rotation
     // still reads naturally: a quick pen stroke and a hand-drawn ring.
     var MARKS = [
-      'M6 27 C15 22 22 30 28 25 S40 21 43 24',                    // line
-      'M31 10 C41 13 43 27 34 36 C25 45 11 42 7 31 C3 21 12 7 26 8 C31 8 36 11 38 15' // circle
+      'M6 27 C15 22 22 30 28 25 S40 21 43 24',                          // line
+      'M23 8 C33 7 41 16 40 25 C40 34 32 41 23 40 C14 40 8 32 8 23 C8 14 14 8 23 8' // circle
     ];
     var host = document.createElement('div');
     host.setAttribute('aria-hidden', 'true');
