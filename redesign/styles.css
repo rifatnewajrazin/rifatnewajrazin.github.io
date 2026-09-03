@@ -270,9 +270,9 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .hero-flank .flank-l{transform:translateX(calc(var(--hpf,0) * -130%))}
 .hero-flank .flank-r{transform:translateX(calc(var(--hpf,0) *  130%))}
 .hero-flank span{opacity:calc(1 - var(--hpf,0))}
-/* ---------- statement (dark band) ---------- */
+/* ---------- statement (colour band) ---------- */
 .statement{
-  max-width:none;width:100%;background:var(--navy);
+  max-width:none;width:100%;background:var(--coral);
   padding:22vh clamp(28px,6vw,64px);display:flex;justify-content:center;
   position:relative;overflow:hidden;
 }
@@ -282,7 +282,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   font-size:clamp(24px,3.6vw,46px);line-height:1.34;letter-spacing:0;
   max-width:22ch;text-transform:none;
 }
-.statement-text .word{color:#5a7f9e;transition:color .1s linear;margin-right:.28em}
+.statement-text .word{color:rgba(253,253,253,.34);transition:color .1s linear;margin-right:.28em}
 
 /* ---------- lineart skyline along the statement band's bottom edge ----------
    Hand-drawn city doodle. All motion is CSS transform/opacity (compositor
