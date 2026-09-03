@@ -697,11 +697,12 @@
   })();
 
   /* ---------- rotating role label (hero flank) ----------
-     Cycles .rotator-word through the comma-separated data-rotate list:
-     auto-advances on a timer, advances on click / Enter / Space, and
-     redraws the stitched underline on every change. Idempotent — safe to
-     call again after an SPA <main> swap; the previous timer/observer are
-     torn down first. Honours prefers-reduced-motion (no timer, no draw). */
+     Cycles .rotator-text through the comma-separated data-rotate list:
+     auto-advances on a timer, advances on click / Enter / Space, pauses on
+     hover/focus and while the hero is off-screen. The stitched underline is
+     pure CSS (hover / focus-visible only). Idempotent — safe to call again
+     after an SPA <main> swap; the previous timer/observer are torn down
+     first. Honours prefers-reduced-motion (no auto-advance). */
   var flankRotator = { timer: null, io: null };
   function setupFlankRotator() {
     if (flankRotator.timer) { clearInterval(flankRotator.timer); flankRotator.timer = null; }
@@ -709,7 +710,6 @@
 
     var btn = document.querySelector('.flank-l .rotator');
     var word = document.querySelector('.flank-l .rotator-text');
-    var line = document.querySelector('.flank-l .rotator-stitch .st-line');
     var hero = document.querySelector('.hero');
     if (!btn || !word) return;
 
@@ -724,27 +724,10 @@
     if (window.__rnrScheduleFit) window.__rnrScheduleFit();
 
     var INTERVAL = 2800;
-    var canAnim = !reduce;
 
-    function draw() {
-      if (!line) return;
-      if (!canAnim) {
-        line.style.transition = 'none';
-        line.style.strokeDashoffset = '0';
-        return;
-      }
-      // restart the "stitch in": jump to hidden with no transition, flush,
-      // then transition back to drawn.
-      line.style.transition = 'none';
-      line.style.strokeDashoffset = '100';
-      line.getBoundingClientRect();
-      line.style.transition = 'stroke-dashoffset 420ms ease-out';
-      line.style.strokeDashoffset = '0';
-    }
     function show(n) {
       i = (n % list.length + list.length) % list.length;
       word.textContent = list[i];
-      draw();
     }
     function advance() { show(i + 1); }
 
@@ -759,10 +742,9 @@
     btn.addEventListener('click', function () { advance(); stop(); start(); });
     btn.addEventListener('mouseenter', stop);
     btn.addEventListener('mouseleave', start);
-    btn.addEventListener('focus', function () { btn.classList.add('is-focus'); stop(); });
-    btn.addEventListener('blur', function () { btn.classList.remove('is-focus'); start(); });
+    btn.addEventListener('focus', stop);
+    btn.addEventListener('blur', start);
 
-    draw();                                    // show the underline from the start
     start();
 
     // Pause the timer while the hero is scrolled off screen (it's faded out

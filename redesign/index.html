@@ -58,14 +58,14 @@
     <div class="hero-flank">
       <!-- The left label cycles through the roles in data-rotate (comma-
            separated — edit that list to add/remove). main.js setupFlankRotator()
-           auto-advances it, lets you click/tab to it to advance manually, and
-           draws the stitched underline on each change. The .rotator-word text
-           is the no-JS fallback and is kept in sync from the list on boot. -->
+           auto-advances it and lets you click/tab to it to advance manually.
+           The stitched underline is CSS-only, shown on hover / keyboard focus.
+           The .rotator-text is the no-JS fallback, kept in sync on boot. -->
       <span class="flank-l">
         <button type="button" class="rotator"
                 data-rotate="graphic designer, show runner, overthinker, problem-solver"
                 aria-label="My roles — activate to see the next one">
-          <span class="rotator-word"><span class="rotator-text">graphic designer</span><svg class="rotator-stitch" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect class="st-box" x="2" y="2" width="96" height="96" rx="9" vector-effect="non-scaling-stroke"/><line class="st-line" x1="1" y1="99" x2="99" y2="99" pathLength="100" vector-effect="non-scaling-stroke"/></svg></span>
+          <span class="rotator-word"><span class="rotator-text">graphic designer</span><svg class="rotator-stitch" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="st-line" x1="1" y1="99" x2="99" y2="99" pathLength="100" vector-effect="non-scaling-stroke"/></svg></span>
         </button>
       </span>
       <span class="flank-r">based in<br>dhaka, bangladesh</span>

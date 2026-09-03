@@ -153,8 +153,8 @@ body.intro-done .intro{display:none}
 .nav-links{display:flex;gap:26px;font-size:13px}
 .nav-links a{position:relative;padding:4px 0;color:var(--ink-soft);transition:color .2s}
 .nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--ink);transform:scaleX(0);transform-origin:right;transition:transform .3s ease,background .3s ease}
-.nav-links a:hover{color:var(--ink)}
-.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav-links a:hover{color:var(--teal)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left;background:var(--teal)}
 
 /* "negative" look while the nav sits over a dark section — see main.js
    navInvert(). Replaces the old mix-blend-mode:multiply trick, which
@@ -198,41 +198,38 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
    word's inner edge — and the connector dash beside it — from shifting as
    the words cycle. */
 .flank-l .rotator{
-  font:inherit;color:var(--warm);background:none;border:0;padding:0;margin:0;
+  font:inherit;color:var(--teal);background:none;border:0;padding:0;margin:0;
   cursor:pointer;position:relative;display:inline-flex;align-items:center;
   justify-content:flex-end;
   pointer-events:auto; /* .hero-flank is pointer-events:none — re-enable just this */
   -webkit-tap-highlight-color:transparent;
 }
 .flank-l .rotator-word{position:relative;display:inline-block}
-.flank-l .rotator-text{display:inline-block;white-space:nowrap;color:var(--warm)}
+.flank-l .rotator-text{display:inline-block;white-space:nowrap;color:var(--teal)}
 .flank-l .rotator-stitch{
   position:absolute;left:-6px;top:-3px;
   width:calc(100% + 12px);height:calc(100% + 6px);
   overflow:visible;pointer-events:none;
 }
-.flank-l .rotator-stitch .st-box,
-.flank-l .rotator-stitch .st-line{fill:none;stroke:var(--warm);stroke-width:1.5}
-.flank-l .rotator-stitch .st-box{
-  stroke-dasharray:4 3.5;opacity:0;transition:opacity .18s ease-out;
+/* stitched underline: hidden at rest, fades in ONLY on hover / keyboard
+   focus. Pure CSS — no JS, no lingering state after a click. */
+.flank-l .rotator-stitch .st-line{
+  fill:none;stroke:var(--teal);stroke-width:1.5;
+  stroke-dasharray:3.5 3;
+  opacity:0;transition:opacity .18s ease-out;
 }
-/* pre-JS resting state: underline hidden. setupFlankRotator() sets the
-   offset to 0 and plays the 100->0 "stitch in" via the Web Animations API
-   on every change (a CSS class toggle can't reliably re-fire it). */
-.flank-l .rotator-stitch .st-line{stroke-dasharray:3.5 3;stroke-dashoffset:100}
+.flank-l .rotator:hover .st-line,
+.flank-l .rotator:focus-visible .st-line{opacity:1}
 .flank-l .rotator:focus-visible{outline:none}
-.flank-l .rotator:hover .st-box,
-.flank-l .rotator.is-focus .st-box{opacity:.9}
 @media (prefers-reduced-motion: reduce){
-  .flank-l .rotator-stitch .st-box{transition:none}
-  .flank-l .rotator-stitch .st-line{stroke-dashoffset:0} /* shown, never drawn */
+  .flank-l .rotator-stitch .st-line{transition:none}
 }
 /* both labels are given an equal box width by script (see equaliseFlanks), so
    their inner edges mirror each other. Each label sits against its INNER edge
    (toward the name) — .flank-l right-aligned, .flank-r left-aligned — with the
    connector dash running back outward toward its own screen edge. */
 .flank-l{justify-content:flex-end}
-.flank-r{justify-content:flex-start;text-align:left}
+.hero-flank .flank-r{justify-content:flex-start;text-align:left;color:var(--pink)}
 /* fixed-length connector from the screen edge to the label — mirrored,
    never grows toward the centre so the name never overlaps the text. */
 .flank-l::before,.flank-r::after{
@@ -243,7 +240,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .flank-r::after{margin-left:20px}
 .hero-name{
   position:relative;z-index:2;
-  font-family:var(--display);font-weight:400;
+  font-family:var(--display);font-weight:400;color:var(--navy);
   font-size:clamp(54px,12.5vw,172px);line-height:.9;letter-spacing:-.035em;
   text-transform:uppercase;will-change:transform,opacity;
   /* --hp is 0..1 across the hero, written by the scroll handler */
@@ -301,8 +298,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   border-top:1px solid var(--ink);padding-top:18px;
   max-width:var(--maxw);margin:0 auto;
 }
-.section-head h2,.work-head h2{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.02em}
-.work-head .count{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.section-head h2,.work-head h2{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.02em;color:var(--navy)}
+.work-head .count{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
 
 /* ---------- work grid ---------- */
 .work{padding-top:14vh;padding-bottom:16vh}
@@ -346,12 +343,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .about-lead{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.3vw,30px);line-height:1.4;letter-spacing:-.015em}
 .about-lead .word{margin-right:.26em}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:24px 32px;align-content:start}
-.stats dt{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.stats dt{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
 .stats dd{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,60px);letter-spacing:-.03em;line-height:1;margin-top:6px;color:var(--coral)}
 
 /* ---------- contact ---------- */
 .contact{padding-top:14vh;padding-bottom:16vh;text-align:center}
-.contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:18px}
+.contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:18px}
 .contact-big{font-family:var(--display);font-weight:400;font-size:clamp(48px,12vw,150px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase;color:var(--navy)}
 .contact-links{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .contact-links > a{font-family:var(--display);font-weight:400;font-size:clamp(18px,2.4vw,28px);border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s}
@@ -378,10 +375,11 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .vers-note h3{
   font-family:var(--display);font-weight:400;
   font-size:clamp(22px,3vw,34px);letter-spacing:-.02em;margin-bottom:10px;
+  color:var(--coral);
 }
 .vers-note p{
   font-family:var(--hand);font-weight:500;
-  font-size:clamp(20px,2.5vw,27px);line-height:1.5;color:var(--ink-soft);
+  font-size:clamp(20px,2.5vw,27px);line-height:1.5;color:var(--coral);
   max-width:42ch;
 }
 .vers-note p + p{margin-top:.85em}
@@ -485,7 +483,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .case-back{font-size:13px;color:var(--ink-soft);display:inline-block;margin-bottom:40px}
 .case-back:hover{color:var(--ink)}
 .case-title{
-  font-family:var(--display);font-weight:400;
+  font-family:var(--display);font-weight:400;color:var(--navy);
   font-size:clamp(44px,10vw,120px);line-height:.94;letter-spacing:-.03em;
   text-transform:uppercase;
 }
@@ -494,7 +492,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .case-meta dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
 .case-meta dd{font-family:var(--display);font-weight:400;font-size:17px;margin-top:6px}
 .case-body{max-width:640px;padding-bottom:6vh}
-.case-body h3{font-family:var(--display);font-weight:400;font-size:22px;margin:48px 0 14px;letter-spacing:-.01em}
+.case-body h3{font-family:var(--display);font-weight:400;font-size:22px;margin:48px 0 14px;letter-spacing:-.01em;color:var(--navy)}
 .case-body p{color:var(--ink-soft);margin-bottom:16px}
 .shot{width:100%;border-radius:6px;margin:10px 0 40px;overflow:hidden}
 /* real photos show at their own natural aspect ratio — never cropped.
