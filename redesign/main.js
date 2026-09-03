@@ -731,7 +731,7 @@
       masks: s('30 24', '<path d="M4 5h9v8a4.5 4.5 0 0 1-9 0zM15 5h9v8a4.5 4.5 0 0 1-9 0z"/><path d="M7 8h.01M10 8h.01M18 8h.01M21 8h.01"/>'),
       bubble: s('28 26', '<path d="M4 5h20v13H12l-6 5v-5H4z"/>'),
       crowd: s('30 26', '<circle cx="9" cy="8" r="3"/><circle cx="21" cy="8" r="3"/><path d="M3 23c0-5 3-8 6-8s6 3 6 8M15 23c0-5 3-8 6-8s6 3 6 8"/>'),
-      moon:  s('28 28', '<path d="M22 17A11 11 0 1 1 12 6a8 8 0 0 0 10 11z"/>'),
+      loner: s('24 26', '<circle cx="12" cy="8" r="4.2"/><path d="M4 24c0-6 4-9 8-9s8 3 8 9"/>'),
       battery: s('30 24', '<rect x="3" y="7" width="21" height="12" rx="2"/><path d="M24 11h3v4h-3M7 10v6"/>'),
       // photography / frames
       camera: s('32 30', '<rect x="3" y="8" width="26" height="18" rx="2"/><circle cx="16" cy="17" r="5"/><path d="M10 8l2-3h8l2 3"/>'),
@@ -748,7 +748,7 @@
     { test: /cycl|\brun\b|runn|marathon|\bkm\b|kilomet|mile|ride|riding|pace|endur|dopamine/i,
       set: ['bike', 'shoe', 'stopwatch', 'mountain', 'pace'] },
     { test: /introvert|extrovert|crowd|people|alone|social|dualit|quiet|shy|confidence/i,
-      set: ['masks', 'bubble', 'crowd', 'moon', 'battery'] },
+      set: ['masks', 'bubble', 'crowd', 'loner', 'battery'] },
     { test: /photo|frame|angle|lens|camera|shoot|picture|third eye|beautiful frame/i,
       set: ['camera', 'aperture', 'crop', 'sun', 'mountain'] }
   ];
