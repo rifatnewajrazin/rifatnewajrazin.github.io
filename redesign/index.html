@@ -15,7 +15,10 @@
 <script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Unica+One&family=Prompt:wght@400;500;600&family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<!-- Self-hosted + preloaded so the display face (mark, hero name, headings)
+     is ready before first paint — no fallback-to-Unica-One flash on reload. -->
+<link rel="preload" href="./fonts/unica-one-v20-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -86,6 +89,73 @@
       and motion for teams that care about the details. Seven years in,
       800+ projects deep, still obsessed with the small stuff.
     </p>
+
+    <!-- Lineart skyline along the bottom edge. All motion is CSS-only
+         (transform/opacity → compositor), and every moving part is frozen
+         under prefers-reduced-motion. Decorative: aria-hidden, no pointer. -->
+    <svg class="cityscape" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
+      <g class="cs-ink">
+        <!-- ground -->
+        <line x1="0" y1="200" x2="1200" y2="200"/>
+
+        <!-- left: little houses -->
+        <path d="M28,200V172H70V200 M24,172 46,150 74,172"/>
+        <path d="M250,200V166H300V200 M246,166 275,146 304,166"/>
+        <path d="M300,200V176H336V200"/>
+
+        <!-- trees (sway) -->
+        <g class="cs-tree">
+          <path d="M96,200V180"/>
+          <path d="M96,180c-13,-3 -17,-20 -4,-26c7,-13 24,-10 26,2c13,2 11,19 -2,22c-3,8 -16,8 -20,2z"/>
+        </g>
+        <g class="cs-tree">
+          <path d="M338,200V182"/>
+          <path d="M338,182c-11,-2 -15,-16 -3,-22c6,-11 21,-9 23,1c11,2 10,16 -2,19c-3,7 -14,7 -18,2z"/>
+        </g>
+        <g class="cs-tree">
+          <path d="M792,200V180"/>
+          <path d="M792,180c-13,-3 -17,-20 -4,-26c7,-13 24,-10 26,2c13,2 11,19 -2,22c-3,8 -16,8 -20,2z"/>
+        </g>
+
+        <!-- mid + right: buildings, some with window rows -->
+        <path d="M366,200V150H408V200"/>
+        <path d="M420,200V116H462V200 M420,140H462 M420,164H462 M441,116V200"/>
+        <path d="M474,200V96H514V200 M474,124H514 M474,152H514 M474,178H514"/>
+        <path d="M524,200V132H584V200 M554,132V200"/>
+        <path d="M596,200V74H642V200 M596,104H642 M596,134H642 M596,164H642 M619,74V200"/>
+        <path d="M652,200V44H694V200 M652,78H694 M652,110H694 M652,142H694 M652,174H694 M673,44V200"/>
+        <path d="M706,200V110H758V200 M706,140H758 M706,170H758"/>
+        <path d="M820,200V128H884V200 M852,128V200 M820,160H884"/>
+        <path d="M896,200V88H934V200 M896,120H934 M896,152H934 M896,182H934"/>
+        <path d="M944,200V150H1000V200"/>
+        <path d="M1130,200V140H1178V200 M1130,170H1178"/>
+
+        <!-- ferris wheel (whole wheel spins; legs stay put) -->
+        <path d="M150,200 180,138 M210,200 180,138"/>
+        <g class="cs-wheel">
+          <circle cx="180" cy="135" r="52"/>
+          <circle cx="180" cy="135" r="4"/>
+          <path d="M180,135 232,135 M180,135 216.8,98.2 M180,135 180,83 M180,135 143.2,98.2
+                   M180,135 128,135 M180,135 143.2,171.8 M180,135 180,187 M180,135 216.8,171.8"/>
+          <circle cx="232" cy="135" r="5"/><circle cx="216.8" cy="98.2" r="5"/>
+          <circle cx="180" cy="83" r="5"/><circle cx="143.2" cy="98.2" r="5"/>
+          <circle cx="128" cy="135" r="5"/><circle cx="143.2" cy="171.8" r="5"/>
+          <circle cx="180" cy="187" r="5"/><circle cx="216.8" cy="171.8" r="5"/>
+        </g>
+
+        <!-- wind turbine (blades spin) -->
+        <line x1="1070" y1="200" x2="1070" y2="70"/>
+        <g class="cs-turbine">
+          <path d="M1070,70 1070,28 M1070,70 1106,91 M1070,70 1034,91"/>
+          <circle cx="1070" cy="70" r="3"/>
+        </g>
+
+        <!-- birds (glide across) -->
+        <path class="cs-bird" d="M-30,54q7,-7 14,0q7,-7 14,0"/>
+        <path class="cs-bird" d="M-30,74q6,-6 12,0q6,-6 12,0"/>
+        <path class="cs-bird" d="M-30,40q5,-5 10,0q5,-5 10,0"/>
+      </g>
+    </svg>
   </section>
 
   <!-- MARQUEE — CSS-driven infinite loop.
@@ -105,8 +175,7 @@
   <!-- WORK — gridline grid of projects -->
   <section id="work" class="work">
     <div class="work-head" data-anim>
-      <h2>Selected Work</h2>
-      <span class="count">Placeholder — real projects to come</span>
+      <h2>Notable Works</h2>
     </div>
 
     <!-- These six cards are the no-JS / fetch-failure fallback only — when

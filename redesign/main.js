@@ -314,8 +314,6 @@
             '<span class="wc-cat">' + esc(item.category) + '</span>';
           grid.appendChild(a);
         });
-        var count = document.querySelector('.work-head .count');
-        if (count) count.textContent = items.length + (items.length === 1 ? ' project' : ' projects');
       });
   }
 
