@@ -179,8 +179,39 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   z-index:2; /* stay above the floaties layer (z-index:1) */
 }
 .hero-flank span{
-  font-size:clamp(12px,1.35vw,15px);line-height:1.4;color:var(--ink-soft);
+  font-family:var(--hand);font-weight:600;
+  font-size:clamp(15px,1.7vw,19px);line-height:1.35;letter-spacing:.01em;
+  color:var(--ink-soft);
   display:flex;align-items:center;white-space:nowrap;
+}
+/* rotating role label — a button styled as text; see setupFlankRotator() */
+.flank-l .rotator{
+  font:inherit;color:var(--warm);background:none;border:0;padding:0;margin:0;
+  cursor:pointer;position:relative;display:inline-flex;align-items:center;
+  pointer-events:auto; /* .hero-flank is pointer-events:none — re-enable just this */
+  -webkit-tap-highlight-color:transparent;
+}
+.flank-l .rotator-word{display:inline-block;white-space:nowrap;color:var(--warm)}
+.flank-l .rotator-stitch{
+  position:absolute;left:-7px;top:-3px;
+  width:calc(100% + 14px);height:calc(100% + 6px);
+  overflow:visible;pointer-events:none;
+}
+.flank-l .rotator-stitch .st-box,
+.flank-l .rotator-stitch .st-line{fill:none;stroke:var(--warm);stroke-width:1.5}
+.flank-l .rotator-stitch .st-box{
+  stroke-dasharray:4 3.5;opacity:0;transition:opacity .18s ease-out;
+}
+/* pre-JS resting state: underline hidden. setupFlankRotator() sets the
+   offset to 0 and plays the 100->0 "stitch in" via the Web Animations API
+   on every change (a CSS class toggle can't reliably re-fire it). */
+.flank-l .rotator-stitch .st-line{stroke-dasharray:3.5 3;stroke-dashoffset:100}
+.flank-l .rotator:focus-visible{outline:none}
+.flank-l .rotator:hover .st-box,
+.flank-l .rotator.is-focus .st-box{opacity:.9}
+@media (prefers-reduced-motion: reduce){
+  .flank-l .rotator-stitch .st-box{transition:none}
+  .flank-l .rotator-stitch .st-line{stroke-dashoffset:0} /* shown, never drawn */
 }
 /* both labels are given an equal box width by script (see equaliseFlanks), so
    their inner edges mirror each other; the right one hugs the right edge */

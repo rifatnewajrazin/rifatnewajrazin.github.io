@@ -387,6 +387,30 @@
       });
   }
 
+  // ---------- statement band text (CMS-editable) ----------
+  // Optional override: data/statement.json -> { "text": "..." }.
+  // The markup in index.html is the no-JS / fetch-failure fallback.
+  // Runs before the generic [data-split] pass; when the JSON lands we
+  // swap the copy, re-split it into .word spans and rebuild the tween.
+  function renderStatement() {
+    var el = document.querySelector('.statement-text');
+    if (!el) return Promise.resolve();
+    return fetch('/redesign/data/statement.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (data) {
+        var text = data && typeof data.text === 'string' && data.text.trim();
+        if (text) {
+          el.textContent = text;
+          splitWords(el);           // rebuild .word spans from the new copy
+        } else if (!el.querySelector('.word')) {
+          splitWords(el);           // fallback copy, not yet split
+        }
+        buildStatementFx();         // retarget the scroll tween (no-op without GSAP)
+        if (haveGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
+      });
+  }
+
   // ---------- case-study populate (independent of GSAP) ----------
   function paragraphs(text) {
     return String(text || '').split(/\n\s*\n/).map(function (p) {
@@ -593,10 +617,29 @@
     var h = (hero ? hero.clientHeight : window.innerHeight) || window.innerHeight;
     return Math.max(48, h * 0.34);
   }
+  // The rotating role label must not resize the layout as words cycle, so we
+  // reserve the width of the widest role up front and pin .flank-l to it.
+  // Re-measured here (inside the resize-driven fitHero path) and on font load.
+  var ROTATE_WORDS = [];
+  function lockFlankWidth() {
+    var flankL = document.querySelector('.flank-l');
+    var wordEl = document.querySelector('.flank-l .rotator-word');
+    if (!flankL || !wordEl) return;
+    if (ROTATE_WORDS.length < 2) { flankL.style.minWidth = ''; return; }
+    var prev = wordEl.textContent, max = 0;
+    ROTATE_WORDS.forEach(function (w) {
+      wordEl.textContent = w;
+      max = Math.max(max, wordEl.getBoundingClientRect().width);
+    });
+    wordEl.textContent = prev;
+    if (max > 0) flankL.style.minWidth = Math.ceil(max + 2) + 'px';
+  }
+
   function equaliseFlanks() {
     var fl = document.querySelector('.flank-l');
     var fr = document.querySelector('.flank-r');
     if (!fl || !fr) return;
+    lockFlankWidth();
     fl.style.width = ''; fr.style.width = '';
     if (window.innerWidth <= FLANK_BREAKPOINT) return;
     var w = Math.max(fl.offsetWidth, fr.offsetWidth);
@@ -653,6 +696,82 @@
     window.__rnrScheduleFit = scheduleFit;
   })();
 
+  /* ---------- rotating role label (hero flank) ----------
+     Cycles .rotator-word through the comma-separated data-rotate list:
+     auto-advances on a timer, advances on click / Enter / Space, and
+     redraws the stitched underline on every change. Idempotent — safe to
+     call again after an SPA <main> swap; the previous timer/observer are
+     torn down first. Honours prefers-reduced-motion (no timer, no draw). */
+  var flankRotator = { timer: null, io: null };
+  function setupFlankRotator() {
+    if (flankRotator.timer) { clearInterval(flankRotator.timer); flankRotator.timer = null; }
+    if (flankRotator.io) { flankRotator.io.disconnect(); flankRotator.io = null; }
+
+    var btn = document.querySelector('.flank-l .rotator');
+    var word = document.querySelector('.flank-l .rotator-word');
+    var line = document.querySelector('.flank-l .rotator-stitch .st-line');
+    var hero = document.querySelector('.hero');
+    if (!btn || !word) return;
+
+    var list = String(btn.getAttribute('data-rotate') || '')
+      .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!list.length) list = [word.textContent.trim()];
+    ROTATE_WORDS = list;
+
+    var i = 0;
+    word.textContent = list[0];               // keep DOM in sync with the list
+    lockFlankWidth();                          // reserve width for the widest role
+    if (window.__rnrScheduleFit) window.__rnrScheduleFit();
+
+    var INTERVAL = 2800;
+    var canAnim = !reduce;
+
+    function draw() {
+      if (!line) return;
+      line.style.strokeDashoffset = '0';       // resting state: underline drawn
+      if (!canAnim || !line.animate) return;
+      line.getAnimations().forEach(function (a) { a.cancel(); });
+      line.animate(
+        [{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }],
+        { duration: 420, easing: 'ease-out' }
+      );
+    }
+    function show(n) {
+      i = (n % list.length + list.length) % list.length;
+      word.textContent = list[i];
+      draw();
+    }
+    function advance() { show(i + 1); }
+
+    function start() {
+      if (flankRotator.timer || reduce || list.length < 2) return;
+      flankRotator.timer = setInterval(advance, INTERVAL);
+    }
+    function stop() {
+      if (flankRotator.timer) { clearInterval(flankRotator.timer); flankRotator.timer = null; }
+    }
+
+    btn.addEventListener('click', function () { advance(); stop(); start(); });
+    btn.addEventListener('mouseenter', stop);
+    btn.addEventListener('mouseleave', start);
+    btn.addEventListener('focus', function () { btn.classList.add('is-focus'); stop(); });
+    btn.addEventListener('blur', function () { btn.classList.remove('is-focus'); start(); });
+
+    draw();                                    // show the underline from the start
+    start();
+
+    // Pause the timer while the hero is scrolled off screen (it's faded out
+    // by the scroll transform down there anyway) — saves needless work. The
+    // observer only ever toggles an already-running/stopped timer; the line
+    // above is what actually gets it going on load.
+    if (hero && window.IntersectionObserver) {
+      flankRotator.io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) start(); else stop();
+      }, { threshold: 0 });
+      flankRotator.io.observe(hero);
+    }
+  }
+
   /* ---------- split helpers ---------- */
   function splitWords(el) {
     var txt = el.textContent.trim().replace(/\s+/g, ' ');
@@ -667,15 +786,25 @@
     el.appendChild(frag);
   }
 
+  /* ---------- statement band: words light up on scroll ----------
+     Split out so renderStatement() can rebuild it after the CMS text
+     lands (the .word spans it tweens get recreated). */
+  function buildStatementFx() {
+    if (!haveGSAP) return;
+    if (buildStatementFx._st) { buildStatementFx._st.kill(); buildStatementFx._st = null; }
+    var stWords = document.querySelectorAll('.statement-text .word');
+    if (!stWords.length) return;
+    gsap.set(stWords, { clearProps: 'color' });
+    var tween = gsap.to(stWords, {
+      color: '#f4f1e9', ease: 'none', stagger: { each: 0.4 },
+      scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
+    });
+    buildStatementFx._st = tween.scrollTrigger || null;
+  }
+
   /* ---------- scroll-driven GSAP effects (home view only) ---------- */
   function buildHomeScrollFx() {
-    var stWords = document.querySelectorAll('.statement-text .word');
-    if (stWords.length) {
-      gsap.to(stWords, {
-        color: '#f4f1e9', ease: 'none', stagger: { each: 0.4 },
-        scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
-      });
-    }
+    buildStatementFx();
     var abWords = document.querySelectorAll('.about-lead .word');
     if (abWords.length) {
       gsap.set(abWords, { opacity: 0.25 });
@@ -1234,6 +1363,7 @@
       document.querySelectorAll('[data-split="words"]').forEach(function (el) {
         if (!el.querySelector('.word')) splitWords(el);
       });
+      renderStatement();
       renderWorkGrid();
       renderVersions().then(function () {
         // the real rows exist now — reveal them and build their doodads
@@ -1243,6 +1373,7 @@
         if (haveGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
       });
       buildMarquee();
+      setupFlankRotator();
       fitHero();
       if (window.__rnrApplyHeroScroll) window.__rnrApplyHeroScroll();
       if (heroResizeObserver) heroResizeObserver.disconnect();
