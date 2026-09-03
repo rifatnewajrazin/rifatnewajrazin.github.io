@@ -314,7 +314,11 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   display:flex;flex-direction:column;align-items:center;justify-content:space-between;
   text-align:center;transition:background .3s ease;
 }
-.work-cell:hover{background:#e9f1f4;background:color-mix(in srgb,var(--teal) 12%,var(--paper))}
+/* each cell hovers to its own soft tint, cycling sky-blue -> baby pink
+   -> pale steel down the grid */
+.work-cell:hover{background:#d9edf3;background:color-mix(in srgb,var(--teal) 15%,var(--paper))}
+.work-cell:nth-child(3n+2):hover{background:#fbe1ea;background:color-mix(in srgb,var(--rose) 34%,var(--paper))}
+.work-cell:nth-child(3n):hover{background:#e4e9ee;background:color-mix(in srgb,var(--navy) 12%,var(--paper))}
 .wc-year{font-size:13px;color:var(--ink-soft)}
 .wc-title{
   font-family:var(--display);font-weight:400;
