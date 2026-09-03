@@ -171,16 +171,13 @@
         <!-- clock hand (slow sweep) -->
         <g class="cs-clock-hand"><path d="M899,100V88"/></g>
 
-        <!-- wind turbine (lattice tower; blades spin) -->
+        <!-- wind turbine (lattice tower; three matching blades spin) -->
         <path d="M1392,178 1398,54 1406,54 1412,178 M1392,178 1406,54 M1412,178 1398,54 M1395,150h11 M1397,116h9 M1399,82h7 M1398,54h8v-5h-8z"/>
         <g class="cs-turbine">
-          <path d="M1402,50V18 M1402,50 1430,66 M1402,50 1374,66"/>
+          <path d="M1402,50C1399,40 1399,28 1402,22C1405,28 1405,40 1402,50Z"/>
+          <path d="M1402,50C1399,40 1399,28 1402,22C1405,28 1405,40 1402,50Z" transform="rotate(120 1402 50)"/>
+          <path d="M1402,50C1399,40 1399,28 1402,22C1405,28 1405,40 1402,50Z" transform="rotate(240 1402 50)"/>
           <circle cx="1402" cy="50" r="2.5"/>
-        </g>
-
-        <!-- chimney smoke (rises + fades) -->
-        <g class="cs-smoke">
-          <circle cx="781" cy="92" r="3"/><circle cx="781" cy="92" r="3"/><circle cx="781" cy="92" r="3"/>
         </g>
 
         <!-- trees (sway from the base) -->

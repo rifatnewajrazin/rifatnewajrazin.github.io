@@ -301,7 +301,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 
 /* rotating rigs */
 .cs-wheel{animation:cs-spin 40s linear infinite;transform-origin:200px 116px}
-.cs-turbine{animation:cs-spin 6s linear infinite;transform-origin:1402px 50px}
+.cs-turbine{animation:cs-spin 8s linear infinite;transform-origin:1402px 50px}
 .cs-clock-hand{animation:cs-spin 90s linear infinite;transform-origin:899px 100px}
 .cs-crane{animation:cs-slew 16s ease-in-out infinite alternate;transform-origin:950px 56px}
 .cs-veh-wheel{animation:cs-spin 1.1s linear infinite;transform-box:fill-box;transform-origin:center}
@@ -309,12 +309,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 /* sky + road crossers — just two of each, one drifting each way */
 .cs-birds path{animation:cs-fly 28s linear infinite}
 .cs-birds path:nth-child(2){animation-duration:37s;animation-direction:reverse}
-.cs-clouds path{animation:cs-fly 96s linear infinite}
-.cs-clouds path:nth-child(2){animation-duration:124s;animation-direction:reverse}
+.cs-clouds path{animation:cs-fly 175s linear infinite}
+.cs-clouds path:nth-child(2){animation-duration:220s;animation-direction:reverse}
 .cs-car{animation:cs-fly 30s linear infinite}
 .cs-van{animation:cs-fly 44s linear infinite;animation-delay:-24s}
 
-/* trees sway; chimney smoke rises */
+/* trees sway from the base */
 .cs-trees > g{
   animation:cs-sway 5.6s ease-in-out infinite alternate;
   transform-box:fill-box;transform-origin:center bottom;
@@ -324,24 +324,15 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .cs-trees > g:nth-child(4){animation-duration:6.2s;animation-delay:-3.9s}
 .cs-trees > g:nth-child(5){animation-duration:5.8s;animation-delay:-0.7s}
 .cs-trees > g:nth-child(6){animation-duration:6.9s;animation-delay:-2.1s}
-.cs-smoke circle{animation:cs-rise 6s ease-out infinite;opacity:0}
-.cs-smoke circle:nth-child(2){animation-delay:-2s}
-.cs-smoke circle:nth-child(3){animation-delay:-4s}
 
 @keyframes cs-spin{to{transform:rotate(360deg)}}
 @keyframes cs-sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 @keyframes cs-slew{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
 @keyframes cs-fly{from{transform:translateX(-160px)}to{transform:translateX(1760px)}}
-@keyframes cs-rise{
-  0%{opacity:0;transform:translateY(0) scale(.6)}
-  25%{opacity:.5}
-  100%{opacity:0;transform:translateY(-24px) scale(1.5)}
-}
 @media (prefers-reduced-motion:reduce){
   .cs-wheel,.cs-turbine,.cs-clock-hand,.cs-crane,.cs-veh-wheel,
   .cs-birds path,.cs-clouds path,.cs-car,.cs-van,
-  .cs-trees > g,.cs-smoke circle{animation:none}
-  .cs-smoke circle{opacity:0}
+  .cs-trees > g{animation:none}
 }
 
 /* ---------- marquee (CSS-driven, seamless) ----------
