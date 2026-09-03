@@ -6,6 +6,11 @@
 <title id="pageTitle">Loading… — Rifat Newaj Razin</title>
 <meta name="description" content="Case study — Rifat Newaj Razin, graphic designer in Dhaka." />
 <meta name="robots" content="noindex, nofollow" />
+<!-- Runs before first paint: mark the page JS-ready so [data-anim] blocks
+     start hidden (no flash of visible content that then snaps away and
+     re-animates on a hard reload), and stop the browser restoring the old
+     scroll position. If main.js never boots, reveal everything after 4s. -->
+<script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- identical to index.html's font set — this <head> never reloads once

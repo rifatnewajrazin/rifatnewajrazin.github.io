@@ -8,6 +8,11 @@
 <!-- Work-in-progress prototype with placeholder copy. Keep it out of search
      until it replaces the live site, so it can't compete with or dilute it. -->
 <meta name="robots" content="noindex, nofollow" />
+<!-- Runs before first paint: mark the page JS-ready so [data-anim] blocks
+     start hidden (no flash of visible content that then snaps away and
+     re-animates on a hard reload), and stop the browser restoring the old
+     scroll position. If main.js never boots, reveal everything after 4s. -->
+<script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Unica+One&family=Prompt:wght@400;500;600&family=Caveat:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />

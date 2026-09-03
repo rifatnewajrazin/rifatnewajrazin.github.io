@@ -13,6 +13,7 @@
    in), and a failed/blocked fetch always falls back to a plain full
    navigation, so nothing here can strand the user on a dead page. */
 (function () {
+  window.__rnrBooted = true; // tells the inline head-script's 4s failsafe to stand down
   var root = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var haveGSAP = !!(window.gsap && window.ScrollTrigger);
