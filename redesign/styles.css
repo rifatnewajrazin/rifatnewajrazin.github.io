@@ -28,7 +28,7 @@
   --rose:#f4a9c0;
   --pink:#ef7aa6;
   --cream:#efe7db;
-  --flank:#38383d;         /* greyish-black for the hero flank labels */
+  --flank:#66666e;         /* dark grey for the hero flank labels */
   --accent:var(--teal);   /* the one "this is clickable" colour */
   --warm:var(--coral);    /* legacy name kept: hero label, marquee, shots */
   --pop:var(--pink);      /* small pops on dark (logo dot on the navy band) */
