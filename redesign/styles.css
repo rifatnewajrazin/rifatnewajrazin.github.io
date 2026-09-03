@@ -434,15 +434,17 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);margin-bottom:18px}
 .contact-big{font-family:var(--display);font-weight:400;font-size:clamp(48px,12vw,150px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase;color:var(--navy)}
 .contact-big .cb-lite{color:var(--teal)}
-/* coral, handwritten (Caveat) — same face as the B-Sides notes, bumped
-   up from 13px since Caveat reads small */
+/* handwritten (Caveat, same face as the B-Sides notes), lowercase, in a
+   soft mid-grey; bumped up from 13px since Caveat reads small */
 .contact-sub{
-  color:var(--coral);
+  color:#6f6f78;text-transform:lowercase;
   font-family:var(--hand);font-weight:500;
   font-size:clamp(17px,1.9vw,21px);line-height:1.55;
   max-width:46ch;margin:24px auto 0;
 }
 .contact-links{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:18px}
+/* plain body font, quiet — a lead-in above the email */
+.contact-reach{font-size:13px;letter-spacing:.03em;color:var(--ink-soft);margin-bottom:-8px}
 .contact-links > a{font-family:var(--display);font-weight:400;font-size:clamp(18px,2.4vw,28px);border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s}
 .contact-links > a:hover{color:var(--accent);border-color:var(--accent)}
 .contact-social{display:flex;gap:22px;font-size:13px;color:var(--ink-soft)}
