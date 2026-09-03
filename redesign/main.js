@@ -474,16 +474,11 @@
   (function wireClickDoodles() {
     if (reduce) return;
     var NS = 'http://www.w3.org/2000/svg';
-    // loose gestural marks in a 0..48 box, roughly centred so a random
-    // rotation still reads naturally
+    // two loose marks in a 0..48 box, roughly centred so a random rotation
+    // still reads naturally: a quick pen stroke and a hand-drawn ring.
     var MARKS = [
-      'M9 25 Q17 10 24 22 T39 16',                       // squiggle
-      'M8 26 L18 37 L40 13',                             // check
-      'M24 6 V19 M24 29 V42 M7 24 H20 M28 24 H41',       // spark
-      'M13 13 L35 35 M35 13 L13 35',                     // scratch-out X
-      'M12 31 Q7 13 24 12 T33 30 Q24 40 15 30',          // scribble loop
-      'M7 23 C14 13 19 33 25 24 S36 12 42 21',           // wave
-      'M24 5 L28 18 L42 19 L31 28 L35 42 L24 33 L13 42 L17 28 L6 19 L20 18 Z' // rough star
+      'M6 27 C15 22 22 30 28 25 S40 21 43 24',                    // line
+      'M31 10 C41 13 43 27 34 36 C25 45 11 42 7 31 C3 21 12 7 26 8 C31 8 36 11 38 15' // circle
     ];
     var host = document.createElement('div');
     host.setAttribute('aria-hidden', 'true');
