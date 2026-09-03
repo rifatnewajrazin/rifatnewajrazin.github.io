@@ -434,6 +434,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);margin-bottom:18px}
 .contact-big{font-family:var(--display);font-weight:400;font-size:clamp(48px,12vw,150px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase;color:var(--navy)}
 .contact-big .cb-lite{color:var(--teal)}
+/* same colour + size as the kicker, but a readable sentence (no caps) */
+.contact-sub{color:var(--coral);font-size:13px;line-height:1.75;max-width:52ch;margin:26px auto 0}
 .contact-links{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .contact-links > a{font-family:var(--display);font-weight:400;font-size:clamp(18px,2.4vw,28px);border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s}
 .contact-links > a:hover{color:var(--accent);border-color:var(--accent)}
