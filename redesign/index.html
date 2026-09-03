@@ -90,70 +90,121 @@
       800+ projects deep, still obsessed with the small stuff.
     </p>
 
-    <!-- Lineart skyline along the bottom edge. All motion is CSS-only
-         (transform/opacity → compositor), and every moving part is frozen
-         under prefers-reduced-motion. Decorative: aria-hidden, no pointer. -->
-    <svg class="cityscape" viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Hand-drawn city doodle along the bottom edge. All motion is CSS
+         transform/opacity (compositor), frozen under prefers-reduced-motion.
+         preserveAspectRatio="xMidYMax slice" => uniform scale (round wheel),
+         bottom-centre anchored. Decorative: aria-hidden, no pointer. -->
+    <svg class="cityscape" viewBox="0 0 1600 240" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
       <g class="cs-ink">
-        <!-- ground -->
-        <line x1="0" y1="200" x2="1200" y2="200"/>
+        <!-- stars -->
+        <path d="M148,40h8 M152,36v8 M432,26h7 M435.5,22.5v7 M900,22h7 M903.5,18.5v7 M1292,36h8 M1296,32v8 M760,15h6 M763,12v6"/>
 
-        <!-- left: little houses -->
-        <path d="M28,200V172H70V200 M24,172 46,150 74,172"/>
-        <path d="M250,200V166H300V200 M246,166 275,146 304,166"/>
-        <path d="M300,200V176H336V200"/>
-
-        <!-- trees (sway) -->
-        <g class="cs-tree">
-          <path d="M96,200V180"/>
-          <path d="M96,180c-13,-3 -17,-20 -4,-26c7,-13 24,-10 26,2c13,2 11,19 -2,22c-3,8 -16,8 -20,2z"/>
-        </g>
-        <g class="cs-tree">
-          <path d="M338,200V182"/>
-          <path d="M338,182c-11,-2 -15,-16 -3,-22c6,-11 21,-9 23,1c11,2 10,16 -2,19c-3,7 -14,7 -18,2z"/>
-        </g>
-        <g class="cs-tree">
-          <path d="M792,200V180"/>
-          <path d="M792,180c-13,-3 -17,-20 -4,-26c7,-13 24,-10 26,2c13,2 11,19 -2,22c-3,8 -16,8 -20,2z"/>
+        <!-- clouds — three sizes, slow drift -->
+        <g class="cs-clouds">
+          <path d="M300,46c-8,0 -11,-10 0,-13c0,-13 20,-15 25,-3c13,-5 23,5 15,13c3,8 -10,12 -16,7c-5,7 -20,5 -23,-3z"/>
+          <path d="M780,34c-5,0 -7,-6 0,-8c0,-8 12,-9 15,-2c8,-3 14,3 9,8c2,5 -6,7 -10,4c-3,4 -12,3 -14,-2z"/>
+          <path d="M1180,58c-4,0 -5,-5 0,-6c0,-6 9,-7 11,-1c6,-2 10,2 7,6c1,4 -4,5 -7,3c-2,3 -9,2 -11,-2z"/>
         </g>
 
-        <!-- mid + right: buildings, some with window rows -->
-        <path d="M366,200V150H408V200"/>
-        <path d="M420,200V116H462V200 M420,140H462 M420,164H462 M441,116V200"/>
-        <path d="M474,200V96H514V200 M474,124H514 M474,152H514 M474,178H514"/>
-        <path d="M524,200V132H584V200 M554,132V200"/>
-        <path d="M596,200V74H642V200 M596,104H642 M596,134H642 M596,164H642 M619,74V200"/>
-        <path d="M652,200V44H694V200 M652,78H694 M652,110H694 M652,142H694 M652,174H694 M673,44V200"/>
-        <path d="M706,200V110H758V200 M706,140H758 M706,170H758"/>
-        <path d="M820,200V128H884V200 M852,128V200 M820,160H884"/>
-        <path d="M896,200V88H934V200 M896,120H934 M896,152H934 M896,182H934"/>
-        <path d="M944,200V150H1000V200"/>
-        <path d="M1130,200V140H1178V200 M1130,170H1178"/>
+        <!-- birds — five, varied sizes, varied speeds -->
+        <g class="cs-birds">
+          <path d="M-120,60q10,-10 20,0q10,-10 20,0"/>
+          <path d="M-120,42q6,-6 12,0q6,-6 12,0"/>
+          <path d="M-120,74q4,-4 8,0q4,-4 8,0"/>
+          <path d="M-120,52q7,-7 14,0q7,-7 14,0"/>
+          <path d="M-120,34q4,-4 8,0q4,-4 8,0"/>
+        </g>
 
-        <!-- ferris wheel (whole wheel spins; legs stay put) -->
-        <path d="M150,200 180,138 M210,200 180,138"/>
+        <!-- skyline -->
+        <path d="M12,210V186H46V210 M8,186 30,166 50,186"/>
+        <path d="M84,210V150H120V210 M84,168H120 M84,186H120 M102,150V210"/>
+        <path d="M126,210V128H166V210 M126,146H166 M126,164H166 M126,182H166 M146,128V210"/>
+        <path d="M320,210V138H356V210 M320,158H356 M320,178H356 M338,138V210"/>
+        <path d="M362,210V104H408V210 M375,104V210 M391,104V210 M362,124H408 M362,144H408 M362,164H408 M362,184H408"/>
+        <path d="M414,210V84H456V210 M422,84V70H448V84 M414,106H456 M414,128H456 M414,150H456 M414,172H456 M414,194H456 M435,84V210"/>
+        <path d="M468,210V92H506V210 M468,112H506 M468,132H506 M468,152H506 M468,172H506 M468,192H506 M487,92V210"/>
+        <path d="M512,210V52H550V210 M512,72H550 M512,90H550 M512,108H550 M512,126H550 M512,144H550 M512,162H550 M512,180H550 M512,198H550 M531,52V210 M531,52V32 M531,36h11v6h-11"/>
+        <path d="M556,210V78H596V210 M556,98H596 M556,116H596 M556,134H596 M556,152H596 M556,170H596 M556,188H596 M576,78V210"/>
+        <path d="M602,210V38H644V210 M602,58H644 M602,78H644 M602,98H644 M602,118H644 M602,138H644 M602,158H644 M602,178H644 M602,198H644 M623,38V210 M602,38 623,16 644,38 M623,16V4"/>
+        <path d="M650,210V96H690V210 M650,116H690 M650,136H690 M650,156H690 M650,176H690 M650,196H690 M656,96Q656,68 670,68Q684,68 684,96 M670,68V58"/>
+        <path d="M696,210V66H736V210 M696,86H736 M696,106H736 M696,126H736 M696,146H736 M696,166H736 M696,186H736 M716,66V210"/>
+        <path d="M742,210V110H780V210 M742,130H780 M742,150H780 M742,170H780 M742,190H780 M742,110Q761,90 780,110"/>
+        <path d="M786,210V54H826V210 M786,74H826 M786,94H826 M786,114H826 M786,134H826 M786,154H826 M786,174H826 M786,194H826 M806,54V210 M796,54V42H816V54"/>
+        <path d="M832,210V118H876V210 M832,138H876 M832,160H876 M832,182H876 M850,118V102H862V118"/>
+        <path d="M882,210V86H922V210 M882,106H922 M882,126H922 M882,146H922 M882,166H922 M882,186H922 M902,86V210 M892,86V74 M912,86V74 M890,74H914v-8h-24z"/>
+        <path d="M962,210V66H994V210 M962,86H994 M962,150H994 M978,66V54 M958,66 978,50 998,66"/>
+        <circle cx="978" cy="104" r="11"/>
+        <path d="M1030,210V150H1058V182H1074V210 M1030,172H1058 M1030,192H1074"/>
+        <path d="M1080,210V92H1120V210 M1080,112H1120 M1080,132H1120 M1080,152H1120 M1080,172H1120 M1080,192H1120 M1100,92V210"/>
+        <path d="M1126,210V124H1164V210 M1126,144H1164 M1126,164H1164 M1126,184H1164"/>
+        <path d="M1176,210V160H1240V210 M1200,210V182Q1200,170 1208,170Q1216,170 1216,182V210 M1188,160Q1188,128 1208,128Q1228,128 1228,160 M1208,128V118"/>
+        <path d="M1248,210V132H1258V210 M1246,132Q1246,120 1253,120Q1260,120 1260,132 M1253,120V112"/>
+        <path d="M1272,210V168H1312V210 M1272,190H1312"/>
+        <path d="M1318,210V150H1356V210 M1318,170H1356 M1318,190H1356"/>
+        <path d="M1448,210V186H1484V210 M1444,186 1466,166 1488,186"/>
+        <path d="M1494,210V174H1530V210 M1494,194H1530"/>
+        <path d="M1540,210V192H1578V210 M1536,192 1558,174 1580,192"/>
+
+        <!-- ferris wheel -->
+        <path d="M232,210 270,136 M308,210 270,136 M270,210V130 M224,210H316"/>
         <g class="cs-wheel">
-          <circle cx="180" cy="135" r="52"/>
-          <circle cx="180" cy="135" r="4"/>
-          <path d="M180,135 232,135 M180,135 216.8,98.2 M180,135 180,83 M180,135 143.2,98.2
-                   M180,135 128,135 M180,135 143.2,171.8 M180,135 180,187 M180,135 216.8,171.8"/>
-          <circle cx="232" cy="135" r="5"/><circle cx="216.8" cy="98.2" r="5"/>
-          <circle cx="180" cy="83" r="5"/><circle cx="143.2" cy="98.2" r="5"/>
-          <circle cx="128" cy="135" r="5"/><circle cx="143.2" cy="171.8" r="5"/>
-          <circle cx="180" cy="187" r="5"/><circle cx="216.8" cy="171.8" r="5"/>
+          <circle cx="270" cy="130" r="56"/>
+          <circle cx="270" cy="130" r="48"/>
+          <circle cx="270" cy="130" r="5"/>
+          <path d="M270,130 326,130 M270,130 318.5,102 M270,130 298,81.5 M270,130 270,74 M270,130 242,81.5 M270,130 221.5,102 M270,130 214,130 M270,130 221.5,158 M270,130 242,178.5 M270,130 270,186 M270,130 298,178.5 M270,130 318.5,158"/>
+          <circle cx="326" cy="130" r="4.5"/><circle cx="318.5" cy="102" r="4.5"/><circle cx="298" cy="81.5" r="4.5"/>
+          <circle cx="270" cy="74" r="4.5"/><circle cx="242" cy="81.5" r="4.5"/><circle cx="221.5" cy="102" r="4.5"/>
+          <circle cx="214" cy="130" r="4.5"/><circle cx="221.5" cy="158" r="4.5"/><circle cx="242" cy="178.5" r="4.5"/>
+          <circle cx="270" cy="186" r="4.5"/><circle cx="298" cy="178.5" r="4.5"/><circle cx="318.5" cy="158" r="4.5"/>
         </g>
+
+        <!-- construction crane (jib slews) -->
+        <path d="M996,210V56 M992,186h8 M992,156h8 M992,126h8 M992,96h8 M992,66h8"/>
+        <g class="cs-crane">
+          <path d="M996,60H1074 M996,60H974 M996,46 1074,60 M996,46 974,60 M1062,60V88 M1058,88h8 M1062,88v6"/>
+        </g>
+
+        <!-- clock hand (slow sweep) -->
+        <g class="cs-clock-hand"><path d="M978,104V90"/></g>
 
         <!-- wind turbine (blades spin) -->
-        <line x1="1070" y1="200" x2="1070" y2="70"/>
+        <path d="M1408,210 1414,60 1422,60 1428,210 M1408,210 1422,60 M1428,210 1414,60 M1411,178h11 M1413,140h9 M1415,102h7 M1413,60h10v-6h-10z"/>
         <g class="cs-turbine">
-          <path d="M1070,70 1070,28 M1070,70 1106,91 M1070,70 1034,91"/>
-          <circle cx="1070" cy="70" r="3"/>
+          <path d="M1418,56V20 M1418,56 1450,74 M1418,56 1386,74"/>
+          <circle cx="1418" cy="56" r="3"/>
         </g>
 
-        <!-- birds (glide across) -->
-        <path class="cs-bird" d="M-30,54q7,-7 14,0q7,-7 14,0"/>
-        <path class="cs-bird" d="M-30,74q6,-6 12,0q6,-6 12,0"/>
-        <path class="cs-bird" d="M-30,40q5,-5 10,0q5,-5 10,0"/>
+        <!-- chimney smoke (rises + fades) -->
+        <g class="cs-smoke">
+          <circle cx="856" cy="98" r="3.5"/><circle cx="856" cy="98" r="3.5"/><circle cx="856" cy="98" r="3.5"/>
+        </g>
+
+        <!-- trees (sway) -->
+        <g class="cs-trees">
+          <g><path d="M62,210V186"/><path d="M62,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+          <g><path d="M178,210V186"/><path d="M178,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+          <g><path d="M460,210V186"/><path d="M460,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+          <g><path d="M1168,210V186"/><path d="M1168,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+          <g><path d="M1366,210V186"/><path d="M1366,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+          <g><path d="M1528,210V186"/><path d="M1528,186c-12,-3 -16,-17 -3,-23c6,-11 21,-9 23,1c11,2 9,16 -3,19c-3,7 -14,7 -17,2z"/></g>
+        </g>
+
+        <!-- road + water -->
+        <path d="M0,210H1600"/>
+        <path d="M0,222q40,-8 80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0"/>
+        <path d="M-40,232q40,-8 80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0t80,0"/>
+
+        <!-- vans (drive across; wheels spin) -->
+        <g class="cs-van">
+          <path d="M2,210V192Q2,186 8,186H18L26,176H46Q54,176 56,186V210 M22,186h9v-7h-9z M34,186h9v-7h-9z"/>
+          <circle class="cs-van-wheel" cx="14" cy="210" r="6"/>
+          <circle class="cs-van-wheel" cx="46" cy="210" r="6"/>
+        </g>
+        <g class="cs-van2">
+          <path d="M2,210V196Q2,192 6,192H14L20,184H40Q46,184 48,192V210 M18,192h7v-5h-7z M28,192h7v-5h-7z"/>
+          <circle class="cs-van-wheel" cx="12" cy="210" r="5"/>
+          <circle class="cs-van-wheel" cx="40" cy="210" r="5"/>
+        </g>
       </g>
     </svg>
   </section>
@@ -321,7 +372,7 @@
   <!-- CONTACT -->
   <section id="contact" class="contact">
     <p class="contact-kicker" data-anim>Let's make something</p>
-    <h2 class="contact-big" data-anim>worth remembering</h2>
+    <h2 class="contact-big" data-anim><span class="cb-lite">worth</span> remembering</h2>
     <div class="contact-links" data-anim>
       <a href="mailto:rifatnewajrazin@gmail.com" class="magnetic">rifatnewajrazin@gmail.com</a>
       <div class="contact-social">

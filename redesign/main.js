@@ -323,6 +323,20 @@
   // with the CMS-editable rows. One photo => a single Instax card; two or
   // more => .instax-gallery, laid out as centred rows of two (.instax-pair)
   // that overlap slightly; a lone last card is centred, not left-hanging.
+  // per-caption colour (matched on the caption text, case-insensitive).
+  // Unlisted captions keep the default muted colour. If a caption is
+  // renamed in the CMS its entry here needs the same edit.
+  var CAPTION_TONE = {
+    'the work nobody sees': 'cap-teal',
+    'the one who enjoys it the most': 'cap-pink',
+    'running 7.5km': 'cap-teal',
+    'cycling on victory day': 'cap-pink',
+    'my first 15km': 'cap-teal',
+    'sleeping among 150+ people': 'cap-pink',
+    'forced-to-speak': 'cap-teal',
+    'lalakhal, sylhet': 'cap-pink',
+    'lama, bandarban': 'cap-teal'
+  };
   function versCard(p) {
     // onerror: a dangling image path (e.g. the file was deleted in the CMS
     // but still referenced) degrades to the "add photo" placeholder instead
@@ -332,8 +346,12 @@
           esc(p.caption || '') + '" loading="lazy" decoding="async" ' +
           'onerror="var d=this.parentNode;this.remove();if(d)d.setAttribute(\'data-ph\',\'add photo\')"></div>'
       : '<div class="instax-img" data-ph="add photo"></div>';
+    var capTone = p && p.caption
+      ? (CAPTION_TONE[String(p.caption).trim().toLowerCase()] || '') : '';
     return '<figure class="instax">' + inner +
-      (p && p.caption ? '<figcaption>' + esc(p.caption) + '</figcaption>' : '') +
+      (p && p.caption
+        ? '<figcaption class="' + capTone + '">' + esc(p.caption) + '</figcaption>'
+        : '') +
       '</figure>';
   }
   function versRowHTML(row, i) {

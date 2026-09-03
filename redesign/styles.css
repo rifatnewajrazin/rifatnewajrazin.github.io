@@ -28,6 +28,7 @@
   --rose:#f4a9c0;
   --pink:#ef7aa6;
   --cream:#efe7db;
+  --flank:#38383d;         /* greyish-black for the hero flank labels */
   --accent:var(--teal);   /* the one "this is clickable" colour */
   --warm:var(--coral);    /* legacy name kept: hero label, marquee, shots */
   --pop:var(--pink);      /* small pops on dark (logo dot on the navy band) */
@@ -207,14 +208,14 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
    word's inner edge — and the connector dash beside it — from shifting as
    the words cycle. */
 .flank-l .rotator{
-  font:inherit;color:var(--pink);background:none;border:0;padding:0;margin:0;
+  font:inherit;color:var(--flank);background:none;border:0;padding:0;margin:0;
   cursor:pointer;position:relative;display:inline-flex;align-items:center;
   justify-content:flex-end;
   pointer-events:auto; /* .hero-flank is pointer-events:none — re-enable just this */
   -webkit-tap-highlight-color:transparent;
 }
 .flank-l .rotator-word{position:relative;display:inline-block}
-.flank-l .rotator-text{display:inline-block;white-space:nowrap;color:var(--pink)}
+.flank-l .rotator-text{display:inline-block;white-space:nowrap;color:var(--flank)}
 .flank-l .rotator-stitch{
   position:absolute;left:-6px;top:-3px;
   width:calc(100% + 12px);height:calc(100% + 6px);
@@ -223,7 +224,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 /* stitched underline: hidden at rest, fades in ONLY on hover / keyboard
    focus. Pure CSS — no JS, no lingering state after a click. */
 .flank-l .rotator-stitch .st-line{
-  fill:none;stroke:var(--pink);stroke-width:1.5;
+  fill:none;stroke:var(--flank);stroke-width:1.5;
   stroke-dasharray:3.5 3;
   opacity:0;transition:opacity .18s ease-out;
 }
@@ -238,7 +239,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
    (toward the name) — .flank-l right-aligned, .flank-r left-aligned — with the
    connector dash running back outward toward its own screen edge. */
 .flank-l{justify-content:flex-end}
-.hero-flank .flank-r{justify-content:flex-start;text-align:left;color:var(--pink)}
+.hero-flank .flank-r{justify-content:flex-start;text-align:left;color:var(--flank)}
 /* fixed-length connector from the screen edge to the label — mirrored,
    never grows toward the centre so the name never overlaps the text. */
 .flank-l::before,.flank-r::after{
@@ -279,32 +280,67 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .statement-text .word{color:#5a7f9e;transition:color .1s linear;margin-right:.28em}
 
 /* ---------- lineart skyline along the statement band's bottom edge ----------
-   All motion is CSS transforms (compositor only); frozen for reduced-motion. */
+   Hand-drawn city doodle. All motion is CSS transform/opacity (compositor
+   only) and every moving part is frozen under prefers-reduced-motion.
+   preserveAspectRatio="xMidYMax slice" scales UNIFORMLY (round wheel, no
+   distortion) and anchors to the bottom-centre, cropping the sides. */
 .cityscape{
   position:absolute;left:0;right:0;bottom:0;width:100%;
-  height:clamp(116px,16vw,208px);
+  height:clamp(150px,17vw,236px);
   pointer-events:none;z-index:0;overflow:hidden;
 }
 .cityscape .cs-ink{
-  fill:none;stroke:rgba(233,240,247,.22);stroke-width:1.4;
+  fill:none;stroke:rgba(233,240,247,.24);stroke-width:1.35;
   stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
 }
-.cs-wheel{animation:cs-spin 38s linear infinite;transform-origin:180px 135px}
-.cs-turbine{animation:cs-spin 6s linear infinite;transform-origin:1070px 70px}
-.cs-tree{
-  animation:cs-sway 5.5s ease-in-out infinite alternate;
+
+/* rotating rigs */
+.cs-wheel{animation:cs-spin 40s linear infinite;transform-origin:270px 130px}
+.cs-turbine{animation:cs-spin 6s linear infinite;transform-origin:1418px 56px}
+.cs-clock-hand{animation:cs-spin 90s linear infinite;transform-origin:978px 104px}
+.cs-crane{animation:cs-slew 16s ease-in-out infinite alternate;transform-origin:996px 60px}
+.cs-van-wheel{animation:cs-spin 1.1s linear infinite;transform-box:fill-box;transform-origin:center}
+
+/* things that cross the sky / road — birds and clouds come in varied sizes */
+.cs-birds path{animation:cs-fly 26s linear infinite}
+.cs-birds path:nth-child(2){animation-duration:34s;animation-delay:-8s}
+.cs-birds path:nth-child(3){animation-duration:21s;animation-delay:-14s}
+.cs-birds path:nth-child(4){animation-duration:39s;animation-delay:-22s}
+.cs-birds path:nth-child(5){animation-duration:29s;animation-delay:-4s}
+.cs-clouds path{animation:cs-fly 78s linear infinite}
+.cs-clouds path:nth-child(2){animation-duration:112s;animation-delay:-40s}
+.cs-clouds path:nth-child(3){animation-duration:94s;animation-delay:-70s}
+.cs-van{animation:cs-fly 32s linear infinite}
+.cs-van2{animation:cs-fly 44s linear infinite;animation-delay:-26s}
+
+/* trees sway; chimney smoke rises */
+.cs-trees > g{
+  animation:cs-sway 5.6s ease-in-out infinite alternate;
   transform-box:fill-box;transform-origin:center bottom;
 }
-.cs-tree ~ .cs-tree{animation-duration:6.6s;animation-delay:-1.8s}
-.cs-tree ~ .cs-tree ~ .cs-tree{animation-duration:5s;animation-delay:-3s}
-.cs-bird{animation:cs-fly 26s linear infinite}
-.cs-bird ~ .cs-bird{animation-duration:33s;animation-delay:-9s}
-.cs-bird ~ .cs-bird ~ .cs-bird{animation-duration:29s;animation-delay:-19s}
+.cs-trees > g:nth-child(2){animation-duration:6.7s;animation-delay:-1.4s}
+.cs-trees > g:nth-child(3){animation-duration:5s;animation-delay:-2.6s}
+.cs-trees > g:nth-child(4){animation-duration:6.2s;animation-delay:-3.9s}
+.cs-trees > g:nth-child(5){animation-duration:5.8s;animation-delay:-0.7s}
+.cs-trees > g:nth-child(6){animation-duration:6.9s;animation-delay:-2.1s}
+.cs-smoke circle{animation:cs-rise 6s ease-out infinite;opacity:0}
+.cs-smoke circle:nth-child(2){animation-delay:-2s}
+.cs-smoke circle:nth-child(3){animation-delay:-4s}
+
 @keyframes cs-spin{to{transform:rotate(360deg)}}
-@keyframes cs-sway{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}
-@keyframes cs-fly{from{transform:translateX(-40px)}to{transform:translateX(1250px)}}
+@keyframes cs-sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+@keyframes cs-slew{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+@keyframes cs-fly{from{transform:translateX(-140px)}to{transform:translateX(1740px)}}
+@keyframes cs-rise{
+  0%{opacity:0;transform:translateY(0) scale(.6)}
+  25%{opacity:.5}
+  100%{opacity:0;transform:translateY(-30px) scale(1.5)}
+}
 @media (prefers-reduced-motion:reduce){
-  .cs-wheel,.cs-turbine,.cs-tree,.cs-bird{animation:none}
+  .cs-wheel,.cs-turbine,.cs-clock-hand,.cs-crane,.cs-van-wheel,
+  .cs-birds path,.cs-clouds path,.cs-van,.cs-van2,
+  .cs-trees > g,.cs-smoke circle{animation:none}
+  .cs-smoke circle{opacity:0}
 }
 
 /* ---------- marquee (CSS-driven, seamless) ----------
@@ -320,8 +356,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 .marquee-seq{display:flex;white-space:nowrap;flex:none}
 .marquee-seq span{
-  font-family:var(--hand);font-weight:600;
-  font-size:clamp(19px,2.4vw,30px);letter-spacing:.01em;
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(16px,2vw,24px);letter-spacing:.02em;text-transform:uppercase;
   margin-right:22px;
 }
 /* the "·" separators alternate coral / teal for a bit of rhythm */
@@ -394,6 +430,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .contact{padding-top:14vh;padding-bottom:16vh;text-align:center}
 .contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);margin-bottom:18px}
 .contact-big{font-family:var(--display);font-weight:400;font-size:clamp(48px,12vw,150px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase;color:var(--navy)}
+.contact-big .cb-lite{color:var(--teal)}
 .contact-links{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .contact-links > a{font-family:var(--display);font-weight:400;font-size:clamp(18px,2.4vw,28px);border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s}
 .contact-links > a:hover{color:var(--accent);border-color:var(--accent)}
@@ -466,6 +503,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   font-size:clamp(17px,2vw,22px);line-height:1.15;text-align:center;
   color:var(--ink-soft);padding:12px 6px 16px;
 }
+.instax figcaption.cap-teal{color:var(--teal)}
+.instax figcaption.cap-pink{color:var(--pink)}
 
 /* Two or more photos: centred rows of two (.instax-pair). Cards overlap a
    little at rest — horizontally within a pair, vertically between pairs —
