@@ -246,8 +246,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   /* --hp is 0..1 across the hero, written by the scroll handler */
   opacity:calc(1 - var(--hp,0) * 0.65);
 }
-/* the two lines pull apart as you scroll away from the hero */
-.hero-name .line-1{transform:translateX(calc(var(--hp,0) * -62%))}
+/* line 1 (Rifat Newaj) is the lighter blue; line 2 (Razin) stays navy */
+.hero-name .line-1{color:var(--teal);transform:translateX(calc(var(--hp,0) * -62%))}
 .hero-name .line-2{transform:translateX(calc(var(--hp,0) *  62%))}
 /* labels retreat to their own edge early (--hpf reaches 1 at 18% of the hero),
    so the widening name can never land on top of them */
@@ -348,7 +348,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 
 /* ---------- contact ---------- */
 .contact{padding-top:14vh;padding-bottom:16vh;text-align:center}
-.contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:18px}
+.contact-kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);margin-bottom:18px}
 .contact-big{font-family:var(--display);font-weight:400;font-size:clamp(48px,12vw,150px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase;color:var(--navy)}
 .contact-links{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:18px}
 .contact-links > a{font-family:var(--display);font-weight:400;font-size:clamp(18px,2.4vw,28px);border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .2s,border-color .2s}
@@ -377,9 +377,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   font-size:clamp(22px,3vw,34px);letter-spacing:-.02em;margin-bottom:10px;
   color:var(--coral);
 }
+/* row headings cycle coral -> teal -> pink -> teal (class set in main.js) */
+.vers-row.vr-teal .vers-note h3{color:var(--teal)}
+.vers-row.vr-pink .vers-note h3{color:var(--pink)}
 .vers-note p{
   font-family:var(--hand);font-weight:500;
-  font-size:clamp(20px,2.5vw,27px);line-height:1.5;color:var(--coral);
+  font-size:clamp(20px,2.5vw,27px);line-height:1.5;color:var(--ink);
   max-width:42ch;
 }
 .vers-note p + p{margin-top:.85em}

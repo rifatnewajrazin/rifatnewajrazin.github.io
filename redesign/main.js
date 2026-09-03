@@ -355,7 +355,9 @@
     } else {
       media = versCard(render[0]);
     }
-    return '<div class="vers-row' + (row && row.flip ? ' flip' : '') + '" data-anim ' +
+    // row headings cycle coral -> teal -> pink -> teal down the section
+    var tone = ['vr-coral', 'vr-teal', 'vr-pink', 'vr-teal'][i % 4];
+    return '<div class="vers-row ' + tone + (row && row.flip ? ' flip' : '') + '" data-anim ' +
         'style="transition-delay:' + (i * 0.06).toFixed(2) + 's">' +
         media +
         '<div class="vers-note"><h3>' + esc(row && row.heading) + '</h3>' +
