@@ -636,6 +636,13 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .work-cell{min-height:36vh}
   .about-grid{grid-template-columns:1fr;gap:36px}
 
+  /* Desktop "clutter" — hide on phones; it only overlapped the big name. */
+  .floaties{display:none}
+  /* The 12.5:1 skyline would shrink to a ~30px sliver at full width, so on
+     phones let it size to a usable height and centre-crop it (the statement
+     band already clips its overflow). */
+  .cityscape{width:auto;height:86px;left:50%;right:auto;transform:translateX(-50%)}
+
   /* versions: stack photo over note, always reading left-aligned */
   .vers-row,.vers-row.flip{flex-direction:column;align-items:flex-start;gap:24px}
   .instax{width:min(300px,78vw);transform:rotate(-2deg)}
