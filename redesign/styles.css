@@ -314,8 +314,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .cs-birds path:nth-child(2){animation-duration:55s;animation-direction:reverse}
 .cs-clouds path{animation:cs-fly 260s linear infinite}
 .cs-clouds path:nth-child(2){animation-duration:320s;animation-direction:reverse}
-.cs-car{animation:cs-fly 46s linear infinite}
-.cs-van{animation:cs-fly 64s linear infinite;animation-delay:-32s}
+.cs-car{animation:cs-fly 46s linear infinite;animation-direction:reverse}
+.cs-van{animation:cs-fly 64s linear infinite reverse;animation-delay:-32s}
 
 /* trees sway from the base */
 .cs-trees > g{
