@@ -72,6 +72,20 @@ collections:
                 required: false
                 field: { label: "Image", name: "image", widget: "image", required: false }
 
+  - name: "statement"
+    label: "Statement"
+    files:
+      - file: "redesign/data/statement.json"
+        label: "Statement Band"
+        name: "statement"
+        fields:
+          - label: "Statement Text"
+            name: "text"
+            widget: "text"
+            hint: >
+              The big dark band under your name. One paragraph — the words
+              light up as the visitor scrolls. Use “ — ” for the dash.
+
   - name: "bsides"
     label: "B-Sides"
     files:
