@@ -179,22 +179,27 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   z-index:2; /* stay above the floaties layer (z-index:1) */
 }
 .hero-flank span{
-  font-family:var(--hand);font-weight:600;
-  font-size:clamp(15px,1.7vw,19px);line-height:1.35;letter-spacing:.01em;
+  font-family:var(--hand);font-weight:700;
+  font-size:clamp(19px,2.3vw,28px);line-height:1.25;letter-spacing:.01em;
   color:var(--ink-soft);
   display:flex;align-items:center;white-space:nowrap;
 }
-/* rotating role label — a button styled as text; see setupFlankRotator() */
+/* rotating role label — a button styled as text; see setupFlankRotator().
+   min-width (set by lockFlankWidth to the widest role) + flex-end keeps the
+   word's inner edge — and the connector dash beside it — from shifting as
+   the words cycle. */
 .flank-l .rotator{
   font:inherit;color:var(--warm);background:none;border:0;padding:0;margin:0;
   cursor:pointer;position:relative;display:inline-flex;align-items:center;
+  justify-content:flex-end;
   pointer-events:auto; /* .hero-flank is pointer-events:none — re-enable just this */
   -webkit-tap-highlight-color:transparent;
 }
-.flank-l .rotator-word{display:inline-block;white-space:nowrap;color:var(--warm)}
+.flank-l .rotator-word{position:relative;display:inline-block}
+.flank-l .rotator-text{display:inline-block;white-space:nowrap;color:var(--warm)}
 .flank-l .rotator-stitch{
-  position:absolute;left:-7px;top:-3px;
-  width:calc(100% + 14px);height:calc(100% + 6px);
+  position:absolute;left:-6px;top:-3px;
+  width:calc(100% + 12px);height:calc(100% + 6px);
   overflow:visible;pointer-events:none;
 }
 .flank-l .rotator-stitch .st-box,
@@ -214,8 +219,11 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .flank-l .rotator-stitch .st-line{stroke-dashoffset:0} /* shown, never drawn */
 }
 /* both labels are given an equal box width by script (see equaliseFlanks), so
-   their inner edges mirror each other; the right one hugs the right edge */
-.flank-r{text-align:left;justify-content:flex-end}
+   their inner edges mirror each other. Each label sits against its INNER edge
+   (toward the name) — .flank-l right-aligned, .flank-r left-aligned — with the
+   connector dash running back outward toward its own screen edge. */
+.flank-l{justify-content:flex-end}
+.flank-r{justify-content:flex-start;text-align:left}
 /* fixed-length connector from the screen edge to the label — mirrored,
    never grows toward the centre so the name never overlaps the text. */
 .flank-l::before,.flank-r::after{

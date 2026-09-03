@@ -622,17 +622,17 @@
   // Re-measured here (inside the resize-driven fitHero path) and on font load.
   var ROTATE_WORDS = [];
   function lockFlankWidth() {
-    var flankL = document.querySelector('.flank-l');
-    var wordEl = document.querySelector('.flank-l .rotator-word');
-    if (!flankL || !wordEl) return;
-    if (ROTATE_WORDS.length < 2) { flankL.style.minWidth = ''; return; }
-    var prev = wordEl.textContent, max = 0;
+    var rotator = document.querySelector('.flank-l .rotator');
+    var textEl = document.querySelector('.flank-l .rotator-text');
+    if (!rotator || !textEl) return;
+    if (ROTATE_WORDS.length < 2) { rotator.style.minWidth = ''; return; }
+    var prev = textEl.textContent, max = 0;
     ROTATE_WORDS.forEach(function (w) {
-      wordEl.textContent = w;
-      max = Math.max(max, wordEl.getBoundingClientRect().width);
+      textEl.textContent = w;
+      max = Math.max(max, textEl.getBoundingClientRect().width);
     });
-    wordEl.textContent = prev;
-    if (max > 0) flankL.style.minWidth = Math.ceil(max + 2) + 'px';
+    textEl.textContent = prev;
+    if (max > 0) rotator.style.minWidth = Math.ceil(max + 2) + 'px';
   }
 
   function equaliseFlanks() {
@@ -708,7 +708,7 @@
     if (flankRotator.io) { flankRotator.io.disconnect(); flankRotator.io = null; }
 
     var btn = document.querySelector('.flank-l .rotator');
-    var word = document.querySelector('.flank-l .rotator-word');
+    var word = document.querySelector('.flank-l .rotator-text');
     var line = document.querySelector('.flank-l .rotator-stitch .st-line');
     var hero = document.querySelector('.hero');
     if (!btn || !word) return;
@@ -728,13 +728,18 @@
 
     function draw() {
       if (!line) return;
-      line.style.strokeDashoffset = '0';       // resting state: underline drawn
-      if (!canAnim || !line.animate) return;
-      line.getAnimations().forEach(function (a) { a.cancel(); });
-      line.animate(
-        [{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }],
-        { duration: 420, easing: 'ease-out' }
-      );
+      if (!canAnim) {
+        line.style.transition = 'none';
+        line.style.strokeDashoffset = '0';
+        return;
+      }
+      // restart the "stitch in": jump to hidden with no transition, flush,
+      // then transition back to drawn.
+      line.style.transition = 'none';
+      line.style.strokeDashoffset = '100';
+      line.getBoundingClientRect();
+      line.style.transition = 'stroke-dashoffset 420ms ease-out';
+      line.style.strokeDashoffset = '0';
     }
     function show(n) {
       i = (n % list.length + list.length) % list.length;
