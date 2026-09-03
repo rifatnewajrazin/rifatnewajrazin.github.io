@@ -839,6 +839,10 @@
 
         var rot = rnd(-16, 16);
         gsap.set(el, { rotation: rot });
+        // fade in rather than pop (matters if a resize does force a rebuild)
+        buildVersionsDoodads._tweens.push(
+          gsap.from(el, { autoAlpha: 0, duration: 0.5, ease: 'power1.out', delay: got * 0.05 })
+        );
         // gentle drift…
         buildVersionsDoodads._tweens.push(gsap.to(el, {
           x: '+=' + rnd(-7, 7).toFixed(1), y: '+=' + rnd(-9, 9).toFixed(1),
@@ -863,20 +867,26 @@
       }).scrollTrigger;
     }
 
-    // Rebuild when the section's box changes — window resize, font swap, or
-    // an image finally loading and pushing rows around. Debounced; the
-    // rebuild reads fresh geometry, so doodads never end up stranded on top
-    // of text after a reflow. Wired once (window/observer persist swaps).
+    // Rebuild when the section's WIDTH changes — a real layout change (window
+    // resize, orientation, font swap). Height-only changes (mobile URL bar
+    // sliding away as you scroll, an image settling) must NOT trigger a
+    // rebuild: that clears the layer and re-scatters every doodad to fresh
+    // random spots, which reads as a jump/flicker mid-scroll. Debounced.
+    buildVersionsDoodads._lastW = Math.round(secRect.width);
     if (!buildVersionsDoodads._reflowWired) {
       buildVersionsDoodads._reflowWired = true;
       var vdt;
       var kick = function () {
         clearTimeout(vdt);
         vdt = setTimeout(function () {
-          if (document.querySelector('.versions .vers-doodads')) buildVersionsDoodads();
-        }, 240);
+          var sec = document.querySelector('.versions');
+          if (!sec || !sec.querySelector('.vers-doodads')) return;
+          if (Math.abs(sec.getBoundingClientRect().width - buildVersionsDoodads._lastW) < 24) return;
+          buildVersionsDoodads();
+        }, 260);
       };
       window.addEventListener('resize', kick);
+      window.addEventListener('orientationchange', kick);
       if (window.ResizeObserver) {
         buildVersionsDoodads._ro = new ResizeObserver(kick);
       }
@@ -1039,22 +1049,24 @@
     }
     var objs = [];
 
+    // narrow screens get a noticeably smaller, quieter set behind the name
+    var SIZE = narrow ? 0.58 : 1;
     function build(cfg) {
       var el = document.createElement('div');
       el.className = 'floatie is-' + cfg.type;
       var inner = document.createElement('div');
       inner.className = 'floatie-in';
       if (cfg.type === 'img') {
-        el.style.width = cfg.w + 'px';
+        el.style.width = (cfg.w * SIZE) + 'px';
         var img = new Image();
         img.src = cfg.src; img.alt = ''; img.draggable = false;
         img.onerror = function () { el.remove(); objs = objs.filter(function (o) { return o.el !== el; }); };
         inner.appendChild(img);
       } else if (cfg.type === 'svg') {
-        el.style.width = cfg.w + 'px';
+        el.style.width = (cfg.w * SIZE) + 'px';
         inner.innerHTML = cfg.svg;
       } else {
-        inner.style.fontSize = (cfg.size || 26) + 'px';
+        inner.style.fontSize = ((cfg.size || 26) * SIZE) + 'px';
         inner.textContent = cfg.text;
       }
       el.appendChild(inner);
