@@ -534,7 +534,7 @@
         'position:absolute;left:' + (x - size / 2).toFixed(1) + 'px;' +
         'top:' + (y - size / 2).toFixed(1) + 'px;' +
         'width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) + 'px;' +
-        'color:var(--warm,#d1602f);opacity:1;' +
+        'color:var(--warm,#ef4b5e);opacity:1;' +
         'transform:rotate(' + rot + 'deg);will-change:opacity';
       host.appendChild(svg);
 
@@ -801,7 +801,7 @@
     if (!stWords.length) return;
     gsap.set(stWords, { clearProps: 'color' });
     var tween = gsap.to(stWords, {
-      color: '#f4f1e9', ease: 'none', stagger: { each: 0.4 },
+      color: '#fdfdfd', ease: 'none', stagger: { each: 0.4 },
       scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
     });
     buildStatementFx._st = tween.scrollTrigger || null;
@@ -1404,7 +1404,7 @@
   if (!haveGSAP || reduce) {
     document.body.classList.add('intro-done');
     document.querySelectorAll('[data-anim]').forEach(function (el) { el.style.opacity = 1; });
-    document.querySelectorAll('.statement-text .word').forEach(function (w) { w.style.color = '#f4f1e9'; });
+    document.querySelectorAll('.statement-text .word').forEach(function (w) { w.style.color = '#fdfdfd'; });
     initView(detectView(document), new URL(location.href));
     return;
   }
