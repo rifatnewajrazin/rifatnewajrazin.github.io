@@ -289,9 +289,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
    only) and every moving part is frozen under prefers-reduced-motion.
    preserveAspectRatio="xMidYMax slice" scales UNIFORMLY (round wheel, no
    distortion) and anchors to the bottom-centre, cropping the sides. */
+/* width:100% + height:auto keeps the SVG at its own 1600x128 aspect, so
+   "meet" fits it exactly — never cropped, never distorted. max-height
+   only bites on ultra-wide screens (then it letterboxes the sides). */
 .cityscape{
-  position:absolute;left:0;right:0;bottom:0;width:100%;
-  height:clamp(118px,12.5vw,172px);
+  position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;
+  max-height:210px;
   pointer-events:none;z-index:0;overflow:hidden;
 }
 .cityscape .cs-ink{
@@ -299,36 +302,36 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;
 }
 
-/* rotating rigs */
-.cs-wheel{animation:cs-spin 40s linear infinite;transform-origin:200px 116px}
-.cs-turbine{animation:cs-spin 8s linear infinite;transform-origin:1402px 50px}
-.cs-clock-hand{animation:cs-spin 90s linear infinite;transform-origin:899px 100px}
-.cs-crane{animation:cs-slew 16s ease-in-out infinite alternate;transform-origin:950px 56px}
-.cs-veh-wheel{animation:cs-spin 1.1s linear infinite;transform-box:fill-box;transform-origin:center}
+/* rotating rigs — all eased right down */
+.cs-wheel{animation:cs-spin 58s linear infinite;transform-origin:170px 74px}
+.cs-turbine{animation:cs-spin 12s linear infinite;transform-origin:1320px 40px}
+.cs-clock-hand{animation:cs-spin 120s linear infinite;transform-origin:857px 66px}
+.cs-crane{animation:cs-slew 22s ease-in-out infinite alternate;transform-origin:880px 42px}
+.cs-veh-wheel{animation:cs-spin 1.5s linear infinite;transform-box:fill-box;transform-origin:center}
 
-/* sky + road crossers — just two of each, one drifting each way */
-.cs-birds path{animation:cs-fly 28s linear infinite}
-.cs-birds path:nth-child(2){animation-duration:37s;animation-direction:reverse}
-.cs-clouds path{animation:cs-fly 175s linear infinite}
-.cs-clouds path:nth-child(2){animation-duration:220s;animation-direction:reverse}
-.cs-car{animation:cs-fly 30s linear infinite}
-.cs-van{animation:cs-fly 44s linear infinite;animation-delay:-24s}
+/* sky + road crossers — two of each, one drifting each way, slow */
+.cs-birds path{animation:cs-fly 42s linear infinite}
+.cs-birds path:nth-child(2){animation-duration:55s;animation-direction:reverse}
+.cs-clouds path{animation:cs-fly 260s linear infinite}
+.cs-clouds path:nth-child(2){animation-duration:320s;animation-direction:reverse}
+.cs-car{animation:cs-fly 46s linear infinite}
+.cs-van{animation:cs-fly 64s linear infinite;animation-delay:-32s}
 
 /* trees sway from the base */
 .cs-trees > g{
-  animation:cs-sway 5.6s ease-in-out infinite alternate;
+  animation:cs-sway 7s ease-in-out infinite alternate;
   transform-box:fill-box;transform-origin:center bottom;
 }
-.cs-trees > g:nth-child(2){animation-duration:6.7s;animation-delay:-1.4s}
-.cs-trees > g:nth-child(3){animation-duration:5s;animation-delay:-2.6s}
-.cs-trees > g:nth-child(4){animation-duration:6.2s;animation-delay:-3.9s}
-.cs-trees > g:nth-child(5){animation-duration:5.8s;animation-delay:-0.7s}
-.cs-trees > g:nth-child(6){animation-duration:6.9s;animation-delay:-2.1s}
+.cs-trees > g:nth-child(2){animation-duration:8.4s;animation-delay:-1.8s}
+.cs-trees > g:nth-child(3){animation-duration:6.4s;animation-delay:-3.2s}
+.cs-trees > g:nth-child(4){animation-duration:7.8s;animation-delay:-4.7s}
+.cs-trees > g:nth-child(5){animation-duration:7.2s;animation-delay:-0.9s}
+.cs-trees > g:nth-child(6){animation-duration:8.7s;animation-delay:-2.6s}
 
 @keyframes cs-spin{to{transform:rotate(360deg)}}
-@keyframes cs-sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
-@keyframes cs-slew{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
-@keyframes cs-fly{from{transform:translateX(-160px)}to{transform:translateX(1760px)}}
+@keyframes cs-sway{from{transform:rotate(-1.7deg)}to{transform:rotate(1.7deg)}}
+@keyframes cs-slew{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+@keyframes cs-fly{from{transform:translateX(-170px)}to{transform:translateX(1790px)}}
 @media (prefers-reduced-motion:reduce){
   .cs-wheel,.cs-turbine,.cs-clock-hand,.cs-crane,.cs-veh-wheel,
   .cs-birds path,.cs-clouds path,.cs-car,.cs-van,
