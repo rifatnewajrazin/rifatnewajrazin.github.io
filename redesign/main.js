@@ -768,7 +768,8 @@
     if (buildVersionsDoodads._st) { buildVersionsDoodads._st.kill(); buildVersionsDoodads._st = null; }
     box.innerHTML = '';
 
-    if (matchMedia('(max-width: 820px)').matches) return;
+    // narrow screens keep a lighter scatter (1–2 per row, a touch smaller)
+    var narrow = matchMedia('(max-width: 820px)').matches;
 
     var ART = versDoodadArt();
     var secRect = section.getBoundingClientRect();
@@ -819,10 +820,11 @@
       var yLo = Math.max(4, (rRect.top - secRect.top) - 96);
       var yHi = Math.min(secRect.height - 4, (rRect.bottom - secRect.top) + 44);
 
-      var want = 3 + Math.floor(Math.random() * 3); // 3–5
+      var want = narrow ? (1 + Math.floor(Math.random() * 2))   // 1–2
+                        : (3 + Math.floor(Math.random() * 3));  // 3–5
       var got = 0, tries = 0;
       while (got < want && tries++ < 500) {
-        var w = rnd(24, 44);
+        var w = narrow ? rnd(18, 30) : rnd(24, 44);
         var x = rnd(zoneL, zoneR - w);
         var y = rnd(yLo, Math.max(yLo + 1, yHi - w));
         if (!isFree(x, y, w)) continue;
@@ -935,7 +937,10 @@
     var hero = document.querySelector('.hero');
     var layer = document.querySelector('.floaties');
     if (!layer || !hero || !haveGSAP || reduce) return;
-    if (matchMedia('(max-width: 820px)').matches || matchMedia('(pointer: coarse)').matches) return;
+    // Narrow screens keep a smaller, ambient-only set: fewer objects, no drag
+    // (dragging fights the scroll on touch). The parallax already no-ops on
+    // touch pointers, so what's left is just the idle bob.
+    var narrow = matchMedia('(max-width: 820px)').matches;
 
     // rebuild clean (kill any tweens from a previous home visit first)
     layer.querySelectorAll('.floatie, .floatie-in').forEach(function (n) { gsap.killTweensOf(n); });
@@ -1028,6 +1033,10 @@
       });
 
     function buildFloaties(ITEMS) {
+    // trim to a light spread on narrow screens
+    if (narrow && ITEMS.length > 5) {
+      ITEMS = ITEMS.filter(function (_, i) { return i % Math.ceil(ITEMS.length / 5) === 0; });
+    }
     var objs = [];
 
     function build(cfg) {
@@ -1122,8 +1131,9 @@
     });
 
     // ---------- drag (plain Pointer Events, no plugin) ----------
+    // skipped on narrow screens — a drag gesture there just eats the scroll
     initFloaties._top = 2;
-    objs.forEach(function (o) {
+    if (!narrow) objs.forEach(function (o) {
       var el = o.el, sx = 0, sy = 0, ox = 0, oy = 0;
       var lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
 
