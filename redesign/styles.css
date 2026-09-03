@@ -303,7 +303,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 
 /* rotating rigs — all eased right down */
-.cs-wheel{animation:cs-spin 58s linear infinite;transform-origin:170px 74px}
+.cs-wheel{animation:cs-spin 58s linear infinite;transform-origin:170px 85px}
 .cs-turbine{animation:cs-spin 12s linear infinite;transform-origin:1320px 40px}
 .cs-clock-hand{animation:cs-spin 120s linear infinite;transform-origin:857px 66px}
 .cs-crane{animation:cs-slew 22s ease-in-out infinite alternate;transform-origin:880px 42px}
