@@ -1148,31 +1148,6 @@ body{text-transform:lowercase}
   --tape-coral:rgba(111,139,58,.26);
 }
 
-/* ---- sketchbook page: warm toned paper, uneven lighting, a fibre tooth ----
-   Subtle by design — it should sit UNDER the torn scraps / tape / doodles
-   and read as the surface they're pinned to, not compete with them. */
-body::before{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  mix-blend-mode:multiply;
-  background:
-    /* lit from above-centre; corners settle a touch warmer + darker */
-    radial-gradient(115% 85% at 50% 20%, rgba(255,252,244,.55), rgba(255,252,244,0) 58%),
-    radial-gradient(150% 130% at 50% 118%, rgba(74,61,42,.12), rgba(74,61,42,0) 55%),
-    radial-gradient(60% 55% at 8% 96%,  rgba(74,61,42,.10), transparent 60%),
-    radial-gradient(55% 50% at 94% 6%,  rgba(74,61,42,.08), transparent 60%),
-    /* faint edge shadow, like a page near the binding */
-    linear-gradient(180deg, rgba(58,48,34,.06) 0, transparent 7%, transparent 93%, rgba(58,48,34,.07) 100%);
-}
-.grain{
-  opacity:.5;
-  background-image:
-    /* fine paper tooth */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='tooth'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23tooth)' opacity='0.34'/%3E%3C/svg%3E"),
-    /* long, soft paper fibres */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='240'%3E%3Cfilter id='fibre'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.016 0.13' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fibre)' opacity='0.05'/%3E%3C/svg%3E");
-  background-size:170px 170px, 340px 240px;
-}
-
 /* statement scrap: green instead of coral, dark enough for white text */
 .statement{background:var(--band-green)}
 
