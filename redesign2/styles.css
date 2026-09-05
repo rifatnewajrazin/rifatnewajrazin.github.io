@@ -925,9 +925,8 @@ body{
 /* ---- section headings: coral marker underline ---- */
 .section-head h2,.work-head h2{position:relative;display:inline-block;color:var(--ink)}
 .section-head h2::after,.work-head h2::after{
-  content:"";position:absolute;left:-2%;right:-8%;bottom:-.34em;height:12px;
-  background:var(--sketch-line) repeat-x left center;background-size:260px 12px;
-  transform:rotate(-.6deg);
+  content:"";position:absolute;left:-2%;right:-8%;bottom:-.4em;height:16px;
+  background:var(--sketch-line) repeat-x left center;background-size:280px 16px;
 }
 
 /* ---- work: torn cream cards, scattered tilt, straighten on hover ---- */
@@ -993,7 +992,7 @@ body{
 
 /* ---- hand-drawn rule, shared: ONE thin, softly wobbly ink line ---- */
 :root{
-  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='12'%3E%3Cpath d='M0 6 C22 2 40 10 64 5 C88 1 106 11 132 6 C156 2 176 10 200 5.5 C220 2.5 240 9 260 6' fill='none' stroke='%232b3a33' stroke-width='1.3' stroke-opacity='.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='16'%3E%3Cg fill='none' stroke='%232b3a33' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M0 8 L14 4 L28 11 L42 6 L56 12 L70 7 L84 3 L98 9 L112 13 L126 6 L140 9 L154 4 L168 12 L182 7 L196 10 L210 4 L224 9 L238 13 L252 6 L266 10 L280 8' stroke-width='2.4' stroke-opacity='.5'/%3E%3Cpath d='M3 10 L20 6 L37 12 L54 7 L71 4 L88 10 L106 13 L124 6 L141 10 L158 5 L176 9 L194 13 L212 6 L230 10 L248 5 L266 9 L280 7' stroke-width='1.1' stroke-opacity='.3'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 /* section / work headings: thin hand-drawn rule + consistent space below */
@@ -1002,8 +1001,8 @@ body{
   padding-bottom:clamp(22px,3.4vw,44px);
 }
 .section-head::before,.work-head::before{
-  content:"";position:absolute;left:0;right:0;top:-8px;height:12px;pointer-events:none;
-  background:var(--sketch-line) repeat-x left center;background-size:260px 12px;
+  content:"";position:absolute;left:0;right:0;top:-10px;height:16px;pointer-events:none;
+  background:var(--sketch-line) repeat-x left center;background-size:280px 16px;
 }
 
 /* ---- marquee: a torn strip of paper with a hand-drawn line each edge ----
@@ -1016,16 +1015,18 @@ body{
     var(--sketch-line) repeat-x left top,
     var(--sketch-line) repeat-x left bottom,
     var(--cream);
-  background-size:260px 12px, 260px 12px, auto;
+  background-size:280px 16px, 280px 16px, auto;
 }
 .marquee > *{position:relative;z-index:1}
 .marquee::before,.marquee::after{
-  content:"";position:absolute;left:0;right:0;height:15px;z-index:0;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='15'%3E%3Cpath d='M0 15 H190 V6 L180 9 L171 3 L162 10 L153 4 L144 9 L135 2 L126 8 L117 3 L108 10 L99 4 L90 9 L81 2 L72 8 L63 3 L54 10 L45 4 L36 9 L27 2 L18 7 L9 3 Z' fill='%23f2ecdc'/%3E%3C/svg%3E") repeat-x left top;
-  background-size:190px 15px;
+  content:"";position:absolute;left:0;right:0;height:22px;z-index:0;pointer-events:none;
+  /* irregular torn-paper edge: uneven chunk widths + depths, occasional
+     deeper notch — not a periodic sawtooth */
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='22'%3E%3Cpath d='M0 22 H430 V11 L421 15 L414 6 L405 13 L399 18 L389 9 L382 12 L370 4 L362 16 L352 10 L345 19 L333 7 L325 13 L314 3 L305 15 L296 11 L285 17 L274 6 L266 12 L253 4 L245 16 L235 9 L227 14 L214 5 L206 12 L197 18 L186 8 L178 12 L166 3 L157 15 L148 10 L138 17 L128 6 L120 12 L108 4 L100 16 L90 9 L82 14 L70 5 L61 12 L52 19 L41 7 L33 12 L22 3 L13 15 L5 10 Z' fill='%23f4eede'/%3E%3C/svg%3E") repeat-x left top;
+  background-size:430px 22px;
 }
-.marquee::before{top:-14px}
-.marquee::after{bottom:-14px;transform:scaleY(-1)}
+.marquee::before{top:-20px}
+.marquee::after{bottom:-20px;transform:scaleY(-1)}
 
 /* ---- no dark mode ---- */
 .theme-toggle,.bg-flow{display:none !important}
@@ -1156,7 +1157,7 @@ body{text-transform:lowercase}
 .vers-row.vr-pink .vers-note h3{color:var(--coral)}
 
 /* ---- contact pull-quote: lowercase Permanent Marker, three lines ---- */
-.contact-kicker{margin-top:clamp(96px,19vh,240px);font-size:16px;letter-spacing:.16em}
+.contact-kicker{margin-top:clamp(150px,27vh,360px);font-size:19px;letter-spacing:.14em}
 /* the "reach me out at" card, sized up */
 .contact-links{padding:clamp(36px,4.6vw,66px)}
 .contact-reach{font-size:15px;letter-spacing:.14em}
@@ -1192,7 +1193,7 @@ body{text-transform:lowercase}
 }
 .case-meta::before{
   content:"";position:absolute;left:0;right:0;top:0;height:5px;pointer-events:none;
-  background:var(--sketch-line) repeat-x left center;background-size:220px 5px;
+  background:var(--sketch-line) repeat-x left center;background-size:280px 16px;
 }
 #shotCover{rotate:-1.5deg;margin-block:12px}
 .case-body h3{display:inline-block}
@@ -1241,3 +1242,14 @@ body{text-transform:lowercase}
 
 /* name scrap stays torn white paper with plain black letters (both words) */
 .hero-name .line-1,.hero-name .line-2{color:var(--ink) !important}
+
+
+/* ---- section titles nudged onto their own angles ---- */
+.work-head h2{rotate:-1.8deg}
+.about .section-head h2{rotate:1.6deg}
+.versions .section-head h2{rotate:-1.3deg}
+.contact-kicker{rotate:2deg}
+
+/* B-Sides row titles: nudged onto an angle, alternating side to side */
+.vers-note h3{rotate:1.8deg}
+.vers-row.flip .vers-note h3{rotate:-1.5deg}
