@@ -662,8 +662,10 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   font-size:clamp(17px,2vw,22px);line-height:1.15;text-align:center;
   color:var(--ink-soft);padding:12px 6px 16px;
 }
-.instax figcaption.cap-teal{color:var(--teal)}
-.instax figcaption.cap-pink{color:var(--pink)}
+/* caption colour is uniform ash grey — the old teal/pink accents are
+   kept as no-ops so existing markup / CMS output doesn't need changing */
+.instax figcaption.cap-teal,
+.instax figcaption.cap-pink{color:var(--ink-soft)}
 
 /* Two or more photos: centred rows of two (.instax-pair). Cards overlap a
    little at rest — horizontally within a pair, vertically between pairs —
