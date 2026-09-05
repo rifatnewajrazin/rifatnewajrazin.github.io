@@ -249,7 +249,11 @@ a{color:inherit;text-decoration:none}
   background-size:90px 90px, 78px 1700px, 100% 100%, 100% 100%;
   background-repeat:repeat, repeat, no-repeat, no-repeat;
 }
-.intro-mark{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);letter-spacing:.02em;color:var(--ink)}
+/* Hidden until the intro animation reveals it — and that reveal is gated on
+   document.fonts.ready, so "RNR." never flashes in the fallback face and
+   then jumps to Caveat on a cold (cmd+shift+R) load. */
+.intro-mark{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);letter-spacing:.02em;color:var(--ink);opacity:0}
+.reveal-all .intro-mark{opacity:1}   /* JS never booted — show it anyway */
 .intro-mark span{color:var(--coral)}
 body.intro-done .intro{display:none}
 
