@@ -237,12 +237,17 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- intro ---------- */
 .intro{
-  position:fixed;inset:0;z-index:100;background:var(--paper);
-  background-image:
-    linear-gradient(var(--paper-line) 1px,transparent 1px),
-    linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);
-  background-size:64px 64px;
+  position:fixed;inset:0;z-index:100;
   display:flex;align-items:center;justify-content:center;
+  /* same paper surface as the body so the loader blends into the site */
+  background-color:var(--ground);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='gi'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gi)' opacity='0.22'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='1700'%3E%3Cpath d='M39 0 C42 280 34 560 39 840 C44 1120 35 1400 39 1700' fill='none' stroke='%23c05f3d' stroke-width='.75' stroke-opacity='.3'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(180deg, transparent 0 812px, rgba(58,44,30,.05) 813px 814px, rgba(255,255,255,.06) 815px 819px, transparent 820px),
+    linear-gradient(90deg, transparent 0 59.6%, rgba(58,44,30,.045) 59.8%, rgba(255,255,255,.06) 60.3%, transparent 61%);
+  background-size:90px 90px, 78px 1700px, 100% 100%, 100% 100%;
+  background-repeat:repeat, repeat, no-repeat, no-repeat;
 }
 .intro-mark{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);letter-spacing:.02em;color:var(--ink)}
 .intro-mark span{color:var(--coral)}
