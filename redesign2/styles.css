@@ -973,3 +973,46 @@ body{
 @media (prefers-reduced-motion:reduce){
   .nav-links a,.work-cell{transition:none}
 }
+
+/* ---- hero: name on a torn paper scrap, centred, one line ---- */
+.hero{padding-top:14vh;padding-bottom:12vh}
+.hero-name{
+  background:var(--cream);color:var(--ink) !important;
+  padding:.2em .62em .34em;border-radius:6px;
+  filter:url(#torn) drop-shadow(0 26px 44px rgba(23,22,26,.22));
+  rotate:-2.2deg;
+  font-size:clamp(34px,7vw,102px);line-height:1;
+  letter-spacing:normal;text-transform:none;
+  white-space:nowrap;
+  opacity:1 !important;                 /* was scroll-faded via --hp */
+}
+/* fitHero() in main.js sizes each line separately with an inline font-size;
+   override it so the name is one even line on the scrap */
+.hero-name .line{display:inline !important;font-size:inherit !important;
+  transform:none !important;color:var(--ink) !important}
+.hero-name .line-1::after{content:"\00a0"}   /* space between the two spans */
+.hero-name .line-2{color:var(--coral) !important}
+/* washi tape holding the name scrap down */
+.hero-name::before,.hero-name::after{
+  content:"";position:absolute;z-index:3;width:118px;height:30px;background:var(--tape-teal);
+  clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);box-shadow:0 3px 8px rgba(23,22,26,.16);
+}
+.hero-name::before{top:-15px;left:11%;rotate:-6deg}
+.hero-name::after{bottom:-15px;right:13%;rotate:5deg;background:var(--tape-rose)}
+/* the rotating role / location labels: quieter so they don't fight the scrap */
+.hero-flank span{font-size:clamp(15px,1.7vw,19px);color:var(--ink-mute)}
+@media(max-width:600px){
+  .hero-name{white-space:normal;rotate:-1.4deg}
+}
+/* role + location: a quiet caption line tucked under the name scrap
+   (was floating at the hero's left/right edges) */
+.hero-flank{
+  position:static;transform:none;order:2;
+  margin-top:26px;justify-content:center;gap:8px 18px;flex-wrap:wrap;
+  padding:0;pointer-events:auto;
+}
+.hero-flank .flank-l,.hero-flank .flank-r{transform:none !important;opacity:1 !important}
+.hero-flank .flank-l::before,.hero-flank .flank-r::after{display:none}
+.hero-flank span{white-space:normal;line-height:1.25}
+.hero-flank .flank-r{text-align:center}
+.hero-flank .flank-l::after{content:"·";margin-left:18px;color:var(--ink-mute)}
