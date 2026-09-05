@@ -412,7 +412,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 .statement-text{
   position:relative;z-index:1;
-  font-family:'Science Gothic','Prompt',system-ui,sans-serif;font-weight:500;
+  font-family:'ZCOOL QingKe HuangYou','Prompt',system-ui,sans-serif;font-weight:400;
   font-size:clamp(24px,3.6vw,46px);line-height:1.34;letter-spacing:0;
   max-width:22ch;text-transform:none;
 }
