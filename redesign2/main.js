@@ -895,7 +895,8 @@
     gsap.set(stWords, { clearProps: 'color' });
     var tween = gsap.to(stWords, {
       color: '#fdfdfd', ease: 'none', stagger: { each: 0.4 },
-      scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
+      // fully lit by the time the scrap reaches the middle of the screen
+      scrollTrigger: { trigger: '.statement', start: 'top 88%', end: 'center 55%', scrub: true }
     });
     buildStatementFx._st = tween.scrollTrigger || null;
   }

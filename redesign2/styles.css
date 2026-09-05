@@ -890,18 +890,19 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 body{
   background-color:var(--ground) !important;
   background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.22'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='1700'%3E%3Cpath d='M39 0 C42 280 34 560 39 840 C44 1120 35 1400 39 1700' fill='none' stroke='%23c05f3d' stroke-width='.75' stroke-opacity='.3'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1500' height='560'%3E%3Cpath d='M0 280 C260 275 540 288 820 278 C1100 268 1320 286 1500 280' fill='none' stroke='%23c05f3d' stroke-width='.65' stroke-opacity='.12'/%3E%3C/svg%3E"),
     repeating-linear-gradient(180deg, transparent 0 812px, rgba(58,44,30,.05) 813px 814px, rgba(255,255,255,.06) 815px 819px, transparent 820px),
     linear-gradient(90deg, transparent 0 59.6%, rgba(58,44,30,.045) 59.8%, rgba(255,255,255,.06) 60.3%, transparent 61%)
     !important;
-  background-size:78px 1700px, 1500px 560px, 100% 100%, 100% 100% !important;
-  background-repeat:repeat, repeat, no-repeat, no-repeat !important;
+  background-size:90px 90px, 78px 1700px, 1500px 560px, 100% 100%, 100% 100% !important;
+  background-repeat:repeat, repeat, repeat, no-repeat, no-repeat !important;
   background-attachment:scroll !important;
 }
 /* one cheap FIXED grain (painted once, composited) instead of tiled
    fractal-noise in the scrolling background — that was the jank */
-.grain{display:block;opacity:.42}
+.grain{display:none}
 
 /* ---- nav: folder tabs, taped down at their own tilt ---- */
 .nav{padding-top:14px}
@@ -951,14 +952,16 @@ body{
   justify-content:flex-start;       /* copy hugs the left */
   rotate:-3.4deg;
   overflow:visible;                 /* let the tape sit past the torn edge */
-  filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
+  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
+  /* no filter here: the scroll word-light-up repaints this subtree every
+     frame, and a drop-shadow on it would re-run per frame → jank */
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
 /* ~6-7 words a line, left-aligned; the right padding is the negative space */
 .statement-text{width:auto;max-width:34ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 /* *asterisk* runs in statement.json render in the Caveat script hand */
-.statement-text .hi{font-family:var(--hand);font-weight:600;font-size:1.06em}
+.statement-text .hi{font:inherit}   /* one font across the whole statement */
 .statement::before,.statement::after{
   content:"";position:absolute;z-index:3;width:150px;height:34px;
   background:var(--tape-rose);
@@ -972,7 +975,8 @@ body{
 .about-grid,.contact-links{
   position:relative;background:var(--cream);
   padding:clamp(30px,4vw,56px);border-radius:6px;
-  filter:url(#torn) drop-shadow(0 18px 30px rgba(23,22,26,.14));
+  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
+  filter:drop-shadow(0 18px 30px rgba(23,22,26,.14));
 }
 .about-grid{rotate:-1.4deg}
 .contact-links{display:inline-flex;margin-inline:auto;rotate:1.2deg}
@@ -986,16 +990,19 @@ body{
 }
 .vers-row.flip .instax::after{background:var(--tape-rose);rotate:-4deg}
 
-/* ---- hand-drawn rule, shared: a wobbly double ink line, tiled ---- */
+/* ---- hand-drawn rule, shared: ONE thin, softly wobbly ink line ---- */
 :root{
-  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='9'%3E%3Cg fill='none' stroke='%232b3a33' stroke-linecap='round'%3E%3Cpath d='M0 4.4 C26 3 44 5.6 70 3.8 C96 2 116 5.4 140 3.9 C145 3.5 148 4.2 150 4' stroke-width='1.1'/%3E%3Cpath d='M6 6 C28 5.2 48 6.4 72 5 C98 3.5 118 6 138 4.8' stroke-width='.5' stroke-opacity='.35'/%3E%3C/g%3E%3C/svg%3E");
+  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='5'%3E%3Cpath d='M0 2.6 C40 2.2 72 3.1 112 2.5 C152 1.9 184 3 220 2.6' fill='none' stroke='%232b3a33' stroke-width='1' stroke-opacity='.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
-/* section / work headings: hand-drawn rule instead of a 1px border */
-.section-head,.work-head{border-top:0 !important;position:relative}
+/* section / work headings: thin hand-drawn rule + consistent space below */
+.section-head,.work-head{
+  border-top:0 !important;position:relative;
+  padding-bottom:clamp(22px,3.4vw,44px);
+}
 .section-head::before,.work-head::before{
-  content:"";position:absolute;left:0;right:0;top:-4px;height:9px;pointer-events:none;
-  background:var(--sketch-line) repeat-x left center;
+  content:"";position:absolute;left:0;right:0;top:-5px;height:5px;pointer-events:none;
+  background:var(--sketch-line) repeat-x left center;background-size:220px 5px;
 }
 
 /* ---- marquee: scratched hand-drawn edges + a faint torn-paper lip ---- */
@@ -1022,7 +1029,8 @@ body{
 .hero-name{
   background:var(--cream);color:var(--ink) !important;
   padding:.2em .62em .34em;border-radius:6px;
-  filter:url(#torn) drop-shadow(0 26px 44px rgba(23,22,26,.22));
+  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
+  filter:drop-shadow(0 26px 44px rgba(23,22,26,.22));
   rotate:-2.2deg;
   font-size:clamp(34px,7vw,102px);line-height:1;
   letter-spacing:normal;text-transform:none;
@@ -1061,7 +1069,9 @@ body{
 }
 .hero-flank .flank-l::before,.hero-flank .flank-l::after{display:none}
 .flank-l .rotator{justify-content:center}   /* was flex-end; centre the cycling word */
-.flank-l .rotator-text{color:var(--ink-soft)}
+/* the base fades every .hero-flank span via --hpf (and it compounds down
+   the nested rotator spans) — hold this caption fully opaque */
+.hero-flank,.hero-flank *{opacity:1 !important}
 .hero-flank span,.flank-l .rotator,.flank-l .rotator-text{
   font-size:clamp(20px,2.7vw,31px);
   color:var(--ink-soft);font-weight:500;white-space:nowrap;line-height:1.2;
@@ -1153,7 +1163,8 @@ body{text-transform:lowercase}
 /* ---- case-study images: torn-paper edges, not plain rectangles ---- */
 #shotCover,.shot-row .shot{
   border-radius:1px;
-  filter:url(#torn) drop-shadow(0 16px 28px rgba(20,20,16,.18));
+  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
+  filter:drop-shadow(0 16px 28px rgba(20,20,16,.18));
 }
 
 /* ---- case study: each block on its own odd angle — collage, still readable ---- */
