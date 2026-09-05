@@ -100,6 +100,26 @@
       in the room asking if the logo is really centered...
     </p>
 
+    <!-- Draggable "pull me" photocard in the open right half of the band.
+         Drag the whole card, or peel just the mask overlay off the face;
+         both spring back on release (main.js initStatementCard).
+         Hidden under 900px. Assets, both optional — the card degrades
+         gracefully without them:
+           uploads/portrait.jpg  a 2:3 headshot
+           uploads/mask.png      a transparent PNG that covers the face
+         (an Iron Maiden "Eddie" mask is the artist's own IP — supply a
+          licensed / commissioned file here; none is bundled.) -->
+    <figure class="stmt-card" aria-hidden="true">
+      <span class="stmt-card-pin"></span>
+      <div class="stmt-card-photo">
+        <img class="stmt-card-face" src="./uploads/portrait.jpg" alt=""
+             draggable="false" onerror="this.remove()" />
+        <img class="stmt-card-mask" src="./uploads/mask.png" alt=""
+             draggable="false" onerror="this.closest('.stmt-card').classList.add('no-mask')" />
+      </div>
+      <figcaption>pull me</figcaption>
+    </figure>
+
     <!-- Hand-drawn city doodle along the bottom edge. All motion is CSS
          transform/opacity (compositor), frozen under prefers-reduced-motion.
          preserveAspectRatio="xMidYMax slice" => uniform scale (round wheel),
