@@ -1088,12 +1088,19 @@ body{text-transform:lowercase}
 /* ---- "Miles and kilometers" heading -> same coral as "The Backstage Guy" ---- */
 .vers-row.vr-pink .vers-note h3{color:var(--coral)}
 
-/* ---- contact pull-quote: lowercase Permanent Marker ---- */
+/* ---- contact pull-quote: lowercase Permanent Marker, three lines ---- */
+.contact-kicker{margin-top:clamp(28px,7vh,84px)}   /* sit a little lower */
 .contact-sub{
   font-family:'Permanent Marker',var(--hand);
   font-weight:400;text-transform:lowercase;
   font-size:clamp(18px,2.1vw,26px);line-height:1.4;letter-spacing:.005em;
-  color:var(--navy);max-width:34ch;
+  color:var(--navy);max-width:46ch;
+}
+
+/* ---- case-study images: torn-paper edges, not plain rectangles ---- */
+#shotCover,.shot-row .shot{
+  border-radius:1px;
+  filter:url(#torn) drop-shadow(0 16px 28px rgba(20,20,16,.18));
 }
 
 /* ---- case study: each block on its own odd angle — collage, still readable ---- */
@@ -1108,8 +1115,8 @@ body{text-transform:lowercase}
 #approachText{rotate:-1.7deg}
 #outcomeText{rotate:1.3deg}
 .shot-row{gap:clamp(16px,2.4vw,34px)}
-.shot-row .shot.b{rotate:2deg}
-.shot-row .shot.c{rotate:-2.3deg}
+.shot-row .shot:first-child{rotate:2deg}
+.shot-row .shot:last-child{rotate:-2.3deg}
 .next a{display:inline-block;rotate:-1.6deg}
 @media (prefers-reduced-motion:reduce){
   .case-title,.case-meta,#shotCover,.case-body h3,
