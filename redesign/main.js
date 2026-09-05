@@ -271,21 +271,43 @@
     window.__rnrApplyHeroScroll = apply;
   })();
 
-  // ---------- nav dark-section invert (independent of GSAP) ----------
-  var navInvertIO = null;
+  // ---------- nav / toggle colour-band invert (independent of GSAP) ----------
+  // Both the top nav and the bottom-right theme toggle re-tint to the
+  // "on band" light while the coral/blue .statement sits behind them.
+  // One observer each: the nav cares about the strip under the header,
+  // the toggle about the strip above its own corner.
+  var navInvertIO = null, toggleBandIO = null;
   function navInvertRebuild() {
     var nav = document.getElementById('nav');
+    var toggle = document.getElementById('themeToggle');
     var darkSections = document.querySelectorAll('.statement');
     if (navInvertIO) { navInvertIO.disconnect(); navInvertIO = null; }
-    if (!nav) return;
-    if (!darkSections.length || !('IntersectionObserver' in window)) { nav.classList.remove('on-dark'); return; }
-    var navH = nav.offsetHeight || 70;
-    var bottom = Math.max(0, Math.round(window.innerHeight - navH));
-    navInvertIO = new IntersectionObserver(function (entries) {
-      var onDark = entries.some(function (e) { return e.isIntersecting; });
-      nav.classList.toggle('on-dark', onDark);
-    }, { rootMargin: '0px 0px -' + bottom + 'px 0px', threshold: 0 });
-    darkSections.forEach(function (el) { navInvertIO.observe(el); });
+    if (toggleBandIO) { toggleBandIO.disconnect(); toggleBandIO = null; }
+
+    var haveIO = 'IntersectionObserver' in window;
+    if (!darkSections.length || !haveIO) {
+      if (nav) nav.classList.remove('on-dark');
+      if (toggle) toggle.classList.remove('on-band');
+      return;
+    }
+
+    if (nav) {
+      var navH = nav.offsetHeight || 70;
+      var below = Math.max(0, Math.round(window.innerHeight - navH));
+      navInvertIO = new IntersectionObserver(function (entries) {
+        nav.classList.toggle('on-dark', entries.some(function (e) { return e.isIntersecting; }));
+      }, { rootMargin: '0px 0px -' + below + 'px 0px', threshold: 0 });
+      darkSections.forEach(function (el) { navInvertIO.observe(el); });
+    }
+
+    if (toggle) {
+      // watch only the bottom ~110px strip the toggle occupies
+      var above = Math.max(0, Math.round(window.innerHeight - 110));
+      toggleBandIO = new IntersectionObserver(function (entries) {
+        toggle.classList.toggle('on-band', entries.some(function (e) { return e.isIntersecting; }));
+      }, { rootMargin: '-' + above + 'px 0px 0px 0px', threshold: 0 });
+      darkSections.forEach(function (el) { toggleBandIO.observe(el); });
+    }
   }
   (function () {
     var rt;
@@ -508,9 +530,11 @@
 
   /* ---------- theme toggle ----------
      data-theme is set on <html> before first paint by the inline head
-     script (from localStorage, else prefers-color-scheme). This just
-     flips it, persists the choice, and keeps the button label/state and
-     the OS <meta theme-color> in sync. Lives outside <main>, wired once. */
+     script: light by default, dark only if the visitor previously chose
+     it (localStorage). The OS setting is deliberately ignored so every
+     first visit lands in light. This just flips the theme, persists the
+     choice, and keeps the button label/state and the OS <meta
+     theme-color> in sync. Lives outside <main>, wired once. */
   (function wireThemeToggle() {
     var root = document.documentElement;
     var btn = document.getElementById('themeToggle');
@@ -537,14 +561,6 @@
       // cheap insurance after a big repaint.
       if (window.ScrollTrigger) window.ScrollTrigger.refresh();
     });
-    // follow the OS if the visitor never made an explicit choice
-    try {
-      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
-        if (localStorage.getItem('theme')) return;
-        root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-        sync();
-      });
-    } catch (e) {}
   })();
 
   /* ---------- click doodles ----------

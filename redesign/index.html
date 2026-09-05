@@ -14,8 +14,9 @@
      re-animates on a hard reload), and stop the browser restoring the old
      scroll position. If main.js never boots, reveal everything after 4s. -->
 <script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
-<!-- Apply the saved / OS theme before first paint so there's no flash. -->
-<script>(function(d){try{var t=localStorage.getItem('theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';d.setAttribute('data-theme',t)}catch(e){}})(document.documentElement)</script>
+<!-- Light by default; only an explicit saved choice flips it to dark. Set
+     before first paint so there's no flash. -->
+<script>(function(d){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}d.setAttribute('data-theme',t)})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Self-hosted + preloaded so the display face (mark, hero name, headings)

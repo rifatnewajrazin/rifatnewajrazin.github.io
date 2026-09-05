@@ -279,33 +279,38 @@ body.intro-done .intro{display:none}
 .nav.on-dark .nav-links a:hover{color:var(--on-band)}
 .nav.on-dark .nav-links a::after{background:var(--on-band)}
 
-/* ---------- theme toggle (fixed, bottom-right) ---------- */
+/* ---------- theme toggle (fixed, bottom-right) ----------
+   Outline only: no fill, no shadow. The ring and the icon are both
+   currentColor, so a single colour swap (see .on-band, mirroring the
+   nav over the colour band) re-tints the whole control. */
 .theme-toggle{
   position:fixed;z-index:30;
   right:clamp(16px,2.4vw,26px);bottom:clamp(16px,2.4vw,26px);
   width:46px;height:46px;border-radius:50%;
   display:grid;place-items:center;
-  background:var(--paper);color:var(--ink);
-  border:1.5px solid var(--hairline);
-  box-shadow:0 8px 22px -10px rgba(0,0,0,.28);
+  background:transparent;color:var(--ink);
+  border:1.5px solid currentColor;overflow:hidden;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
-  transition:transform .22s ease,background .32s ease,
-             border-color .32s ease,box-shadow .32s ease;
+  transition:transform .22s ease,color .32s ease,border-color .32s ease;
 }
+.theme-toggle.on-band{color:var(--on-band)}
 .theme-toggle:hover{transform:translateY(-2px) rotate(-10deg)}
 .theme-toggle:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
 .theme-toggle svg{
   position:absolute;width:19px;height:19px;
   fill:none;stroke:currentColor;stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;
-  transition:opacity .2s ease,transform .35s cubic-bezier(.2,.7,.2,1);
+  will-change:transform,opacity;
+  transition:transform .6s cubic-bezier(.65,0,.35,1),opacity .42s ease;
 }
-/* light mode: offer the moon ("go dark"); dark mode: offer the sun */
-.theme-toggle .tt-moon{opacity:1;transform:none}
-.theme-toggle .tt-sun{opacity:0;transform:scale(.5) rotate(-50deg)}
-[data-theme="dark"] .theme-toggle .tt-moon{opacity:0;transform:scale(.5) rotate(50deg)}
-[data-theme="dark"] .theme-toggle .tt-sun{opacity:1;transform:none}
-[data-theme="dark"] .theme-toggle{box-shadow:0 8px 26px -10px rgba(0,0,0,.6)}
+/* Visible icon = the CURRENT mode. Toggling slides the whole "sky":
+   going dark, the sun sets below the rim while the moon drops in from
+   above; going light, the sun rises back up from below and the moon
+   lifts away over the top. The round overflow:hidden rim is the horizon. */
+.theme-toggle .tt-sun{opacity:1;transform:translateY(0)}
+.theme-toggle .tt-moon{opacity:0;transform:translateY(-135%)}
+[data-theme="dark"] .theme-toggle .tt-sun{opacity:0;transform:translateY(135%)}
+[data-theme="dark"] .theme-toggle .tt-moon{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){
   .theme-toggle,.theme-toggle svg{transition:none}
   .theme-toggle:hover{transform:none}

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#fdfdfd" />
 <title id="pageTitle">Loading… — Rifat Newaj Razin</title>
 <meta name="description" content="Case study — Rifat Newaj Razin, graphic designer in Dhaka." />
 <meta name="robots" content="noindex, nofollow" />
@@ -11,6 +12,9 @@
      re-animates on a hard reload), and stop the browser restoring the old
      scroll position. If main.js never boots, reveal everything after 4s. -->
 <script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
+<!-- Light by default; only an explicit saved choice flips it to dark. Set
+     before first paint so there's no flash. -->
+<script>(function(d){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}d.setAttribute('data-theme',t)})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- identical to index.html's font set — this <head> never reloads once
@@ -25,6 +29,7 @@
      this <head>. -->
 </head>
 <body>
+<div class="bg-flow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
 <!-- ============ PAGE TRANSITION ============ (see main.js) -->
@@ -79,6 +84,13 @@
   <span>© 2026 Rifat Newaj Razin</span>
   <span>Dhaka, Bangladesh</span>
 </footer>
+
+<!-- Theme toggle — mirrors index.html so a direct load of this page also
+     has it; wired once in main.js. -->
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Toggle theme">
+  <svg class="tt-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  <svg class="tt-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+</button>
 
 <!-- ============ LIGHTBOX ============ click any photo to view it full-size
      (wired in main.js, so it survives client-side navigation into this view) -->
