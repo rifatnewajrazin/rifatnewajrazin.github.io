@@ -1009,8 +1009,9 @@ body{
    JS-locked min-width keeps the centred row from jumping as words cycle. */
 .hero-flank{
   position:static;transform:none;order:2;
-  margin-top:24px;justify-content:center;
+  margin-top:26px;justify-content:center;
   padding:0;pointer-events:auto;
+  rotate:2.7deg;                 /* its own casual tilt, not parallel to the scrap */
 }
 .hero-flank .flank-r{display:none}                 /* drop "based in dhaka…" */
 .hero-flank .flank-l{
@@ -1021,7 +1022,7 @@ body{
 .flank-l .rotator{justify-content:center}   /* was flex-end; centre the cycling word */
 .flank-l .rotator-text{color:var(--ink-soft)}
 .hero-flank span,.flank-l .rotator,.flank-l .rotator-text{
-  font-size:clamp(24px,3.4vw,40px);
+  font-size:clamp(20px,2.7vw,31px);
   color:var(--ink-soft);font-weight:500;white-space:nowrap;line-height:1.2;
 }
 
