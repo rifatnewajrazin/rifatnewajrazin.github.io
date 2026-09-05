@@ -933,15 +933,15 @@ body{
 .statement{
   max-width:1040px;width:auto;
   margin:clamp(64px,13vh,150px) auto;
-  /* copy hugs the left; a big empty stretch of the scrap is left on the right */
-  padding:clamp(46px,6vw,84px) clamp(120px,22vw,380px) clamp(46px,6vw,84px) clamp(38px,6vw,76px);
-  justify-content:flex-start;
+  padding:clamp(48px,6vw,86px) clamp(40px,6vw,90px);
+  justify-content:flex-start;       /* copy hugs the left */
   rotate:-3.4deg;
   overflow:visible;                 /* let the tape sit past the torn edge */
   filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
-.statement-text{max-width:30ch;text-transform:lowercase}
+/* text takes under half the scrap — the rest is deliberate green space */
+.statement-text{width:min(30ch,46%);max-width:none;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 .statement::before,.statement::after{
   content:"";position:absolute;z-index:3;width:150px;height:34px;
@@ -1061,10 +1061,17 @@ body{text-transform:lowercase}
   display:block;max-width:16ch;
   margin:12px 0 0 auto;                 /* block sits at the right edge */
   font-family:var(--hand);font-weight:500;
-  font-size:clamp(20px,2.2vw,28px);letter-spacing:.01em;
+  font-size:clamp(20px,2.2vw,28px);line-height:1.12;letter-spacing:.01em;
   text-transform:lowercase;color:var(--ink-soft);
   text-align:left;text-align-last:right;
   rotate:-1.8deg;
+}
+
+/* ---- B-Sides row titles: thicker + a touch larger ---- */
+.vers-note h3{
+  font-weight:700;
+  font-size:clamp(26px,3.7vw,42px);
+  letter-spacing:normal;
 }
 
 /* ---- B-Sides: hovering a photocard lifts ONLY that card ----
@@ -1091,7 +1098,12 @@ body{text-transform:lowercase}
 .vers-row.vr-pink .vers-note h3{color:var(--coral)}
 
 /* ---- contact pull-quote: lowercase Permanent Marker, three lines ---- */
-.contact-kicker{margin-top:clamp(28px,7vh,84px)}   /* sit a little lower */
+.contact-kicker{margin-top:clamp(52px,11vh,130px);font-size:16px;letter-spacing:.16em}
+/* the "reach me out at" card, sized up */
+.contact-links{padding:clamp(36px,4.6vw,66px)}
+.contact-reach{font-size:15px;letter-spacing:.14em}
+.contact-links > a{font-size:clamp(24px,3.4vw,40px)}
+.contact-social{font-size:16px;gap:30px}
 .contact-sub{
   font-family:'Permanent Marker',var(--hand);
   font-weight:400;text-transform:lowercase;
