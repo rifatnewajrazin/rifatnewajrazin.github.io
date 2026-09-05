@@ -999,23 +999,29 @@ body{
 }
 .hero-name::before{top:-15px;left:11%;rotate:-6deg}
 .hero-name::after{bottom:-15px;right:13%;rotate:5deg;background:var(--tape-rose)}
-/* the rotating role / location labels: quieter so they don't fight the scrap */
-.hero-flank span{font-size:clamp(15px,1.7vw,19px);color:var(--ink-mute)}
 @media(max-width:600px){
   .hero-name{white-space:normal;rotate:-1.4deg}
 }
-/* role + location: a quiet caption line tucked under the name scrap
-   (was floating at the hero's left/right edges) */
+/* under the name scrap: just the rotating role, centred, a bit bigger.
+   The word-switch effect (setupFlankRotator in main.js) stays; the
+   JS-locked min-width keeps the centred row from jumping as words cycle. */
 .hero-flank{
   position:static;transform:none;order:2;
-  margin-top:26px;justify-content:center;gap:8px 18px;flex-wrap:wrap;
+  margin-top:24px;justify-content:center;
   padding:0;pointer-events:auto;
 }
-.hero-flank .flank-l,.hero-flank .flank-r{transform:none !important;opacity:1 !important}
-.hero-flank .flank-l::before,.hero-flank .flank-r::after{display:none}
-.hero-flank span{white-space:normal;line-height:1.25}
-.hero-flank .flank-r{text-align:center}
-.hero-flank .flank-l::after{content:"·";margin-left:18px;color:var(--ink-mute)}
+.hero-flank .flank-r{display:none}                 /* drop "based in dhaka…" */
+.hero-flank .flank-l{
+  transform:none !important;opacity:1 !important;
+  justify-content:center;text-align:center;
+}
+.hero-flank .flank-l::before,.hero-flank .flank-l::after{display:none}
+.flank-l .rotator{justify-content:center}   /* was flex-end; centre the cycling word */
+.flank-l .rotator-text{color:var(--ink-soft)}
+.hero-flank span,.flank-l .rotator,.flank-l .rotator-text{
+  font-size:clamp(19px,2.5vw,27px);
+  color:var(--ink-soft);font-weight:500;white-space:nowrap;line-height:1.2;
+}
 
 /* ---- all lowercase, except the name on the scrap ---- */
 body{text-transform:lowercase}
