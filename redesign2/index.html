@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#fdfdfd" />
+<title>Rifat Newaj Razin — Graphic Designer, Dhaka</title>
+<meta name="description" content="Rifat Newaj Razin is a graphic designer in Dhaka, Bangladesh working on brand identity, packaging, social, and motion." />
+<!-- Work-in-progress prototype with placeholder copy. Keep it out of search
+     until it replaces the live site, so it can't compete with or dilute it. -->
+<meta name="robots" content="noindex, nofollow" />
+<!-- Runs before first paint: mark the page JS-ready so [data-anim] blocks
+     start hidden (no flash of visible content that then snaps away and
+     re-animates on a hard reload), and stop the browser restoring the old
+     scroll position. If main.js never boots, reveal everything after 4s. -->
+<script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
+<!-- Light by default; only an explicit saved choice flips it to dark. Set
+     before first paint so there's no flash. -->
+<script>(function(d){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}d.setAttribute('data-theme',t)})(document.documentElement)</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- All-handwritten type: Shantell Sans for anything that must read (body,
+     nav, headings, case studies), Caveat for the artistic hits (mark, hero
+     name, big contact line, hand labels). -->
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<!-- rough torn-edge filter for the mixed-media skin (styles.css) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="torn"><feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+
+<!-- Dark-mode only: a very slow drifting gradient so the black has some
+     life. CSS-animated, frozen under prefers-reduced-motion. -->
+<div class="bg-flow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ PAGE TRANSITION ============
+     Shared cover/lift overlay for client-side navigation between this page
+     and /work/case.html — see main.js. Internal links never do a real page
+     load, so there's no cross-document handoff to coordinate here anymore. -->
+<div class="page-transition" id="pageTransition" aria-hidden="true"></div>
+
+<!-- ============ INTRO ============ -->
+<div class="intro" id="intro" aria-hidden="true">
+  <span class="intro-mark">RNR<span>.</span></span>
+</div>
+
+<!-- nav -->
+<header class="nav" id="nav">
+  <a href="/redesign2/#top" class="mark">RNR<span class="dot">.</span></a>
+  <nav class="nav-links">
+    <a href="/redesign2/#work">Work</a>
+    <a href="/redesign2/#about">About</a>
+    <a href="/redesign2/#versions">B-Sides</a>
+    <a href="/redesign2/#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- Draggable "desktop clutter" for the hero, built in main.js
+       initFloaties(). A full-bleed SIBLING of .hero (not a child — the
+       hero's 1200px max-width and overflow:hidden would otherwise cage the
+       drag area). It overlays the hero band, is JS-sized to the hero's
+       height, clips its own overflow, and scrolls away with the page. -->
+  <div class="floaties" aria-hidden="true"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-flank">
+      <!-- The left label cycles through the roles in data-rotate (comma-
+           separated — edit that list to add/remove). main.js setupFlankRotator()
+           auto-advances it and lets you click/tab to it to advance manually.
+           The stitched underline is CSS-only, shown on hover / keyboard focus.
+           The .rotator-text is the no-JS fallback, kept in sync on boot. -->
+      <span class="flank-l">
+        <button type="button" class="rotator"
+                data-rotate="graphic designer, show runner, overthinker, problem-solver"
+                aria-label="My roles — activate to see the next one">
+          <span class="rotator-word"><span class="rotator-text">graphic designer</span><svg class="rotator-stitch" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="st-line" x1="1" y1="99" x2="99" y2="99" pathLength="100" vector-effect="non-scaling-stroke"/></svg></span>
+        </button>
+      </span>
+      <span class="flank-r">based in<br>dhaka, bangladesh</span>
+    </div>
+    <h1 class="hero-name">
+      <span class="line line-1">Rifat Newaj</span>
+      <span class="line line-2">Razin</span>
+    </h1>
+  </section>
+
+  <!-- STATEMENT — dark band, text lights up on scroll.
+       This copy is the no-JS / fetch-failure fallback; when
+       data/statement.json loads, main.js renderStatement() replaces it
+       with the CMS-editable text (Admin → Statement). -->
+  <section class="statement">
+    <p class="statement-text" data-split="words">
+      I design brands that actually hold up. Identity systems, packaging,
+      social, motion, the whole stack, for teams who lose sleep over the
+      same tiny details I do.
+
+      Seven years and 800+ projects later, I'm still that annoying person
+      in the room asking if the logo is really centered...
+    </p>
+
+    <!-- Hand-drawn city doodle along the bottom edge. All motion is CSS
+         transform/opacity (compositor), frozen under prefers-reduced-motion.
+         preserveAspectRatio="xMidYMax slice" => uniform scale (round wheel),
+         bottom-centre anchored. Shorter + denser than the panorama version so
+         the tallest towers never reach the statement copy. Decorative. -->
+    <svg class="cityscape" viewBox="0 0 1600 128" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <g class="cs-ink">
+        <!-- clouds — two, one drifting each way (CSS animation-direction) -->
+        <g class="cs-clouds">
+          <path d="M300,26c-7,0 -9,-9 0,-11c0,-11 17,-13 21,-3c11,-4 19,4 13,11c3,7 -8,10 -13,6c-4,6 -17,4 -20,-3z"/>
+          <path d="M1140,20c-4,0 -6,-5 0,-7c0,-7 10,-8 12,-2c7,-3 12,3 8,7c2,4 -5,6 -8,3c-3,3 -10,2 -12,-2z"/>
+        </g>
+
+        <!-- birds — two, one big / one small, one each way -->
+        <g class="cs-birds">
+          <path d="M-140,24q8,-8 16,0q8,-8 16,0"/>
+          <path d="M-140,36q4,-4 8,0q4,-4 8,0"/>
+        </g>
+
+        <!-- skyline (ground y=114) -->
+        <path d="M8,114V102H34V114 M4,102 19,92 38,102"/>
+        <path d="M42,114V96H72V114 M42,105H72 M57,96V114"/>
+        <path d="M80,114V82H112V114 M80,92H112 M80,102H112 M96,82V114"/>
+        <path d="M118,114V96H142V114"/>
+        <path d="M250,114V88H280V114 M250,98H280 M265,88V114"/>
+        <path d="M286,114V72H320V114 M296,72V114 M308,72V114 M286,84H320 M286,96H320 M286,108H320"/>
+        <path d="M326,114V62H362V114 M332,62V54H356V62 M326,74H362 M326,86H362 M326,98H362 M344,62V114"/>
+        <path d="M368,114V86H394V114 M368,100H394"/>
+        <path d="M410,114V64H442V114 M410,76H442 M410,88H442 M410,100H442 M426,64V114"/>
+        <path d="M448,114V38H482V114 M448,50H482 M448,62H482 M448,74H482 M448,86H482 M448,98H482 M465,38V114 M465,38V30 M465,32h8v4h-8"/>
+        <path d="M488,114V56H520V114 M488,68H520 M488,80H520 M488,92H520 M488,104H520 M504,56V114"/>
+        <path d="M526,114V32H560V114 M526,44H560 M526,56H560 M526,68H560 M526,80H560 M526,92H560 M526,104H560 M543,32V114 M526,32 543,22 560,32"/>
+        <path d="M566,114V62H598V114 M566,74H598 M566,86H598 M566,98H598 M570,62Q570,46 582,46Q594,46 594,62 M582,46V40"/>
+        <path d="M604,114V48H638V114 M604,60H638 M604,72H638 M604,84H638 M604,96H638 M604,108H638 M621,48V114"/>
+        <path d="M644,114V68H676V114 M644,80H676 M644,92H676 M644,104H676 M644,68Q660,54 676,68"/>
+        <path d="M682,114V38H716V114 M682,50H716 M682,62H716 M682,74H716 M682,86H716 M682,98H716 M682,110H716 M699,38V114 M690,38V30H708V38"/>
+        <path d="M722,114V72H756V114 M722,84H756 M722,96H756 M722,108H756 M738,72V64H748V72"/>
+        <path d="M762,114V56H796V114 M762,68H796 M762,80H796 M762,92H796 M762,104H796 M779,56V114 M770,56V48 M788,56V48 M768,48H790v-5h-22z"/>
+        <path d="M802,114V50H836V114 M802,62H836 M802,74H836 M802,86H836 M802,98H836 M802,110H836 M819,50V114"/>
+        <path d="M842,114V44H872V114 M842,56H872 M842,88H872 M857,44V36 M838,44 857,32 876,44"/>
+        <circle cx="857" cy="66" r="8"/>
+        <path d="M912,114V82H936V100H952V114 M912,96H936 M912,106H952"/>
+        <path d="M958,114V64H992V114 M958,76H992 M958,88H992 M958,100H992 M975,64V114"/>
+        <path d="M998,114V78H1030V114 M998,90H1030 M998,102H1030"/>
+        <path d="M1036,114V68H1066V114 M1036,80H1066 M1036,92H1066 M1036,104H1066 M1051,68V114"/>
+        <path d="M1088,114V90H1140V114 M1106,114V102Q1106,94 1112,94Q1118,94 1118,102V114 M1098,90Q1098,72 1112,72Q1126,72 1126,90 M1112,72V66"/>
+        <path d="M1146,114V76H1152V114 M1144,76Q1144,68 1148,68Q1152,68 1152,76 M1148,68V63"/>
+        <path d="M1164,114V94H1196V114 M1164,104H1196"/>
+        <path d="M1202,114V84H1234V114 M1202,94H1234 M1202,104H1234 M1218,84V114"/>
+        <path d="M1256,114V96H1286V114 M1256,105H1286"/>
+        <path d="M1352,114V100H1382V114 M1352,107H1382"/>
+        <path d="M1416,114V102H1446V114 M1412,102 1429,92 1450,102"/>
+        <path d="M1454,114V98H1484V114"/>
+        <path d="M1520,114V104H1552V114 M1516,104 1533,94 1554,104"/>
+        <path d="M1560,114V107H1590V114"/>
+
+        <!-- ferris wheel — hub on an A-frame, rim resting just above the
+             ground; only the wheel group spins. -->
+        <path d="M146,114 170,85 M194,114 170,85 M170,114V85 M138,114H202"/>
+        <g class="cs-wheel">
+          <circle cx="170" cy="85" r="27"/>
+          <circle cx="170" cy="85" r="22"/>
+          <circle cx="170" cy="85" r="3"/>
+          <path d="M170,85 197,85 M170,85 193.4,71.5 M170,85 183.5,61.6 M170,85 170,58 M170,85 156.5,61.6 M170,85 146.6,71.5 M170,85 143,85 M170,85 146.6,98.5 M170,85 156.5,108.4 M170,85 170,112 M170,85 183.5,108.4 M170,85 193.4,98.5"/>
+          <circle cx="197" cy="85" r="2.6"/><circle cx="193.4" cy="71.5" r="2.6"/><circle cx="183.5" cy="61.6" r="2.6"/>
+          <circle cx="170" cy="58" r="2.6"/><circle cx="156.5" cy="61.6" r="2.6"/><circle cx="146.6" cy="71.5" r="2.6"/>
+          <circle cx="143" cy="85" r="2.6"/><circle cx="146.6" cy="98.5" r="2.6"/><circle cx="156.5" cy="108.4" r="2.6"/>
+          <circle cx="170" cy="112" r="2.6"/><circle cx="183.5" cy="108.4" r="2.6"/><circle cx="193.4" cy="98.5" r="2.6"/>
+        </g>
+
+        <!-- construction crane (jib slews) -->
+        <path d="M880,114V38 M876,98h8 M876,78h8 M876,58h8 M876,42h8"/>
+        <g class="cs-crane">
+          <path d="M880,42H940 M880,42H864 M880,32 940,42 M880,32 864,42 M930,42V60 M927,60h6 M930,60v4"/>
+        </g>
+
+        <!-- clock hand (slow sweep) -->
+        <g class="cs-clock-hand"><path d="M857,66V58"/></g>
+
+        <!-- wind turbine (lattice tower; three matching blades spin) -->
+        <path d="M1312,114 1317,44 1324,44 1329,114 M1312,114 1324,44 M1329,114 1317,44 M1314,96h13 M1316,74h9 M1318,52h5 M1317,44h7v-4h-7z"/>
+        <g class="cs-turbine">
+          <path d="M1320,40C1318,32 1318,24 1320,20C1322,24 1322,32 1320,40Z"/>
+          <path d="M1320,40C1318,32 1318,24 1320,20C1322,24 1322,32 1320,40Z" transform="rotate(120 1320 40)"/>
+          <path d="M1320,40C1318,32 1318,24 1320,20C1322,24 1322,32 1320,40Z" transform="rotate(240 1320 40)"/>
+          <circle cx="1320" cy="40" r="2"/>
+        </g>
+
+        <!-- trees (sway from the base) -->
+        <g class="cs-trees">
+          <g><path d="M20,114V100"/><path d="M20,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+          <g><path d="M130,114V100"/><path d="M130,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+          <g><path d="M400,114V100"/><path d="M400,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+          <g><path d="M1076,114V100"/><path d="M1076,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+          <g><path d="M1300,114V100"/><path d="M1300,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+          <g><path d="M1500,114V100"/><path d="M1500,100c-8,-2 -10,-11 -2,-15c4,-7 14,-6 15,1c7,2 6,10 -2,12c-2,5 -9,5 -11,2z"/></g>
+        </g>
+
+        <!-- road + water -->
+        <path d="M0,114H1600"/>
+        <path d="M0,120q30,-5 60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0"/>
+        <path d="M-30,126q30,-5 60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0t60,0"/>
+
+        <!-- car (low) + van, driving the road; wheels spin -->
+        <g class="cs-car">
+          <path d="M4,114V108Q4,105 8,104L14,100Q17,97 24,97H32Q39,97 42,101L46,104Q50,105 50,108V114 M15,104h8v-4q-3,-2 -7,0z M26,104h7l-3,-4h-4z"/>
+          <circle class="cs-veh-wheel" cx="13" cy="114" r="4"/>
+          <circle class="cs-veh-wheel" cx="41" cy="114" r="4"/>
+        </g>
+        <g class="cs-van">
+          <path d="M2,114V104Q2,100 6,100H14L19,94H38Q43,94 45,100V114 M16,100h7v-5h-7z M25,100h7v-5h-7z"/>
+          <circle class="cs-veh-wheel" cx="12" cy="114" r="4"/>
+          <circle class="cs-veh-wheel" cx="40" cy="114" r="4"/>
+        </g>
+      </g>
+    </svg>
+  </section>
+
+  <!-- MARQUEE — CSS-driven infinite loop.
+       #marqueeSeq holds ONE sequence; script clones it so the track is exactly
+       two identical halves, each at least one viewport wide. Animating to
+       -50% therefore lands on a pixel-identical frame: no gap, no jump. -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <div class="marquee-seq" id="marqueeSeq">
+        <span>Brand Identity</span><span>·</span><span>Packaging</span><span>·</span>
+        <span>Social &amp; Digital</span><span>·</span><span>Motion Graphics</span><span>·</span>
+        <span>Video Editing</span><span>·</span><span>Event Design</span><span>·</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORK — gridline grid of projects -->
+  <section id="work" class="work">
+    <div class="work-head" data-anim>
+      <h2>Notable Works</h2>
+    </div>
+
+    <!-- These six cards are the no-JS / fetch-failure fallback only — when
+         data/work.json loads, main.js renderWorkGrid() replaces them with
+         the real, CMS-editable project list. -->
+    <div class="work-grid" data-anim>
+      <a class="work-cell" href="./work/case.html?slug=lorem-ipsum-studio">
+        <span class="wc-year">2026</span>
+        <span class="wc-title">Lorem Ipsum Studio</span>
+        <span class="wc-cat">Brand Identity · Packaging</span>
+      </a>
+      <a class="work-cell" href="./work/case.html?slug=dolor-sit-beverages">
+        <span class="wc-year">2025</span>
+        <span class="wc-title">Dolor Sit Beverages</span>
+        <span class="wc-cat">Packaging · Art Direction</span>
+      </a>
+      <a class="work-cell" href="./work/case.html?slug=consectetur-festival">
+        <span class="wc-year">2025</span>
+        <span class="wc-title">Consectetur Festival</span>
+        <span class="wc-cat">Event Design · Motion</span>
+      </a>
+      <a class="work-cell" href="./work/case.html?slug=adipiscing-tech">
+        <span class="wc-year">2024</span>
+        <span class="wc-title">Adipiscing Tech</span>
+        <span class="wc-cat">Brand Identity · Web</span>
+      </a>
+      <a class="work-cell" href="./work/case.html?slug=eiusmod-skincare">
+        <span class="wc-year">2024</span>
+        <span class="wc-title">Eiusmod Skincare</span>
+        <span class="wc-cat">Packaging · Social</span>
+      </a>
+      <a class="work-cell" href="./work/case.html?slug=tempor-incididunt-co">
+        <span class="wc-year">2023</span>
+        <span class="wc-title">Tempor Incididunt Co.</span>
+        <span class="wc-cat">Brand Identity</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="about">
+    <div class="section-head" data-anim><h2>About</h2></div>
+    <div class="about-grid">
+      <p class="about-lead" data-split="words">
+        I'm a graphic designer and creative professional based in Dhaka.
+        I've done the freelance hustle, the in-house grind, and pretty much
+        everything in between, including stints with Adcomm Ltd. and British
+        American Tobacco. These days I'm apparently ambitious enough to hold
+        down two Graphic Design Executive roles at once, and somehow still
+        enjoy it.
+      </p>
+      <dl class="stats" data-anim>
+        <div><dt>Years</dt><dd data-count="7" data-suffix="+">0</dd></div>
+        <div><dt>Projects</dt><dd data-count="800" data-suffix="+">0</dd></div>
+        <div><dt>Brands</dt><dd data-count="12" data-suffix="+">0</dd></div>
+        <div><dt>Roles now</dt><dd data-count="2" data-suffix="">0</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- OTHER VERSIONS — alternating Instax photocard + handwritten note.
+       Photo slots are empty placeholders: drop <img src="/redesign2/uploads/…"
+       alt="…"> inside a .instax-img and the gradient/label is covered.
+       .flip on a row puts the photo on the right instead of the left.
+       Decorative .vers-doodads are built per home load in main.js. -->
+  <section id="versions" class="versions">
+    <div class="section-head" data-anim>
+      <h2 id="versionsTitle">The B-Sides</h2>
+      <span class="count">Same person, different soundtrack</span>
+    </div>
+
+    <div class="vers-doodads" aria-hidden="true"></div>
+
+    <div class="vers-row" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-a" data-ph="add photo"></div>
+        <figcaption>Backstage, not on stage</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>The artist manager</h3>
+        <p>When a release is due I'm three inboxes deep at 2am — deadlines, splits,
+          artwork approvals — so the artist only has to think about the music.</p>
+      </div>
+    </div>
+
+    <div class="vers-row flip" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-b" data-ph="add photo"></div>
+        <figcaption>km 32, still smiling</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>The tour manager</h3>
+        <p>Vans, visas, load-ins, day sheets. If the show starts on time and
+          everyone's fed and accounted for, I did the job right.</p>
+      </div>
+    </div>
+
+    <div class="vers-row" data-anim>
+      <div class="instax-reel">
+        <figure class="instax">
+          <div class="instax-img g-c" data-ph="add photo"></div>
+          <figcaption>5am club</figcaption>
+        </figure>
+        <figure class="instax">
+          <div class="instax-img g-d" data-ph="add photo"></div>
+          <figcaption>chasing a PB</figcaption>
+        </figure>
+        <figure class="instax">
+          <div class="instax-img g-e" data-ph="add photo"></div>
+          <figcaption>podium-adjacent</figcaption>
+        </figure>
+      </div>
+      <div class="vers-note">
+        <h3>On two wheels &amp; two feet</h3>
+        <p>Long rides and longer runs are where the actual thinking happens.
+          Half the ideas on this site were worked out somewhere around km 20.</p>
+      </div>
+    </div>
+
+    <div class="vers-row flip" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-f" data-ph="add photo"></div>
+        <figcaption>where did we park?</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>In the friend circle</h3>
+        <p>The designated planner, driver and photo-taker. Someone has to book
+          the table, keep the plan alive, and remember where we left the car.</p>
+      </div>
+    </div>
+
+    <div class="vers-row" data-anim>
+      <figure class="instax">
+        <div class="instax-img g-g" data-ph="add photo"></div>
+        <figcaption>depends on the day</figcaption>
+      </figure>
+      <div class="vers-note">
+        <h3>Introvert / extrovert</h3>
+        <p>Loud in a room of six, invisible in a room of sixty. Both are me —
+          just on different days, and I've stopped apologising for either.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <p class="contact-kicker" data-anim>Let's make something</p>
+    <h2 class="contact-big" data-anim><span class="cb-lite">worth</span> remembering</h2>
+    <p class="contact-sub" data-anim>“Let's not talk about me. Let's talk about your business, what's not working, and how to fix it. You'll walk away with that whether you hire me or not.”</p>
+    <div class="contact-links" data-anim>
+      <p class="contact-reach">reach me out at:</p>
+      <a href="mailto:rifatnewajrazin@gmail.com" class="magnetic">rifatnewajrazin@gmail.com</a>
+      <div class="contact-social">
+        <a href="https://www.behance.net/rifatnewajrazin" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.linkedin.com/in/rifatnewajrazin/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://www.instagram.com/_razinn_/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>© 2026 Rifat Newaj Razin</span>
+  <span>Dhaka, Bangladesh</span>
+</footer>
+
+<!-- Theme toggle — lives outside <main> so it survives client-side nav.
+     Wired in main.js; the moon shows in light mode, the sun in dark. -->
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Toggle theme">
+  <svg class="tt-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  <svg class="tt-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+</button>
+
+<!-- ============ LIGHTBOX ============ (see main.js) — kept outside <main>,
+     identical in both templates, so it exists and stays wired regardless of
+     which page loaded first or how the visitor navigates between them. -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="./main.js"></script>
+</body>
+</html>

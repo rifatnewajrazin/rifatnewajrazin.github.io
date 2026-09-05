@@ -1,0 +1,16 @@
+{
+  "items": [
+    { "type": "doodle", "preset": "laptop",   "x": 13, "y": 30, "width": 128 },
+    { "type": "doodle", "preset": "monitor",  "x": 87, "y": 23, "width": 86 },
+    { "type": "doodle", "preset": "keyboard", "x": 80, "y": 80, "width": 124 },
+    { "type": "doodle", "preset": "mouse",    "x": 20, "y": 74, "width": 56 },
+    { "type": "doodle", "preset": "cursor",   "x": 63, "y": 18, "width": 44 },
+    { "type": "doodle", "preset": "notebook", "x": 7,  "y": 58, "width": 58 },
+    { "type": "doodle", "preset": "wallet",   "x": 93, "y": 56, "width": 80 },
+    { "type": "doodle", "preset": "undo",     "x": 46, "y": 87, "width": 96 },
+    { "type": "kaomoji", "text": "\\( ^_^ )/", "x": 50, "y": 12, "size": 30 },
+    { "type": "kaomoji", "text": "{ ˆ-ˆ }",    "x": 33, "y": 65, "size": 28 },
+    { "type": "kaomoji", "text": ">_<",        "x": 70, "y": 64, "size": 30 },
+    { "type": "kaomoji", "text": "; )",        "x": 10, "y": 17, "size": 30 }
+  ]
+}
