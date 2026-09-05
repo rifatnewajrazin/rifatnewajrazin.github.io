@@ -1304,3 +1304,68 @@ body{text-transform:lowercase}
    left (flip) rows tilt left — kept small so it stays readable */
 .vers-note p{rotate:2.4deg;transform-origin:left top}
 .vers-row.flip .vers-note p{rotate:-2.4deg}
+
+/* =====================================================================
+   QC PASS — cross-breakpoint fixes (appended last so it wins the cascade)
+   ===================================================================== */
+
+/* ---- statement: on tablet/phone the art must STACK under the copy.
+   Left as a flex row it was shrinking to a ~48px sliver that sat on top
+   of the first words of every line. ---- */
+@media (max-width:1024px){
+  .statement{
+    flex-direction:column;align-items:flex-start;
+    rotate:-1.4deg;
+    padding:clamp(34px,7vw,64px) clamp(26px,7vw,60px);
+    margin-inline:clamp(6px,3vw,20px);
+  }
+  .statement-text{max-width:none;width:100%;order:1}
+  .stmt-art{
+    order:2;position:static;translate:0 0;rotate:2deg;right:auto;inset:auto;
+    width:min(62vw,300px);margin:26px auto 0;align-self:center;
+  }
+  .stmt-art::before{inset:-12px -10px -18px -10px}
+  .stmt-tape.a{left:8%}
+  .stmt-tape.b{right:10%}
+}
+
+/* ---- B-Sides detail copy: dial the lean back below the wide layout so a
+   ~680px paragraph can't clip against the column edge when rotated ---- */
+@media (max-width:900px){
+  .vers-note p,
+  .vers-row.flip .vers-note p{rotate:1.4deg}
+  .vers-row.flip .vers-note p{rotate:-1.4deg}
+  /* the desktop-scale gap before "let's make something" is too much on a
+     portrait tablet — bring it in (phones tighten it further below) */
+  .contact-kicker{margin-top:clamp(150px,20vh,280px)}
+}
+
+/* ---- phone: tighten the vertical rhythm. Sections were 14–16vh top/bottom
+   plus big element margins, which on a small screen reads as dead space. ---- */
+@media (max-width:600px){
+  .hero{min-height:auto;padding-top:116px;padding-bottom:5vh;justify-content:center}
+  .hero-name{font-size:clamp(40px,10vw,60px)}
+
+  .work{padding-top:9vh;padding-bottom:10vh}
+  .about{padding-top:8vh;padding-bottom:9vh}
+  .versions{padding-top:9vh;padding-bottom:10vh}
+  .contact{padding-top:9vh;padding-bottom:8vh}
+  .vers-row{margin-top:11vh}
+  .statement{margin-block:7vh}
+
+  /* the giant gap before "let's make something" — sensible on desktop,
+     way too much on a phone */
+  .contact-kicker{margin-top:clamp(90px,16vh,150px)}
+
+  /* the 76px was clearance for the theme toggle, which no longer exists */
+  .foot{padding-bottom:30px}
+}
+
+/* ---- phone nav: give the four tabs a touch more room so "contact" isn't
+   grazing the screen edge and the home mark isn't kissing "work" ---- */
+@media (max-width:420px){
+  .nav{padding-left:12px;padding-right:12px}
+  .nav-links{gap:5px}
+  .nav-links a{padding:9px 10px 7px;font-size:12px}
+  .mark svg{width:26px}
+}
