@@ -960,7 +960,7 @@ body{
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
 /* ~6-7 words a line, left-aligned; the right padding is the negative space */
-.statement-text{width:auto;max-width:28ch;text-transform:lowercase}
+.statement-text{width:auto;max-width:25ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 /* *asterisk* runs in statement.json render in the Caveat script hand */
 .statement-text .hi{font:inherit}   /* one font across the whole statement */
@@ -979,18 +979,28 @@ body{
 
 /* ---- artwork in the scrap's negative space (right) ---- */
 .stmt-art{
-  position:absolute;z-index:2;margin:0;
-  right:1%;top:52%;translate:0 -50%;
-  width:min(300px,32%);
-  rotate:4deg;
-  pointer-events:none;
+  position:absolute;z-index:4;margin:0;
+  right:-12%;top:50%;translate:0 -50%;
+  width:min(310px,30%);
+  rotate:4deg;scale:1;
+  pointer-events:auto;cursor:pointer;
+  transition:rotate .3s ease, scale .3s ease, filter .3s ease;
+}
+/* torn white paper backing behind the photo, like the photoshop mock */
+.stmt-art::before{
+  content:"";position:absolute;z-index:-1;
+  inset:-15px -13px -22px -13px;
+  background:#f7f3e6;
+  filter:url(#torn);
+  box-shadow:0 20px 34px rgba(23,22,26,.24);
 }
 .stmt-art img{
   width:100%;height:auto;display:block;
   filter:url(#torn);            /* ragged torn-photo edge, no shadow (halo) */
 }
+.stmt-art:hover{rotate:0deg;scale:1.06;z-index:20}
 @media(max-width:1024px){
-  .stmt-art{position:static;translate:0 0;rotate:2deg;
+  .stmt-art{position:static;translate:0 0;rotate:2deg;right:auto;
     width:min(70vw,320px);margin:24px auto 0}
 }
 
