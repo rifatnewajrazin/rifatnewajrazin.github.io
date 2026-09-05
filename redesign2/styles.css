@@ -933,13 +933,15 @@ body{
 .statement{
   max-width:1040px;width:auto;
   margin:clamp(64px,13vh,150px) auto;
-  padding:clamp(46px,6vw,84px) clamp(34px,6vw,76px);
+  /* copy hugs the left; a big empty stretch of the scrap is left on the right */
+  padding:clamp(46px,6vw,84px) clamp(120px,22vw,380px) clamp(46px,6vw,84px) clamp(38px,6vw,76px);
+  justify-content:flex-start;
   rotate:-3.4deg;
   overflow:visible;                 /* let the tape sit past the torn edge */
   filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
-.statement-text{max-width:32ch;text-transform:lowercase}
+.statement-text{max-width:30ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 .statement::before,.statement::after{
   content:"";position:absolute;z-index:3;width:150px;height:34px;
