@@ -962,7 +962,7 @@ body{
 .statement::before{                 /* torn green backdrop, filtered ONCE (static) */
   content:"";position:absolute;inset:0;z-index:0;border-radius:6px;
   background:var(--band-green);
-  filter:url(#torn) drop-shadow(0 26px 40px rgba(23,22,26,.24));
+  filter:url(#torn);
 }
 .statement > .statement-text{position:relative;z-index:1}
 .stmt-tape{position:absolute;z-index:3;width:150px;height:34px;
@@ -976,7 +976,7 @@ body{
 .about-grid,.contact-links{
   position:relative;background:var(--cream);
   padding:clamp(30px,4vw,56px);border-radius:6px;
-  filter:url(#torn) drop-shadow(0 18px 30px rgba(23,22,26,.14));
+  filter:url(#torn);
 }
 .about-grid{rotate:-1.4deg}
 .contact-links{display:inline-flex;margin-inline:auto;rotate:2.6deg}
@@ -1040,7 +1040,7 @@ body{
 .hero-name{
   background:var(--cream);color:var(--ink) !important;
   padding:.2em .62em .34em;border-radius:6px;
-  filter:url(#torn) drop-shadow(0 26px 44px rgba(23,22,26,.22));
+  filter:url(#torn);
   rotate:-2.2deg;
   font-size:clamp(34px,7vw,102px);line-height:1;
   letter-spacing:normal;text-transform:none;
@@ -1173,7 +1173,7 @@ body{text-transform:lowercase}
 /* ---- case-study images: torn-paper edges, not plain rectangles ---- */
 #shotCover,.shot-row .shot{
   border-radius:1px;
-  filter:url(#torn) drop-shadow(0 16px 28px rgba(20,20,16,.18));
+  filter:url(#torn);
 }
 
 /* ---- case study: each block on its own odd angle — collage, still readable ---- */
