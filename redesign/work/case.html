@@ -14,21 +14,24 @@
 <script>(function(d){try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch(e){}d.classList.add('js-ready');setTimeout(function(){window.__rnrBooted||d.classList.add('reveal-all')},4000)})(document.documentElement)</script>
 <!-- Light by default; only an explicit saved choice flips it to dark. Set
      before first paint so there's no flash. -->
-<script>(function(d){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}d.setAttribute('data-theme',t)})(document.documentElement)</script>
+<script>(function(d){d.setAttribute('data-theme','light')})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- identical to index.html's font set — this <head> never reloads once
      client-side navigation swaps <main>, so both templates must request the
      same fonts up front regardless of which one loads first (this page
      doesn't use Prompt itself, but the homepage's statement text does). -->
-<link href="https://fonts.googleapis.com/css2?family=Unica+One&family=Prompt:wght@400;500;600&family=Caveat:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="../styles.css" />
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/redesign/styles.css?v=25" />
 <!-- Case-view styles now live in ../styles.css (the "case study" block) so
      they are present no matter how the view is reached — a full load of this
      file, or a client-side <main> swap from the homepage that never touches
      this <head>. -->
 </head>
 <body>
+
+<!-- rough torn-edge filter for the mixed-media skin (styles.css) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="torn" color-interpolation-filters="sRGB" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div class="bg-flow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
@@ -36,7 +39,7 @@
 <div class="page-transition" id="pageTransition" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
-  <a href="/redesign/#top" class="mark">RNR<span class="dot">.</span></a>
+  <a href="/redesign/#top" class="mark" aria-label="Home"><svg viewBox="0 0 32 33" aria-hidden="true"><path d="M3 15 Q16 3.5 29 15"/><path d="M6.5 13 V28"/><path d="M25.5 13 V28"/><path d="M21.5 8.5 V4 H24.6 V10.6"/><path class="door" d="M13 28 V19.6 Q16 17 19 19.6 V28"/><path d="M2 28.2 H30"/><path d="M2.6 31 Q16 29 29.4 30.8"/></svg></a>
   <nav class="nav-links">
     <a href="/redesign/#work">Work</a>
     <a href="/redesign/#about">About</a>
@@ -101,6 +104,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="../main.js"></script>
+<script src="/redesign/main.js?v=5"></script>
 </body>
 </html>

@@ -594,7 +594,7 @@
       'position:fixed;inset:0;pointer-events:none;z-index:140;overflow:hidden';
     document.body.appendChild(host);
 
-    var lastAt = 0;
+    var lastAt = 0, clickN = 0;
     function stamp(x, y) {
       var now = Date.now();
       if (now - lastAt < 55) return;      // ignore frantic double-fires
@@ -617,7 +617,7 @@
         'position:absolute;left:' + (x - size / 2).toFixed(1) + 'px;' +
         'top:' + (y - size / 2).toFixed(1) + 'px;' +
         'width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) + 'px;' +
-        'color:var(--warm,#ef4b5e);opacity:1;' +
+        'color:var(' + (clickN++ % 2 ? '--teal' : '--coral') + ');opacity:1;' +  /* alternate green / blue */
         'transform:rotate(' + rot + 'deg);will-change:opacity';
       host.appendChild(svg);
 
@@ -868,11 +868,17 @@
       if (!p) return;
       var line = document.createElement('span');
       line.className = 'stmt-line';
-      p.split(' ').forEach(function (w) {
-        var s = document.createElement('span');
-        s.className = 'word';
-        s.textContent = w;
-        line.appendChild(s);
+      // *asterisks* mark a script-hand accent run; every word inside keeps
+      // its own .word span (scroll light-up), plus a .hi class.
+      p.split('*').forEach(function (chunk, i) {
+        var hi = (i % 2 === 1);
+        chunk.split(' ').forEach(function (w) {
+          if (!w) return;
+          var s = document.createElement('span');
+          s.className = hi ? 'word hi' : 'word';
+          s.textContent = w;
+          line.appendChild(s);
+        });
       });
       el.appendChild(line);
     });
@@ -889,7 +895,8 @@
     gsap.set(stWords, { clearProps: 'color' });
     var tween = gsap.to(stWords, {
       color: '#fdfdfd', ease: 'none', stagger: { each: 0.4 },
-      scrollTrigger: { trigger: '.statement', start: 'top 72%', end: 'bottom 62%', scrub: true }
+      // fully lit by the time the scrap reaches the middle of the screen
+      scrollTrigger: { trigger: '.statement', start: 'top 68%', end: 'center 58%', scrub: true }
     });
     buildStatementFx._st = tween.scrollTrigger || null;
   }

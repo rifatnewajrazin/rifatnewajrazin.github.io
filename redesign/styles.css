@@ -5,12 +5,6 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* Self-hosted display face — see the preload in index.html <head>. */
-@font-face{
-  font-family:'Unica One';
-  font-style:normal;font-weight:400;font-display:swap;
-  src:url('./fonts/unica-one-v20-latin.woff2') format('woff2');
-}
 
 :root{
   /* Palette drawn from the artwork brief: near-white ground, near-black
@@ -36,8 +30,9 @@
   --maxw:1200px;
   /* fallback is a plain condensed face, not Impact — keeps the pre-swap
      frame (if any) close in weight/width so the swap isn't a visible jump */
-  --display:'Unica One','Arial Narrow','Roboto Condensed','PT Sans Narrow',sans-serif;
+  --display:'Caveat','Segoe Script','Bradley Hand',cursive;  /* artistic hand */
   --hand:'Caveat','Segoe Script','Bradley Hand',cursive;
+  --tidy:'Shantell Sans','Segoe UI',system-ui,sans-serif;    /* legible hand */
 
   /* --- theme-aware bits (see [data-theme="dark"] below) --- */
   --stat-dt-1:#66666e;      /* Years / Roles now labels  */
@@ -144,10 +139,10 @@ body,.nav-links a,.nav-links a::after,.work-cell,.wc-year,.wc-cat,
   font-weight:400;letter-spacing:.005em;
 }
 
-html{-webkit-text-size-adjust:100%;overscroll-behavior:none}
+html{-webkit-text-size-adjust:100%;overscroll-behavior:none;overflow-x:clip}
 body{
   background:var(--paper);color:var(--ink);
-  font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.55;
+  font-family:var(--tidy);font-size:16.5px;line-height:1.6;
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overscroll-behavior:none;
   background-image:
     linear-gradient(var(--paper-line) 1px,transparent 1px),
@@ -242,12 +237,17 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- intro ---------- */
 .intro{
-  position:fixed;inset:0;z-index:100;background:var(--paper);
-  background-image:
-    linear-gradient(var(--paper-line) 1px,transparent 1px),
-    linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);
-  background-size:64px 64px;
+  position:fixed;inset:0;z-index:100;
   display:flex;align-items:center;justify-content:center;
+  /* same paper surface as the body so the loader blends into the site */
+  background-color:var(--ground);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='gi'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23gi)' opacity='0.22'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='1700'%3E%3Cpath d='M39 0 C42 280 34 560 39 840 C44 1120 35 1400 39 1700' fill='none' stroke='%23c05f3d' stroke-width='.75' stroke-opacity='.3'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(180deg, transparent 0 812px, rgba(58,44,30,.05) 813px 814px, rgba(255,255,255,.06) 815px 819px, transparent 820px),
+    linear-gradient(90deg, transparent 0 59.6%, rgba(58,44,30,.045) 59.8%, rgba(255,255,255,.06) 60.3%, transparent 61%);
+  background-size:90px 90px, 78px 1700px, 100% 100%, 100% 100%;
+  background-repeat:repeat, repeat, no-repeat, no-repeat;
 }
 .intro-mark{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);letter-spacing:.02em;color:var(--ink)}
 .intro-mark span{color:var(--coral)}
@@ -417,7 +417,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 .statement-text{
   position:relative;z-index:1;
-  font-family:'ZCOOL QingKe HuangYou','Prompt',system-ui,sans-serif;font-weight:400;
+  font-family:var(--tidy);font-weight:500;
   font-size:clamp(23px,3vw,40px);line-height:1.36;letter-spacing:0;
   max-width:34ch;text-transform:none;
 }
@@ -842,3 +842,461 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   .instax,.instax:hover,.instax-gallery .instax{transition:none !important}
   .vers-doodads{display:none}
   }
+
+/* ============================================================
+   HANDWRITTEN TYPE PASS
+   Unica One -> Caveat (--display, artistic) and Inter -> Shantell Sans
+   (--tidy, legible). This block runs last so it settles the details:
+   section titles + card titles move to the tidy hand for readability,
+   and the condensed-era negative tracking / all-caps that suited Unica
+   One are undone so Caveat sits naturally.
+   ============================================================ */
+.section-head h2,.work-head h2,
+.wc-title,
+.case-body h3,.case-meta dt,.case-meta dd,.case-back,
+#versionsTitle{
+  font-family:var(--tidy);
+  font-weight:600;
+  letter-spacing:normal;
+}
+.mark,.intro-mark,.hero-name,.hero-name .line,
+.about-lead,.stats dd,
+.contact-big,.contact-links > a,.contact-reach,
+.next a,.rotator,.marquee-track span,
+.vers-note h3{
+  letter-spacing:normal;
+}
+/* Caveat is a mixed-case hand — all-caps kills the handwriting; let the
+   big display lines show their real letterforms */
+.hero-name,.contact-big,.intro-mark{text-transform:none}
+/* Shantell Sans runs a touch smaller than Unica One at the same px —
+   nudge the two spots where that matters */
+.section-head h2,.work-head h2{font-size:clamp(22px,2.6vw,32px)}
+.nav-links{font-size:14px}
+
+/* ============================================================================
+   REDESIGN2 — MIXED-MEDIA SKIN  (append-only; overrides the editorial base)
+   Warm paper ground, no grid. Content reads as torn cream scraps + washi
+   tape on a worktable. Uses the shared #torn SVG filter in the page <head>.
+   Everything here is additive / uses independent transform axes so the
+   GSAP scroll variables (--hp, --hpf, [data-anim] transforms) still run.
+   ============================================================================ */
+:root{
+  --ground:#f1ebe0;
+  --tape-teal:rgba(31,147,184,.34);
+  --tape-rose:rgba(244,169,192,.44);
+  --tape-coral:rgba(239,75,94,.32);
+}
+[data-theme="dark"]:root{ --ground:#0b0c11; }
+
+/* ---- scrolling paper: tooth + crumple shading + faint hand-drawn rust
+   ruling + soft fold creases. All on the body's own background so it
+   SCROLLS with the page (no parallax, nothing fixed). ---- */
+body{
+  background-color:var(--ground) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.22'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='1700'%3E%3Cpath d='M39 0 C42 280 34 560 39 840 C44 1120 35 1400 39 1700' fill='none' stroke='%23c05f3d' stroke-width='.75' stroke-opacity='.3'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1500' height='560'%3E%3Cpath d='M0 280 C260 275 540 288 820 278 C1100 268 1320 286 1500 280' fill='none' stroke='%23c05f3d' stroke-width='.65' stroke-opacity='.12'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(180deg, transparent 0 812px, rgba(58,44,30,.05) 813px 814px, rgba(255,255,255,.06) 815px 819px, transparent 820px),
+    linear-gradient(90deg, transparent 0 59.6%, rgba(58,44,30,.045) 59.8%, rgba(255,255,255,.06) 60.3%, transparent 61%)
+    !important;
+  background-size:90px 90px, 78px 1700px, 1500px 560px, 100% 100%, 100% 100% !important;
+  background-repeat:repeat, repeat, repeat, no-repeat, no-repeat !important;
+  background-attachment:scroll !important;
+}
+/* one cheap FIXED grain (painted once, composited) instead of tiled
+   fractal-noise in the scrolling background — that was the jank */
+.grain{display:none}
+
+/* ---- nav: folder tabs, taped down at their own tilt ---- */
+.nav{padding-top:14px}
+.mark{font-size:clamp(24px,3.2vw,34px);rotate:-3deg}
+.nav-links{gap:6px}
+.nav-links a{
+  background:var(--cream);color:var(--ink);
+  padding:11px 15px 8px;font-size:14px;
+  box-shadow:0 6px 10px rgba(23,22,26,.12);
+  transition:translate .2s ease, rotate .2s ease, color .2s ease;
+}
+.nav-links a::after{display:none}
+.nav-links a:nth-child(1){rotate:-3deg;translate:0 -3px}
+.nav-links a:nth-child(2){rotate:2deg}
+.nav-links a:nth-child(3){rotate:-1.5deg;translate:0 -2px}
+.nav-links a:nth-child(4){rotate:3deg;translate:0 2px}
+.nav-links a:hover{translate:0 5px;rotate:0deg;color:var(--coral)}
+.nav.on-dark .nav-links a{color:var(--ink)}   /* tabs stay on their cream chip */
+
+/* ---- section headings: coral marker underline ---- */
+.section-head h2,.work-head h2{position:relative;display:inline-block;color:var(--ink)}
+.section-head h2::after,.work-head h2::after{
+  content:"";position:absolute;left:-2%;right:-6%;bottom:-.3em;height:9px;
+  background:var(--sketch-line) repeat-x left center;background-size:360px 9px;
+}
+
+/* ---- work: torn cream cards, scattered tilt, straighten on hover ---- */
+.work-grid{gap:clamp(20px,3vw,40px)}
+.work-cell{
+  background:var(--cream) !important;
+  padding:clamp(18px,2.4vw,30px);border-radius:6px;
+  box-shadow:0 16px 26px rgba(23,22,26,.16);
+  transition:rotate .3s ease, translate .3s ease;
+}
+.work-cell:nth-child(odd){rotate:-1.4deg}
+.work-cell:nth-child(even){rotate:1.4deg}
+.work-cell:nth-child(3n){rotate:.6deg}
+.work-cell:hover{rotate:0deg;translate:0 -6px}
+.wc-title{color:var(--ink)}
+
+/* ---- statement: a torn coral scrap, taped down and properly tilted ---- */
+.statement{
+  max-width:1040px;width:auto;
+  margin:clamp(64px,13vh,150px) auto;
+  padding:clamp(48px,6vw,86px) clamp(56px,12vw,190px) clamp(48px,6vw,86px) clamp(40px,6vw,80px);
+  justify-content:flex-start;       /* copy hugs the left */
+  rotate:-3.4deg;
+  overflow:visible;                 /* let the tape sit past the torn edge */
+  background:transparent !important;   /* the torn green lives on ::before */
+}
+.statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
+/* ~6-7 words a line, left-aligned; the right padding is the negative space */
+.statement-text{width:auto;max-width:25ch;text-transform:lowercase}
+.statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
+/* *asterisk* runs in statement.json render in the Caveat script hand */
+.statement-text .hi{font:inherit}   /* one font across the whole statement */
+.statement::before{                 /* torn green backdrop, filtered ONCE (static) */
+  content:"";position:absolute;inset:0;z-index:0;border-radius:6px;
+  background:var(--band-green);
+  filter:url(#torn);
+}
+.statement > .statement-text{position:relative;z-index:1}
+.stmt-tape{position:absolute;z-index:3;width:150px;height:34px;
+  background:var(--tape-rose);
+  clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);
+  box-shadow:0 4px 9px rgba(23,22,26,.18);}
+.stmt-tape.a{top:-16px;left:13%;rotate:-6deg}
+.stmt-tape.b{bottom:-16px;right:15%;rotate:5deg}
+
+/* ---- artwork in the scrap's negative space (right) ---- */
+.stmt-art{
+  position:absolute;z-index:4;margin:0;
+  right:-12%;top:50%;translate:0 -50%;
+  width:min(310px,30%);
+  rotate:4deg;scale:1;
+  pointer-events:auto;cursor:pointer;
+  transition:rotate .3s ease, scale .3s ease, filter .3s ease;
+}
+/* torn white paper backing behind the photo, like the photoshop mock */
+.stmt-art::before{
+  content:"";position:absolute;z-index:-1;
+  inset:-15px -13px -22px -13px;
+  background:#f7f3e6;
+  filter:url(#torn);
+  box-shadow:0 20px 34px rgba(23,22,26,.24);
+}
+.stmt-art img{
+  width:100%;height:auto;display:block;
+  filter:url(#torn);            /* ragged torn-photo edge, no shadow (halo) */
+}
+.stmt-art:hover{rotate:0deg;scale:1.06;z-index:20}
+@media(max-width:1024px){
+  .stmt-art{position:static;translate:0 0;rotate:2deg;right:auto;
+    width:min(70vw,320px);margin:24px auto 0}
+}
+
+/* ---- about + contact sit on a torn cream sheet ---- */
+.about-grid,.contact-links{
+  position:relative;background:var(--cream);
+  padding:clamp(30px,4vw,56px);border-radius:6px;
+  filter:url(#torn);
+}
+.about-grid{rotate:-1.4deg}
+.contact-links{display:inline-flex;margin-inline:auto;rotate:2.6deg}
+
+/* ---- photocards: a strip of washi tape across the top ---- */
+.instax::after{
+  content:"";position:absolute;z-index:4;top:-13px;left:50%;translate:-50% 0;
+  width:120px;height:28px;background:var(--tape-teal);
+  clip-path:polygon(3% 8%,97% 0,100% 90%,0 100%);
+  box-shadow:0 3px 7px rgba(23,22,26,.14);
+}
+.vers-row.flip .instax::after{background:var(--tape-rose);rotate:-4deg}
+
+/* ---- hand-drawn rule, shared: ONE thin, softly wobbly ink line ---- */
+:root{
+  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='9'%3E%3Cpath d='M3 5.1 C10 4.2 22 3.9 40 3.8 C92 3.6 128 5.4 172 4.5 C214 3.6 252 5.0 292 4.2 C312 3.8 330 4.0 348 4.3 C352 4.35 355 4.45 357 4.6 C355 4.95 352 5.0 348 5.05 C330 5.3 312 5.6 292 5.5 C252 6.4 214 4.9 172 5.9 C128 6.9 92 5.0 40 5.0 C22 5.0 10 5.6 3 5.9 Z' fill='%232b3a33' fill-opacity='.42'/%3E%3C/svg%3E");
+}
+
+/* section / work headings: thin hand-drawn rule + consistent space below */
+.section-head,.work-head{
+  border-top:0 !important;position:relative;
+  padding-bottom:clamp(22px,3.4vw,44px);
+}
+.section-head::before,.work-head::before{
+  content:"";position:absolute;left:0;right:0;top:-5px;height:9px;pointer-events:none;
+  background:var(--sketch-line) repeat-x left center;background-size:360px 9px;
+}
+
+/* ---- marquee: a torn strip of paper with a hand-drawn line each edge ----
+   Lines are background layers ON .marquee (so nothing clips them); the
+   torn cream teeth are the ::before/::after. No filter — the track
+   animates and a filter would re-run every frame. */
+.marquee{
+  border:0;position:relative;overflow:visible;
+  background:
+    var(--sketch-line) repeat-x left top,
+    var(--sketch-line) repeat-x left bottom,
+    var(--cream);
+  background-size:360px 9px, 360px 9px, auto;
+}
+.marquee > *{position:relative;z-index:1}
+.marquee::before,.marquee::after{
+  content:"";position:absolute;left:0;right:0;height:13px;z-index:0;pointer-events:none;
+  /* shallow, irregular torn-paper edge */
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='13'%3E%3Cpath d='M0 13 H430 V7 L420 9 L412 4 L402 8 L394 11 L384 6 L374 8 L362 3 L352 10 L342 6 L332 11 L320 5 L310 8 L298 3 L288 9 L276 6 L264 10 L252 4 L242 8 L230 3 L220 10 L208 6 L198 9 L186 4 L176 8 L164 3 L154 9 L142 6 L132 10 L120 4 L110 8 L98 3 L88 9 L78 6 L66 10 L54 4 L44 8 L32 3 L22 9 L12 6 L4 9 Z' fill='%23f4eede'/%3E%3C/svg%3E") repeat-x left top;
+  background-size:430px 13px;
+}
+.marquee::before{top:-11px}
+.marquee::after{bottom:-11px;transform:scaleY(-1)}
+
+/* ---- no dark mode ---- */
+.theme-toggle,.bg-flow{display:none !important}
+
+@media (prefers-reduced-motion:reduce){
+  .nav-links a,.work-cell{transition:none}
+}
+
+/* ---- hero: name on a torn paper scrap, centred, one line ---- */
+.hero{padding-top:14vh;padding-bottom:12vh}
+.hero-name{
+  background:var(--cream);color:var(--ink) !important;
+  padding:.2em .62em .34em;border-radius:6px;
+  filter:url(#torn);
+  rotate:-2.2deg;
+  font-size:clamp(34px,7vw,102px);line-height:1;
+  letter-spacing:normal;text-transform:none;
+  white-space:nowrap;
+  opacity:1 !important;                 /* was scroll-faded via --hp */
+}
+/* fitHero() in main.js sizes each line separately with an inline font-size;
+   override it so the name is one even line on the scrap */
+.hero-name .line{display:inline !important;font-size:inherit !important;
+  transform:none !important;color:var(--ink) !important}
+.hero-name .line-1::after{content:"\00a0"}   /* space between the two spans */
+.hero-name .line-2{color:var(--coral) !important}
+/* washi tape holding the name scrap down */
+.hero-name::before,.hero-name::after{
+  content:"";position:absolute;z-index:3;width:118px;height:30px;background:var(--tape-teal);
+  clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);box-shadow:0 3px 8px rgba(23,22,26,.16);
+}
+.hero-name::before{top:-15px;left:11%;rotate:-6deg}
+.hero-name::after{bottom:-15px;right:13%;rotate:5deg;background:var(--tape-rose)}
+@media(max-width:600px){
+  .hero-name{white-space:normal;rotate:-1.4deg}
+}
+/* under the name scrap: just the rotating role, centred, a bit bigger.
+   The word-switch effect (setupFlankRotator in main.js) stays; the
+   JS-locked min-width keeps the centred row from jumping as words cycle. */
+.hero-flank{
+  position:static;transform:none;order:2;
+  margin-top:26px;justify-content:center;
+  padding:0;pointer-events:auto;
+  rotate:2.7deg;                 /* its own casual tilt, not parallel to the scrap */
+}
+.hero-flank .flank-r{display:none}                 /* drop "based in dhaka…" */
+.hero-flank .flank-l{
+  transform:none !important;opacity:1 !important;
+  justify-content:center;text-align:center;
+}
+.hero-flank .flank-l::before,.hero-flank .flank-l::after{display:none}
+.flank-l .rotator{justify-content:center}   /* was flex-end; centre the cycling word */
+/* the base fades every .hero-flank span via --hpf (and it compounds down
+   the nested rotator spans) — hold this caption fully opaque */
+.hero-flank,.hero-flank *{opacity:1 !important}
+.hero-flank span,.flank-l .rotator,.flank-l .rotator-text{
+  font-size:clamp(20px,2.7vw,31px);
+  color:var(--ink-soft);font-weight:500;white-space:nowrap;line-height:1.2;
+}
+
+/* ---- all lowercase, except the name on the scrap ---- */
+body{text-transform:lowercase}
+.hero-name,.hero-name .line{text-transform:none !important}
+.contact-kicker,.contact-reach,.contact-big,.wc-year,.wc-cat,
+.work-head .count,.versions .count,.section-head .count,.stats dt,
+.foot,.marquee-seq span,.case-meta dt,.case-back,.next span,
+.hero-flank span,.rotator-text,.instax-img[data-ph]::after{
+  text-transform:lowercase !important;
+}
+
+/* ---- nav mark: hand-drawn home icon, and it no longer flips colour ----
+   The statement is a small rotated scrap now, so the old "nav goes light
+   over the dark band" behaviour just made the icon vanish. */
+.nav.on-dark,.nav.on-dark .nav-links a{color:var(--ink)}
+.nav.on-dark .mark{color:var(--ink)}
+.mark{display:inline-flex;align-items:center;line-height:0;color:var(--ink)}
+.mark svg{
+  width:clamp(30px,3.4vw,38px);height:auto;overflow:visible;
+  fill:none;stroke:currentColor;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.mark svg .door{stroke:var(--coral)}
+/* the house ticks between poses in hard snaps (click-click), never eased */
+.mark{transition:rotate .12s steps(1,end), translate .12s steps(1,end);
+  animation:markSnap 4s steps(1,end) infinite}
+.mark:hover{rotate:5deg;translate:3px -2px;animation-play-state:paused}
+@keyframes markSnap{
+  0%,32%   {rotate:-3deg;translate:0 0}
+  33%,57%  {rotate:-1deg;translate:1px 0}
+  58%,82%  {rotate:-4deg;translate:-1px 0}
+  83%,100% {rotate:-2deg;translate:0 0}
+}
+@media (prefers-reduced-motion: reduce){
+  .mark{animation:none}
+}
+
+/* ---- B-Sides subtitle: informal two-line aside, pushed to the RIGHT end
+   of the section rule. Own row under the title; narrow block hugging the
+   line's right edge; first line a little left, last line flush right. */
+.versions .section-head{flex-wrap:wrap}
+.versions .count{
+  flex:0 0 100%;order:2;
+  display:block;max-width:16ch;
+  margin:12px 0 0 auto;                 /* block sits at the right edge */
+  font-family:var(--hand);font-weight:500;
+  font-size:clamp(20px,2.2vw,28px);line-height:1.12;letter-spacing:.01em;
+  text-transform:lowercase;color:var(--ink-soft);
+  text-align:left;text-align-last:right;
+  rotate:-1.8deg;
+}
+
+/* ---- B-Sides row titles: thicker + a touch larger ---- */
+.vers-note h3{
+  font-weight:700;
+  font-size:clamp(26px,3.7vw,42px);
+  letter-spacing:normal;
+}
+
+/* ---- B-Sides: hovering a photocard lifts ONLY that card ----
+   The .instax-pair wrappers carry a left/right nudge via transform, which
+   makes each pair its own stacking context — so raising a card on hover
+   couldn't clear the next pair, and the earlier fix lifted the WHOLE pair
+   (dragging its other card forward too). Move the nudge onto the cards so
+   no wrapper is a stacking context, then lift just the hovered card. */
+.instax-gallery .instax-pair{transform:none !important}
+.instax-gallery .instax-pair:not(:only-child):nth-child(odd) > .instax{translate:clamp(-20px,-1.6vw,-8px) 0}
+.instax-gallery .instax-pair:not(:only-child):nth-child(even) > .instax{translate:clamp(8px,1.6vw,20px) 0}
+.instax-pair:has(.instax:hover),
+.instax-reel:has(.instax:hover){position:static !important;z-index:auto !important}
+.instax:hover{z-index:30}
+
+/* ---- about: nudge the copy + stat labels up for readability ---- */
+.about-lead{
+  font-size:clamp(23px,2.7vw,34px);line-height:1.5;letter-spacing:normal;
+}
+.stats dt{font-size:15px;letter-spacing:.04em}
+.stats dd{font-size:clamp(38px,5.4vw,64px)}
+
+/* ---- "Miles and kilometers" heading -> same coral as "The Backstage Guy" ---- */
+.vers-row.vr-pink .vers-note h3{color:var(--coral)}
+
+/* ---- contact pull-quote: lowercase Permanent Marker, three lines ---- */
+.contact-kicker{margin-top:clamp(150px,20vh,280px);font-size:19px;letter-spacing:.14em}
+/* the "reach me out at" card, sized up */
+.contact-links{padding:clamp(36px,4.6vw,66px)}
+.contact-reach{font-size:15px;letter-spacing:.14em}
+.contact-links > a{font-size:clamp(24px,3.4vw,40px)}
+.contact-social{font-size:16px;gap:30px}
+.contact-sub{
+  font-family:'Permanent Marker',var(--hand);
+  font-weight:400;text-transform:lowercase;
+  font-size:clamp(18px,2.1vw,26px);line-height:1.4;letter-spacing:.005em;
+  color:var(--navy);max-width:46ch;
+}
+
+/* ---- case-study images: torn-paper edges, not plain rectangles ---- */
+#shotCover,.shot-row .shot{
+  border-radius:1px;
+  filter:url(#torn);
+}
+
+/* ---- case study: each block on its own odd angle — collage, still readable ---- */
+.case-hero,.case-body,.shot-row,.next,section:has(> #shotCover){overflow:visible}
+/* stack the back-link and the title, give each room */
+.case-hero{display:flex;flex-direction:column;align-items:flex-start}
+.case-back{margin-bottom:clamp(18px,4vh,40px)}
+.case-title{
+  display:block;rotate:-1.4deg;
+  font-size:clamp(32px,5vw,58px);line-height:1.08;
+  letter-spacing:normal;text-transform:none;max-width:20ch;
+}
+/* the rule under the title -> hand-drawn, with breathing room */
+.case-meta{
+  rotate:1deg;border-top:0;position:relative;
+  margin-top:clamp(30px,5vh,60px);padding-top:clamp(24px,3vw,40px);
+}
+.case-meta::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:5px;pointer-events:none;
+  background:var(--sketch-line) repeat-x left center;background-size:360px 9px;
+}
+#shotCover{rotate:-1.5deg;margin-block:12px}
+.case-body h3{display:inline-block}
+.case-body h3:nth-of-type(1){rotate:-2.2deg}
+.case-body h3:nth-of-type(2){rotate:1.9deg}
+#briefText{rotate:1.4deg}
+#approachText{rotate:-1.7deg}
+#outcomeText{rotate:1.3deg}
+.shot-row{gap:clamp(16px,2.4vw,34px)}
+.shot-row .shot:first-child{rotate:2deg}
+.shot-row .shot:last-child{rotate:-2.3deg}
+.next a{display:inline-block;rotate:-1.6deg}
+@media (prefers-reduced-motion:reduce){
+  .case-title,.case-meta,#shotCover,.case-body h3,
+  #briefText,#approachText,#outcomeText,.shot-row .shot,.next a{rotate:none}
+}
+
+/* ============================================================================
+   PALETTE + BACKGROUND — retuned to the Kutztown "Communication Design House"
+   reference: warm cream paper, muted sky-blue, olive/leaf green, warm black.
+   The old coral/red and pink are replaced by green and blue. Light mode only
+   (dark keeps its existing swap). Appended last so it wins.
+   ============================================================================ */
+:root{
+  --ink:#201f1b;
+  --ink-soft:#585a4d;
+  --ink-mute:#9c9c8c;
+  --coral:#6f8b3a;          /* red/pink  -> leaf-olive green */
+  --teal:#5a94a4;           /* blue      -> muted sky blue   */
+  --navy:#2b3a33;           /* headings  -> dark slate-green */
+  --rose:#cdd8ac;           /* placeholders -> pale green   */
+  --pink:#a6c6cf;           /* -> pale sky blue             */
+  --cream:#f2ecdc;
+  --ground:#efe8d6;
+  --band-green:#5c7a33;     /* the statement scrap fill      */
+  --tape-teal:rgba(90,148,164,.30);
+  --tape-rose:rgba(111,139,58,.30);
+  --tape-coral:rgba(111,139,58,.26);
+}
+
+/* (the rust ruling + folds now live on the body's scrolling background,
+   see the "scrolling paper" rule above) */
+
+/* statement scrap: green instead of coral, dark enough for white text */
+.statement{background:var(--band-green)}
+
+/* name scrap stays torn white paper with plain black letters (both words) */
+.hero-name .line-1,.hero-name .line-2{color:var(--ink) !important}
+
+
+/* ---- section titles nudged onto their own angles ---- */
+.work-head h2{rotate:-1.8deg}
+.about .section-head h2{rotate:1.6deg}
+.versions .section-head h2{rotate:-1.3deg}
+.contact-kicker{rotate:2deg}
+
+/* B-Sides row titles: nudged onto an angle, alternating side to side */
+.vers-note h3{rotate:1.8deg}
+.vers-row.flip .vers-note h3{rotate:-1.5deg}
+/* the detail copy leans the same way as its side: right rows tilt right,
+   left (flip) rows tilt left — kept small so it stays readable */
+.vers-note p{rotate:2.4deg;transform-origin:left top}
+.vers-row.flip .vers-note p{rotate:-2.4deg}
