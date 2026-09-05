@@ -1016,3 +1016,13 @@ body{
 .hero-flank span{white-space:normal;line-height:1.25}
 .hero-flank .flank-r{text-align:center}
 .hero-flank .flank-l::after{content:"·";margin-left:18px;color:var(--ink-mute)}
+
+/* ---- all lowercase, except the name on the scrap ---- */
+body{text-transform:lowercase}
+.hero-name,.hero-name .line{text-transform:none !important}
+.contact-kicker,.contact-reach,.contact-big,.wc-year,.wc-cat,
+.work-head .count,.versions .count,.section-head .count,.stats dt,
+.foot,.marquee-seq span,.case-meta dt,.case-back,.next span,
+.hero-flank span,.rotator-text,.instax-img[data-ph]::after{
+  text-transform:lowercase !important;
+}
