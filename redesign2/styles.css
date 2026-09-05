@@ -884,10 +884,24 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 }
 [data-theme="dark"]:root{ --ground:#0b0c11; }
 
+/* ---- scrolling paper: tooth + crumple shading + faint hand-drawn rust
+   ruling + soft fold creases. All on the body's own background so it
+   SCROLLS with the page (no parallax, nothing fixed). ---- */
 body{
-  background:var(--ground) !important;   /* kill the ruled grid */
+  background-color:var(--ground) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)' opacity='0.11'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='860' height='1120'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.012' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)' opacity='0.06'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='1700'%3E%3Cpath d='M39 0 C42 280 34 560 39 840 C44 1120 35 1400 39 1700' fill='none' stroke='%23c05f3d' stroke-width='.8' stroke-opacity='.42'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1500' height='560'%3E%3Cpath d='M0 280 C260 275 540 288 820 278 C1100 268 1320 286 1500 280' fill='none' stroke='%23c05f3d' stroke-width='.7' stroke-opacity='.16'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(180deg, transparent 0 812px, rgba(58,44,30,.05) 813px 814px, rgba(255,255,255,.06) 815px 819px, transparent 820px),
+    linear-gradient(90deg, transparent 0 59.6%, rgba(58,44,30,.045) 59.8%, rgba(255,255,255,.06) 60.3%, transparent 61%)
+    !important;
+  background-size:160px 160px, 860px 1120px, 78px 1700px, 1500px 560px, 100% 100%, 100% 100% !important;
+  background-repeat:repeat, repeat, repeat, repeat, no-repeat, no-repeat !important;
+  background-attachment:scroll !important;
 }
-.grain{opacity:.4}
+.grain{display:none}   /* tooth is baked into the scrolling body bg now */
 
 /* ---- nav: folder tabs, taped down at their own tilt ---- */
 .nav{padding-top:14px}
@@ -1159,6 +1173,9 @@ body{text-transform:lowercase}
   --tape-rose:rgba(111,139,58,.30);
   --tape-coral:rgba(111,139,58,.26);
 }
+
+/* (the rust ruling + folds now live on the body's scrolling background,
+   see the "scrolling paper" rule above) */
 
 /* statement scrap: green instead of coral, dark enough for white text */
 .statement{background:var(--band-green)}
