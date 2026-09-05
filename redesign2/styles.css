@@ -939,7 +939,7 @@ body{
   filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
-.statement-text{max-width:32ch}
+.statement-text{max-width:32ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 .statement::before,.statement::after{
   content:"";position:absolute;z-index:3;width:150px;height:34px;
