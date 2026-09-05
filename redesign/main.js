@@ -1432,70 +1432,6 @@
     } // buildFloaties
   }
 
-  /* ---------- statement band "pull me" photocard ----------
-     The card (and, independently, the mask overlay) drags on plain
-     Pointer Events; on release it transitions its `translate` back to
-     0,0 with a soft overshoot. No GSAP. Wired once — the node lives in
-     the static markup and renderStatement() never touches it. */
-  function initStatementCard() {
-    var card = document.querySelector('.stmt-card');
-    if (!card || initStatementCard._wired) return;
-    initStatementCard._wired = true;
-    var mask = card.querySelector('.stmt-card-mask');
-
-    function makeDraggable(el, limit) {
-      var ox = 0, oy = 0, on = false;
-      el.addEventListener('pointerdown', function (e) {
-        on = true;
-        ox = e.clientX; oy = e.clientY;
-        el.classList.remove('is-springing');
-        el.classList.add('is-dragging');
-        try { el.setPointerCapture(e.pointerId); } catch (err) {}
-        e.preventDefault();
-      });
-      el.addEventListener('pointermove', function (e) {
-        if (!on) return;
-        var dx = e.clientX - ox, dy = e.clientY - oy;
-        if (limit) {
-          dx = Math.max(-limit, Math.min(limit, dx));
-          dy = Math.max(-limit, Math.min(limit, dy));
-        }
-        el.style.translate = dx.toFixed(1) + 'px ' + dy.toFixed(1) + 'px';
-      });
-      function settle() {
-        clearTimeout(el._springTimer);
-        el.classList.remove('is-springing');
-        el.style.translate = '';
-      }
-      function release(e) {
-        if (!on) return;
-        on = false;
-        try { el.releasePointerCapture(e.pointerId); } catch (err) {}
-        el.classList.remove('is-dragging');
-        // commit the dragged offset with a forced reflow, then arm the
-        // ease and aim at rest so the spring actually runs (no rAF — a
-        // background tab would starve it and leave the card stuck).
-        void el.offsetWidth;
-        el.classList.add('is-springing');
-        el.style.translate = '0px 0px';
-        clearTimeout(el._springTimer);
-        el._springTimer = setTimeout(settle, 700);   // fallback if no transitionend
-      }
-      el.addEventListener('pointerup', release);
-      el.addEventListener('pointercancel', release);
-      el.addEventListener('transitionend', function (e) {
-        if (e.propertyName === 'translate') settle();
-      });
-    }
-
-    makeDraggable(card, 180);
-    if (mask) {
-      makeDraggable(mask, 150);
-      // peeling the mask must not also drag the card underneath
-      mask.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
-    }
-  }
-
   /* ============================================================
      BOOT / initView — the single entry point run on cold load AND
      after every client-side swap.
@@ -1520,7 +1456,6 @@
         if (!el.querySelector('.word')) splitWords(el);
       });
       renderStatement();
-      initStatementCard();
       renderWorkGrid();
       renderVersions().then(function () {
         // the real rows exist now — reveal them and build their doodads
