@@ -1095,3 +1095,23 @@ body{text-transform:lowercase}
   font-size:clamp(18px,2.1vw,26px);line-height:1.4;letter-spacing:.005em;
   color:var(--navy);max-width:34ch;
 }
+
+/* ---- case study: each block on its own odd angle — collage, still readable ---- */
+.case-hero,.case-body,.shot-row,.next,section:has(> #shotCover){overflow:visible}
+.case-title{display:inline-block;rotate:-1.9deg}
+.case-meta{rotate:1.1deg}
+#shotCover{rotate:-1.5deg;margin-block:12px}
+.case-body h3{display:inline-block}
+.case-body h3:nth-of-type(1){rotate:-2.2deg}
+.case-body h3:nth-of-type(2){rotate:1.9deg}
+#briefText{rotate:1.4deg}
+#approachText{rotate:-1.7deg}
+#outcomeText{rotate:1.3deg}
+.shot-row{gap:clamp(16px,2.4vw,34px)}
+.shot-row .shot.b{rotate:2deg}
+.shot-row .shot.c{rotate:-2.3deg}
+.next a{display:inline-block;rotate:-1.6deg}
+@media (prefers-reduced-motion:reduce){
+  .case-title,.case-meta,#shotCover,.case-body h3,
+  #briefText,#approachText,#outcomeText,.shot-row .shot,.next a{rotate:none}
+}
