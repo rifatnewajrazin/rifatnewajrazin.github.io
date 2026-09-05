@@ -1343,7 +1343,9 @@ body{text-transform:lowercase}
 /* ---- phone: tighten the vertical rhythm. Sections were 14–16vh top/bottom
    plus big element margins, which on a small screen reads as dead space. ---- */
 @media (max-width:600px){
-  .hero{min-height:auto;padding-top:116px;padding-bottom:5vh;justify-content:center}
+  /* the phone home screen is name + a few floaties only; the green
+     statement scrap starts below the fold, on scroll */
+  .hero{min-height:100svh;padding-top:116px;padding-bottom:8vh;justify-content:center}
   .hero-name{font-size:clamp(40px,10vw,60px)}
 
   .work{padding-top:9vh;padding-bottom:10vh}
@@ -1359,6 +1361,14 @@ body{text-transform:lowercase}
 
   /* the 76px was clearance for the theme toggle, which no longer exists */
   .foot{padding-bottom:30px}
+}
+
+/* ---- narrow screens: show the ambient floaties on the hero. main.js
+   already builds a smaller, quieter, non-draggable set (~5 items at 0.58
+   scale, pointer-events off, z-index 0 behind the name) below 820px —
+   the old rule just hid the layer outright. ---- */
+@media (max-width:820px) and (prefers-reduced-motion: no-preference){
+  .floaties{display:block !important}
 }
 
 /* ---- phone nav: give the four tabs a touch more room so "contact" isn't
