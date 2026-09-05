@@ -594,7 +594,7 @@
       'position:fixed;inset:0;pointer-events:none;z-index:140;overflow:hidden';
     document.body.appendChild(host);
 
-    var lastAt = 0;
+    var lastAt = 0, clickN = 0;
     function stamp(x, y) {
       var now = Date.now();
       if (now - lastAt < 55) return;      // ignore frantic double-fires
@@ -617,7 +617,7 @@
         'position:absolute;left:' + (x - size / 2).toFixed(1) + 'px;' +
         'top:' + (y - size / 2).toFixed(1) + 'px;' +
         'width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) + 'px;' +
-        'color:var(--warm,#ef4b5e);opacity:1;' +
+        'color:var(' + (clickN++ % 2 ? '--teal' : '--coral') + ');opacity:1;' +  /* alternate green / blue */
         'transform:rotate(' + rot + 'deg);will-change:opacity';
       host.appendChild(svg);
 
