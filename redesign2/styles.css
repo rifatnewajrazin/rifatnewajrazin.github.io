@@ -953,10 +953,11 @@ body{
 /* ---- about + contact sit on a torn cream sheet ---- */
 .about-grid,.contact-links{
   position:relative;background:var(--cream);
-  padding:clamp(28px,4vw,52px);border-radius:6px;
+  padding:clamp(30px,4vw,56px);border-radius:6px;
   filter:url(#torn) drop-shadow(0 18px 30px rgba(23,22,26,.14));
 }
-.contact-links{display:inline-flex;margin-inline:auto}
+.about-grid{rotate:-1.4deg}
+.contact-links{display:inline-flex;margin-inline:auto;rotate:1.2deg}
 
 /* ---- photocards: a strip of washi tape across the top ---- */
 .instax::after{
