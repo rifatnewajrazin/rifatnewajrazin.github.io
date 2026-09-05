@@ -925,9 +925,9 @@ body{
 /* ---- section headings: coral marker underline ---- */
 .section-head h2,.work-head h2{position:relative;display:inline-block;color:var(--ink)}
 .section-head h2::after,.work-head h2::after{
-  content:"";position:absolute;left:-2%;right:-5%;bottom:-.24em;height:.34em;
-  background:var(--coral);border-radius:40% 60% 55% 45%/60% 50% 50% 40%;
-  transform:rotate(-.8deg);
+  content:"";position:absolute;left:-2%;right:-8%;bottom:-.34em;height:12px;
+  background:var(--sketch-line) repeat-x left center;background-size:260px 12px;
+  transform:rotate(-.6deg);
 }
 
 /* ---- work: torn cream cards, scattered tilt, straighten on hover ---- */
@@ -952,9 +952,7 @@ body{
   justify-content:flex-start;       /* copy hugs the left */
   rotate:-3.4deg;
   overflow:visible;                 /* let the tape sit past the torn edge */
-  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
-  /* no filter here: the scroll word-light-up repaints this subtree every
-     frame, and a drop-shadow on it would re-run per frame → jank */
+  background:transparent !important;   /* the torn green lives on ::before */
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
 /* ~6-7 words a line, left-aligned; the right padding is the negative space */
@@ -962,21 +960,24 @@ body{
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 /* *asterisk* runs in statement.json render in the Caveat script hand */
 .statement-text .hi{font:inherit}   /* one font across the whole statement */
-.statement::before,.statement::after{
-  content:"";position:absolute;z-index:3;width:150px;height:34px;
+.statement::before{                 /* torn green backdrop, filtered ONCE (static) */
+  content:"";position:absolute;inset:0;z-index:0;border-radius:6px;
+  background:var(--band-green);
+  filter:url(#torn) drop-shadow(0 26px 40px rgba(23,22,26,.24));
+}
+.statement > .statement-text{position:relative;z-index:1}
+.stmt-tape{position:absolute;z-index:3;width:150px;height:34px;
   background:var(--tape-rose);
   clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);
-  box-shadow:0 4px 9px rgba(23,22,26,.18);
-}
-.statement::before{top:-16px;left:13%;rotate:-6deg}
-.statement::after{bottom:-16px;right:15%;rotate:5deg}
+  box-shadow:0 4px 9px rgba(23,22,26,.18);}
+.stmt-tape.a{top:-16px;left:13%;rotate:-6deg}
+.stmt-tape.b{bottom:-16px;right:15%;rotate:5deg}
 
 /* ---- about + contact sit on a torn cream sheet ---- */
 .about-grid,.contact-links{
   position:relative;background:var(--cream);
   padding:clamp(30px,4vw,56px);border-radius:6px;
-  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
-  filter:drop-shadow(0 18px 30px rgba(23,22,26,.14));
+  filter:url(#torn) drop-shadow(0 18px 30px rgba(23,22,26,.14));
 }
 .about-grid{rotate:-1.4deg}
 .contact-links{display:inline-flex;margin-inline:auto;rotate:1.2deg}
@@ -992,7 +993,7 @@ body{
 
 /* ---- hand-drawn rule, shared: ONE thin, softly wobbly ink line ---- */
 :root{
-  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='5'%3E%3Cpath d='M0 2.6 C40 2.2 72 3.1 112 2.5 C152 1.9 184 3 220 2.6' fill='none' stroke='%232b3a33' stroke-width='1' stroke-opacity='.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  --sketch-line:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='12'%3E%3Cpath d='M0 6 C22 2 40 10 64 5 C88 1 106 11 132 6 C156 2 176 10 200 5.5 C220 2.5 240 9 260 6' fill='none' stroke='%232b3a33' stroke-width='1.3' stroke-opacity='.4' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 /* section / work headings: thin hand-drawn rule + consistent space below */
@@ -1001,8 +1002,8 @@ body{
   padding-bottom:clamp(22px,3.4vw,44px);
 }
 .section-head::before,.work-head::before{
-  content:"";position:absolute;left:0;right:0;top:-5px;height:5px;pointer-events:none;
-  background:var(--sketch-line) repeat-x left center;background-size:220px 5px;
+  content:"";position:absolute;left:0;right:0;top:-8px;height:12px;pointer-events:none;
+  background:var(--sketch-line) repeat-x left center;background-size:260px 12px;
 }
 
 /* ---- marquee: scratched hand-drawn edges + a faint torn-paper lip ---- */
@@ -1029,8 +1030,7 @@ body{
 .hero-name{
   background:var(--cream);color:var(--ink) !important;
   padding:.2em .62em .34em;border-radius:6px;
-  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
-  filter:drop-shadow(0 26px 44px rgba(23,22,26,.22));
+  filter:url(#torn) drop-shadow(0 26px 44px rgba(23,22,26,.22));
   rotate:-2.2deg;
   font-size:clamp(34px,7vw,102px);line-height:1;
   letter-spacing:normal;text-transform:none;
@@ -1163,8 +1163,7 @@ body{text-transform:lowercase}
 /* ---- case-study images: torn-paper edges, not plain rectangles ---- */
 #shotCover,.shot-row .shot{
   border-radius:1px;
-  clip-path:polygon(0.5% 1.4%,9% 0.3%,19% 1.6%,29% 0.4%,39% 1.8%,49% 0.5%,59% 1.7%,69% 0.4%,79% 1.9%,89% 0.6%,97% 0.4%,99.6% 1.6%,98.5% 12%,99.6% 24%,98.6% 37%,99.6% 50%,98.5% 63%,99.6% 76%,98.6% 88%,99.6% 98.6%,90% 99.6%,79% 98.4%,68% 99.6%,57% 98.5%,46% 99.6%,35% 98.4%,24% 99.6%,13% 98.5%,3% 99.6%,0.4% 98.5%,1.5% 87%,0.4% 74%,1.4% 61%,0.4% 48%,1.5% 35%,0.4% 23%,1.3% 12%);
-  filter:drop-shadow(0 16px 28px rgba(20,20,16,.18));
+  filter:url(#torn) drop-shadow(0 16px 28px rgba(20,20,16,.18));
 }
 
 /* ---- case study: each block on its own odd angle — collage, still readable ---- */
