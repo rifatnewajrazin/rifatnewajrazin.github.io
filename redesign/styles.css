@@ -660,12 +660,14 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
 .instax figcaption{
   font-family:var(--hand);font-weight:500;
   font-size:clamp(17px,2vw,22px);line-height:1.15;text-align:center;
-  color:var(--ink-soft);padding:12px 6px 16px;
+  /* fixed ash grey in BOTH themes — the card under it is always white,
+     so --ink-soft (which lightens in dark mode) would wash out */
+  color:#54585f;padding:12px 6px 16px;
 }
-/* caption colour is uniform ash grey — the old teal/pink accents are
-   kept as no-ops so existing markup / CMS output doesn't need changing */
+/* caption colour is uniform — the old teal/pink accents are kept as
+   no-ops so existing markup / CMS output doesn't need changing */
 .instax figcaption.cap-teal,
-.instax figcaption.cap-pink{color:var(--ink-soft)}
+.instax figcaption.cap-pink{color:#54585f}
 
 /* Two or more photos: centred rows of two (.instax-pair). Cards overlap a
    little at rest — horizontally within a pair, vertically between pairs —

@@ -274,41 +274,47 @@
   // ---------- nav / toggle colour-band invert (independent of GSAP) ----------
   // Both the top nav and the bottom-right theme toggle re-tint to the
   // "on band" light while the coral/blue .statement sits behind them.
-  // One observer each: the nav cares about the strip under the header,
-  // the toggle about the strip above its own corner.
-  var navInvertIO = null, toggleBandIO = null;
+  // Nav: an IntersectionObserver on the strip under the header. Toggle:
+  // a real rect-overlap test each frame — a bottom strip can't be used
+  // there because the section after the hero always pokes into it.
+  var navInvertIO = null;
+  function updateToggleBand() {
+    var toggle = document.getElementById('themeToggle');
+    if (!toggle) return;
+    var t = toggle.getBoundingClientRect();
+    var on = false;
+    document.querySelectorAll('.statement').forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < t.bottom && r.bottom > t.top) on = true;   // vertical overlap
+    });
+    toggle.classList.toggle('on-band', on);
+  }
+  var toggleBandTick = false;
+  function scheduleToggleBand() {
+    if (toggleBandTick) return;
+    toggleBandTick = true;
+    requestAnimationFrame(function () { toggleBandTick = false; updateToggleBand(); });
+  }
   function navInvertRebuild() {
     var nav = document.getElementById('nav');
-    var toggle = document.getElementById('themeToggle');
     var darkSections = document.querySelectorAll('.statement');
     if (navInvertIO) { navInvertIO.disconnect(); navInvertIO = null; }
-    if (toggleBandIO) { toggleBandIO.disconnect(); toggleBandIO = null; }
-
-    var haveIO = 'IntersectionObserver' in window;
-    if (!darkSections.length || !haveIO) {
-      if (nav) nav.classList.remove('on-dark');
-      if (toggle) toggle.classList.remove('on-band');
-      return;
-    }
 
     if (nav) {
-      var navH = nav.offsetHeight || 70;
-      var below = Math.max(0, Math.round(window.innerHeight - navH));
-      navInvertIO = new IntersectionObserver(function (entries) {
-        nav.classList.toggle('on-dark', entries.some(function (e) { return e.isIntersecting; }));
-      }, { rootMargin: '0px 0px -' + below + 'px 0px', threshold: 0 });
-      darkSections.forEach(function (el) { navInvertIO.observe(el); });
+      if (!darkSections.length || !('IntersectionObserver' in window)) {
+        nav.classList.remove('on-dark');
+      } else {
+        var navH = nav.offsetHeight || 70;
+        var below = Math.max(0, Math.round(window.innerHeight - navH));
+        navInvertIO = new IntersectionObserver(function (entries) {
+          nav.classList.toggle('on-dark', entries.some(function (e) { return e.isIntersecting; }));
+        }, { rootMargin: '0px 0px -' + below + 'px 0px', threshold: 0 });
+        darkSections.forEach(function (el) { navInvertIO.observe(el); });
+      }
     }
-
-    if (toggle) {
-      // watch only the bottom ~110px strip the toggle occupies
-      var above = Math.max(0, Math.round(window.innerHeight - 110));
-      toggleBandIO = new IntersectionObserver(function (entries) {
-        toggle.classList.toggle('on-band', entries.some(function (e) { return e.isIntersecting; }));
-      }, { rootMargin: '-' + above + 'px 0px 0px 0px', threshold: 0 });
-      darkSections.forEach(function (el) { toggleBandIO.observe(el); });
-    }
+    updateToggleBand();
   }
+  window.addEventListener('scroll', scheduleToggleBand, { passive: true });
   (function () {
     var rt;
     window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(navInvertRebuild, 200); });
