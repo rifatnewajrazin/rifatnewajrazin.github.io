@@ -1284,3 +1284,7 @@ body{text-transform:lowercase}
 /* B-Sides row titles: nudged onto an angle, alternating side to side */
 .vers-note h3{rotate:1.8deg}
 .vers-row.flip .vers-note h3{rotate:-1.5deg}
+/* the detail copy leans the same way as its side: right rows tilt right,
+   left (flip) rows tilt left — kept small so it stays readable */
+.vers-note p{rotate:1deg;transform-origin:left top}
+.vers-row.flip .vers-note p{rotate:-1deg}
