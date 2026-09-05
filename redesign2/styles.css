@@ -1074,3 +1074,10 @@ body{text-transform:lowercase}
 .instax-pair:has(.instax:hover),
 .instax-reel:has(.instax:hover){position:static !important;z-index:auto !important}
 .instax:hover{z-index:30}
+
+/* ---- about: nudge the copy + stat labels up for readability ---- */
+.about-lead{
+  font-size:clamp(23px,2.7vw,34px);line-height:1.5;letter-spacing:normal;
+}
+.stats dt{font-size:15px;letter-spacing:.04em}
+.stats dd{font-size:clamp(38px,5.4vw,64px)}
