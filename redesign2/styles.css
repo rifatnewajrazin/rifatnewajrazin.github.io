@@ -139,7 +139,7 @@ body,.nav-links a,.nav-links a::after,.work-cell,.wc-year,.wc-cat,
   font-weight:400;letter-spacing:.005em;
 }
 
-html{-webkit-text-size-adjust:100%;overscroll-behavior:none}
+html{-webkit-text-size-adjust:100%;overscroll-behavior:none;overflow-x:clip}
 body{
   background:var(--paper);color:var(--ink);
   font-family:var(--tidy);font-size:16.5px;line-height:1.6;
@@ -955,7 +955,7 @@ body{
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
 /* ~6-7 words a line, left-aligned; the right padding is the negative space */
-.statement-text{width:auto;max-width:34ch;text-transform:lowercase}
+.statement-text{width:auto;max-width:28ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 /* *asterisk* runs in statement.json render in the Caveat script hand */
 .statement-text .hi{font:inherit}   /* one font across the whole statement */
@@ -975,9 +975,9 @@ body{
 /* ---- artwork in the scrap's negative space (right) ---- */
 .stmt-art{
   position:absolute;z-index:2;margin:0;
-  right:-3%;top:50%;translate:0 -50%;
-  width:min(360px,38%);
-  rotate:4.5deg;
+  right:1%;top:52%;translate:0 -50%;
+  width:min(300px,32%);
+  rotate:4deg;
   pointer-events:none;
 }
 .stmt-art img{
