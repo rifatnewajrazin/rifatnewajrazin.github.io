@@ -1115,3 +1115,54 @@ body{text-transform:lowercase}
   .case-title,.case-meta,#shotCover,.case-body h3,
   #briefText,#approachText,#outcomeText,.shot-row .shot,.next a{rotate:none}
 }
+
+/* ============================================================================
+   PALETTE + BACKGROUND — retuned to the Kutztown "Communication Design House"
+   reference: warm cream paper, muted sky-blue, olive/leaf green, warm black.
+   The old coral/red and pink are replaced by green and blue. Light mode only
+   (dark keeps its existing swap). Appended last so it wins.
+   ============================================================================ */
+:root{
+  --ink:#201f1b;
+  --ink-soft:#585a4d;
+  --ink-mute:#9c9c8c;
+  --coral:#6f8b3a;          /* red/pink  -> leaf-olive green */
+  --teal:#5a94a4;           /* blue      -> muted sky blue   */
+  --navy:#2b3a33;           /* headings  -> dark slate-green */
+  --rose:#cdd8ac;           /* placeholders -> pale green   */
+  --pink:#a6c6cf;           /* -> pale sky blue             */
+  --cream:#f2ecdc;
+  --ground:#efe8d6;
+  --band-green:#5c7a33;     /* the statement scrap fill      */
+  --tape-teal:rgba(90,148,164,.30);
+  --tape-rose:rgba(111,139,58,.30);
+  --tape-coral:rgba(111,139,58,.26);
+}
+
+/* layered, non-bland background: soft colour washes + faint torn-paper
+   panels + a stray pen line — all fixed, behind the content, multiply. */
+body::before{
+  content:"";position:fixed;inset:-12% -6%;z-index:0;pointer-events:none;
+  mix-blend-mode:multiply;
+  background:
+    radial-gradient(34% 30% at 15% 20%, rgba(90,148,164,.13), transparent 70%),
+    radial-gradient(40% 34% at 85% 66%, rgba(111,139,58,.13), transparent 72%),
+    radial-gradient(26% 24% at 62% 90%, rgba(111,139,58,.08), transparent 70%),
+    radial-gradient(30% 22% at 48% 4%,  rgba(90,148,164,.08), transparent 70%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.5;mix-blend-mode:multiply;
+  background:
+    linear-gradient(96deg,  rgba(0,0,0,.03)  0 46%, transparent 47%) left 6% top 12%    /62% 40% no-repeat,
+    linear-gradient(-92deg, rgba(0,0,0,.022) 0 55%, transparent 56%) right 4% bottom 14% /58% 46% no-repeat,
+    linear-gradient(74deg, transparent calc(50% - 1px), rgba(0,0,0,.055) 50%, transparent calc(50% + 1px));
+}
+
+/* statement scrap: green instead of coral, dark enough for white text */
+.statement{background:var(--band-green)}
+
+/* name scrap stays torn white paper with plain black letters (both words) */
+.hero-name .line-1,.hero-name .line-2{color:var(--ink) !important}
+
+@media (prefers-reduced-motion:reduce){ body::before,body::after{background:none} }
