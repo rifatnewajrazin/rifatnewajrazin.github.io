@@ -1298,5 +1298,5 @@ body{text-transform:lowercase}
 .vers-row.flip .vers-note h3{rotate:-1.5deg}
 /* the detail copy leans the same way as its side: right rows tilt right,
    left (flip) rows tilt left — kept small so it stays readable */
-.vers-note p{rotate:1deg;transform-origin:left top}
-.vers-row.flip .vers-note p{rotate:-1deg}
+.vers-note p{rotate:2.4deg;transform-origin:left top}
+.vers-row.flip .vers-note p{rotate:-2.4deg}
