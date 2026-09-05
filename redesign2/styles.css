@@ -979,7 +979,7 @@ body{
   filter:url(#torn) drop-shadow(0 18px 30px rgba(23,22,26,.14));
 }
 .about-grid{rotate:-1.4deg}
-.contact-links{display:inline-flex;margin-inline:auto;rotate:1.2deg}
+.contact-links{display:inline-flex;margin-inline:auto;rotate:2.6deg}
 
 /* ---- photocards: a strip of washi tape across the top ---- */
 .instax::after{
