@@ -419,10 +419,9 @@
       .then(function (data) {
         var text = data && typeof data.text === 'string' && data.text.trim();
         if (text) {
-          el.textContent = text;
-          splitWords(el);           // rebuild .word spans from the new copy
+          splitStatement(el, text);              // rebuild from the CMS copy
         } else if (!el.querySelector('.word')) {
-          splitWords(el);           // fallback copy, not yet split
+          splitStatement(el, el.textContent);    // fallback copy, not yet split
         }
         buildStatementFx();         // retarget the scroll tween (no-op without GSAP)
         if (haveGSAP && window.ScrollTrigger) ScrollTrigger.refresh();
@@ -505,6 +504,47 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') close();
     });
+  })();
+
+  /* ---------- theme toggle ----------
+     data-theme is set on <html> before first paint by the inline head
+     script (from localStorage, else prefers-color-scheme). This just
+     flips it, persists the choice, and keeps the button label/state and
+     the OS <meta theme-color> in sync. Lives outside <main>, wired once. */
+  (function wireThemeToggle() {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    function paperColour() {
+      return getComputedStyle(root).getPropertyValue('--paper').trim() || '#fdfdfd';
+    }
+    function sync() {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if (btn) {
+        btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+      if (meta) meta.setAttribute('content', paperColour());
+    }
+    sync();
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      sync();
+      // layout metrics ScrollTrigger cached don't change, but a refresh is
+      // cheap insurance after a big repaint.
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+    });
+    // follow the OS if the visitor never made an explicit choice
+    try {
+      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+        if (localStorage.getItem('theme')) return;
+        root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        sync();
+      });
+    } catch (e) {}
   })();
 
   /* ---------- click doodles ----------
@@ -789,6 +829,28 @@
       frag.appendChild(s);
     });
     el.appendChild(frag);
+  }
+
+  // Statement band: keep the author's paragraph breaks (blank line = new
+  // paragraph). Each paragraph is a block-level .stmt-line wrapping its
+  // own .word spans, so the scroll light-up (which targets
+  // `.statement-text .word`) still works unchanged.
+  function splitStatement(el, text) {
+    var paras = String(text || '').trim().split(/\n\s*\n/);
+    el.textContent = '';
+    paras.forEach(function (p) {
+      p = p.trim().replace(/\s+/g, ' ');
+      if (!p) return;
+      var line = document.createElement('span');
+      line.className = 'stmt-line';
+      p.split(' ').forEach(function (w) {
+        var s = document.createElement('span');
+        s.className = 'word';
+        s.textContent = w;
+        line.appendChild(s);
+      });
+      el.appendChild(line);
+    });
   }
 
   /* ---------- statement band: words light up on scroll ----------
@@ -1365,7 +1427,7 @@
     navInvertRebuild();
 
     if (view === 'home') {
-      document.querySelectorAll('[data-split="words"]').forEach(function (el) {
+      document.querySelectorAll('[data-split="words"]:not(.statement-text)').forEach(function (el) {
         if (!el.querySelector('.word')) splitWords(el);
       });
       renderStatement();
