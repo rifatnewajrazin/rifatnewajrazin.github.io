@@ -579,11 +579,14 @@
   (function wireClickDoodles() {
     if (reduce) return;
     var NS = 'http://www.w3.org/2000/svg';
-    // two loose marks in a 0..48 box, roughly centred so a random rotation
-    // still reads naturally: a quick pen stroke and a hand-drawn ring.
+    // loose pen strokes in a 0..48 box, roughly centred so a random
+    // rotation still reads naturally. Lines only — no rings.
     var MARKS = [
-      'M6 27 C15 22 22 30 28 25 S40 21 43 24',                          // line
-      'M23 8 C33 7 41 16 40 25 C40 34 32 41 23 40 C14 40 8 32 8 23 C8 14 14 8 23 8' // circle
+      'M6 27 C15 22 22 30 28 25 S40 21 43 24',   // gentle wave
+      'M7 24 C18 23 30 25 41 24',                // near-straight dash
+      'M6 30 C14 20 24 34 33 22 S41 26 43 20',   // springy zigzag
+      'M8 20 C16 26 24 18 32 26 S40 20 42 27',   // shallow scallop
+      'M6 22 C20 21 22 33 34 30 S41 25 43 27'    // hook-tailed streak
     ];
     var host = document.createElement('div');
     host.setAttribute('aria-hidden', 'true');
