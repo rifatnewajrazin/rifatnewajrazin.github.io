@@ -1049,14 +1049,16 @@ body{text-transform:lowercase}
 .mark svg .door{stroke:var(--coral)}
 .mark:hover{rotate:0deg}
 
-/* ---- B-Sides subtitle: an informal two-line aside, not a centred label ----
-   narrow enough to wrap between the clauses; first line flush left,
-   last line flush right (text-align-last), whole thing tilted. */
+/* ---- B-Sides subtitle: informal two-line aside, pushed to the RIGHT end
+   of the section rule. Own row under the title; narrow block hugging the
+   line's right edge; first line a little left, last line flush right. */
+.versions .section-head{flex-wrap:wrap}
 .versions .count{
-  display:block;max-width:15ch;
-  margin:10px auto 0;
+  flex:0 0 100%;order:2;
+  display:block;max-width:16ch;
+  margin:12px 0 0 auto;                 /* block sits at the right edge */
   font-family:var(--hand);font-weight:500;
-  font-size:clamp(19px,2.1vw,26px);letter-spacing:.01em;
+  font-size:clamp(20px,2.2vw,28px);letter-spacing:.01em;
   text-transform:lowercase;color:var(--ink-soft);
   text-align:left;text-align-last:right;
   rotate:-1.8deg;
@@ -1081,3 +1083,6 @@ body{text-transform:lowercase}
 }
 .stats dt{font-size:15px;letter-spacing:.04em}
 .stats dd{font-size:clamp(38px,5.4vw,64px)}
+
+/* ---- "Miles and kilometers" heading -> same coral as "The Backstage Guy" ---- */
+.vers-row.vr-pink .vers-note h3{color:var(--coral)}
