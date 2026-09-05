@@ -933,15 +933,15 @@ body{
 .statement{
   max-width:1040px;width:auto;
   margin:clamp(64px,13vh,150px) auto;
-  padding:clamp(48px,6vw,86px) clamp(40px,6vw,90px);
+  padding:clamp(48px,6vw,86px) clamp(56px,12vw,190px) clamp(48px,6vw,86px) clamp(40px,6vw,80px);
   justify-content:flex-start;       /* copy hugs the left */
   rotate:-3.4deg;
   overflow:visible;                 /* let the tape sit past the torn edge */
   filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
 }
 .statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
-/* text takes under half the scrap — the rest is deliberate green space */
-.statement-text{width:min(30ch,46%);max-width:none;text-transform:lowercase}
+/* ~6-7 words a line, left-aligned; the right padding is the negative space */
+.statement-text{width:auto;max-width:34ch;text-transform:lowercase}
 .statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
 .statement::before,.statement::after{
   content:"";position:absolute;z-index:3;width:150px;height:34px;
