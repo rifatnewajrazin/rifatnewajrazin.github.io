@@ -1006,17 +1006,26 @@ body{
   background:var(--sketch-line) repeat-x left center;background-size:260px 12px;
 }
 
-/* ---- marquee: scratched hand-drawn edges + a faint torn-paper lip ---- */
-.marquee{background:var(--cream);border:0;position:relative;overflow:visible}
+/* ---- marquee: a torn strip of paper with a hand-drawn line each edge ----
+   Lines are background layers ON .marquee (so nothing clips them); the
+   torn cream teeth are the ::before/::after. No filter — the track
+   animates and a filter would re-run every frame. */
+.marquee{
+  border:0;position:relative;overflow:visible;
+  background:
+    var(--sketch-line) repeat-x left top,
+    var(--sketch-line) repeat-x left bottom,
+    var(--cream);
+  background-size:260px 12px, 260px 12px, auto;
+}
 .marquee > *{position:relative;z-index:1}
 .marquee::before,.marquee::after{
-  content:"";position:absolute;left:0;right:0;height:15px;z-index:2;pointer-events:none;
-  background:
-    var(--sketch-line) repeat-x left 11px,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='134' height='15'%3E%3Cpath d='M0 0 H134 V7 L126 10 L118 6 L110 11 L102 7 L94 12 L86 7 L78 11 L70 6 L62 10 L54 7 L46 11 L38 6 L30 10 L22 7 L14 11 L6 7 L0 9 Z' fill='%23efe8d6'/%3E%3C/svg%3E") repeat-x left top;
+  content:"";position:absolute;left:0;right:0;height:15px;z-index:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='15'%3E%3Cpath d='M0 15 H190 V6 L180 9 L171 3 L162 10 L153 4 L144 9 L135 2 L126 8 L117 3 L108 10 L99 4 L90 9 L81 2 L72 8 L63 3 L54 10 L45 4 L36 9 L27 2 L18 7 L9 3 Z' fill='%23f2ecdc'/%3E%3C/svg%3E") repeat-x left top;
+  background-size:190px 15px;
 }
-.marquee::before{top:-1px}
-.marquee::after{bottom:-1px;transform:scaleY(-1)}
+.marquee::before{top:-14px}
+.marquee::after{bottom:-14px;transform:scaleY(-1)}
 
 /* ---- no dark mode ---- */
 .theme-toggle,.bg-flow{display:none !important}
