@@ -715,6 +715,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:0 clamp(28px,6vw,64px)}
   box-shadow:var(--card-shadow-hover);
   z-index:5;
 }
+/* Each .instax-pair with a left/right nudge is a transformed element =
+   its own stacking context, so a card's z-index:5 only wins *inside its
+   pair* — a hovered card in the top pair still sat under the next pair.
+   Lift the whole pair (and the reel) while it holds the hovered card. */
+.instax-pair:has(.instax:hover),
+.instax-reel:has(.instax:hover){position:relative;z-index:6}
 
 /* decorative drifting doodads (built in main.js; absolute within .versions) */
 .vers-doodads{position:absolute;inset:0;pointer-events:none;z-index:0}
