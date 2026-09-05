@@ -1140,12 +1140,15 @@ body{text-transform:lowercase}
   stroke-linecap:round;stroke-linejoin:round;
 }
 .mark svg .door{stroke:var(--coral)}
-/* the house gently rocks, and leans + hops sideways on hover */
-.mark{transition:rotate .35s ease, translate .35s ease;animation:markSway 5.5s ease-in-out infinite}
+/* the house ticks between poses in hard snaps (click-click), never eased */
+.mark{transition:rotate .12s steps(1,end), translate .12s steps(1,end);
+  animation:markSnap 4s steps(1,end) infinite}
 .mark:hover{rotate:5deg;translate:3px -2px;animation-play-state:paused}
-@keyframes markSway{
-  0%,100%{rotate:-3deg}
-  50%{rotate:-1deg}
+@keyframes markSnap{
+  0%,32%   {rotate:-3deg;translate:0 0}
+  33%,57%  {rotate:-1deg;translate:1px 0}
+  58%,82%  {rotate:-4deg;translate:-1px 0}
+  83%,100% {rotate:-2deg;translate:0 0}
 }
 @media (prefers-reduced-motion: reduce){
   .mark{animation:none}
