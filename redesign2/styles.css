@@ -929,16 +929,26 @@ body{
 .work-cell:hover{rotate:0deg;translate:0 -6px}
 .wc-title{color:var(--ink)}
 
-/* ---- statement: torn coral strip with a grain wash + tape ---- */
-.statement{filter:url(#torn)}
-.statement::before,.statement::after{
-  content:"";position:absolute;z-index:3;width:130px;height:30px;
-  background:var(--tape-coral);
-  clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);
-  box-shadow:0 3px 7px rgba(23,22,26,.16);
+/* ---- statement: a torn coral scrap, taped down and properly tilted ---- */
+.statement{
+  max-width:1040px;width:auto;
+  margin:clamp(64px,13vh,150px) auto;
+  padding:clamp(46px,6vw,84px) clamp(34px,6vw,76px);
+  rotate:-3.4deg;
+  overflow:visible;                 /* let the tape sit past the torn edge */
+  filter:url(#torn) drop-shadow(0 28px 44px rgba(23,22,26,.26));
 }
-.statement::before{top:-12px;left:16%;rotate:-5deg}
-.statement::after{bottom:-12px;right:18%;rotate:5deg}
+.statement .cityscape{display:none} /* a skyline doesn't belong on a scrap */
+.statement-text{max-width:32ch}
+.statement-text .word{color:rgba(253,253,253,.42)}  /* readable while unlit */
+.statement::before,.statement::after{
+  content:"";position:absolute;z-index:3;width:150px;height:34px;
+  background:var(--tape-rose);
+  clip-path:polygon(2% 8%,98% 0,100% 92%,0 100%);
+  box-shadow:0 4px 9px rgba(23,22,26,.18);
+}
+.statement::before{top:-16px;left:13%;rotate:-6deg}
+.statement::after{bottom:-16px;right:15%;rotate:5deg}
 
 /* ---- about + contact sit on a torn cream sheet ---- */
 .about-grid,.contact-links{
