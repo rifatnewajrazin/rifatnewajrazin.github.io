@@ -967,8 +967,9 @@ body{
 }
 .vers-row.flip .instax::after{background:var(--tape-rose);rotate:-4deg}
 
-/* ---- marquee divider: torn edge instead of a hairline ---- */
-.marquee{border-bottom:0;filter:url(#torn);background:var(--cream)}
+/* ---- marquee divider: plain cream strip (no torn filter — it warped
+   the text into waves) ---- */
+.marquee{background:var(--cream);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)}
 
 @media (prefers-reduced-motion:reduce){
   .nav-links a,.work-cell{transition:none}
