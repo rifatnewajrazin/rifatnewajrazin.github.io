@@ -1034,3 +1034,30 @@ body{text-transform:lowercase}
 .hero-flank span,.rotator-text,.instax-img[data-ph]::after{
   text-transform:lowercase !important;
 }
+
+/* ---- nav mark: hand-drawn home icon, and it no longer flips colour ----
+   The statement is a small rotated scrap now, so the old "nav goes light
+   over the dark band" behaviour just made the icon vanish. */
+.nav.on-dark,.nav.on-dark .nav-links a{color:var(--ink)}
+.nav.on-dark .mark{color:var(--ink)}
+.mark{display:inline-flex;align-items:center;line-height:0;color:var(--ink)}
+.mark svg{
+  width:clamp(30px,3.4vw,38px);height:auto;overflow:visible;
+  fill:none;stroke:currentColor;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.mark svg .door{stroke:var(--coral)}
+.mark:hover{rotate:0deg}
+
+/* ---- B-Sides subtitle: an informal two-line aside, not a centred label ----
+   narrow enough to wrap between the clauses; first line flush left,
+   last line flush right (text-align-last), whole thing tilted. */
+.versions .count{
+  display:block;max-width:15ch;
+  margin:10px auto 0;
+  font-family:var(--hand);font-weight:500;
+  font-size:clamp(19px,2.1vw,26px);letter-spacing:.01em;
+  text-transform:lowercase;color:var(--ink-soft);
+  text-align:left;text-align-last:right;
+  rotate:-1.8deg;
+}
