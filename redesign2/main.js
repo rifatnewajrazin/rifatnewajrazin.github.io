@@ -868,11 +868,17 @@
       if (!p) return;
       var line = document.createElement('span');
       line.className = 'stmt-line';
-      p.split(' ').forEach(function (w) {
-        var s = document.createElement('span');
-        s.className = 'word';
-        s.textContent = w;
-        line.appendChild(s);
+      // *asterisks* mark a script-hand accent run; every word inside keeps
+      // its own .word span (scroll light-up), plus a .hi class.
+      p.split('*').forEach(function (chunk, i) {
+        var hi = (i % 2 === 1);
+        chunk.split(' ').forEach(function (w) {
+          if (!w) return;
+          var s = document.createElement('span');
+          s.className = hi ? 'word hi' : 'word';
+          s.textContent = w;
+          line.appendChild(s);
+        });
       });
       el.appendChild(line);
     });
