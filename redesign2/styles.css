@@ -1021,7 +1021,7 @@ body{
 .flank-l .rotator{justify-content:center}   /* was flex-end; centre the cycling word */
 .flank-l .rotator-text{color:var(--ink-soft)}
 .hero-flank span,.flank-l .rotator,.flank-l .rotator-text{
-  font-size:clamp(19px,2.5vw,27px);
+  font-size:clamp(24px,3.4vw,40px);
   color:var(--ink-soft);font-weight:500;white-space:nowrap;line-height:1.2;
 }
 
@@ -1061,3 +1061,16 @@ body{text-transform:lowercase}
   text-align:left;text-align-last:right;
   rotate:-1.8deg;
 }
+
+/* ---- B-Sides: hovering a photocard lifts ONLY that card ----
+   The .instax-pair wrappers carry a left/right nudge via transform, which
+   makes each pair its own stacking context — so raising a card on hover
+   couldn't clear the next pair, and the earlier fix lifted the WHOLE pair
+   (dragging its other card forward too). Move the nudge onto the cards so
+   no wrapper is a stacking context, then lift just the hovered card. */
+.instax-gallery .instax-pair{transform:none !important}
+.instax-gallery .instax-pair:not(:only-child):nth-child(odd) > .instax{translate:clamp(-20px,-1.6vw,-8px) 0}
+.instax-gallery .instax-pair:not(:only-child):nth-child(even) > .instax{translate:clamp(8px,1.6vw,20px) 0}
+.instax-pair:has(.instax:hover),
+.instax-reel:has(.instax:hover){position:static !important;z-index:auto !important}
+.instax:hover{z-index:30}
