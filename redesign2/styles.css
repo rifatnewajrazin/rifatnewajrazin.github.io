@@ -972,6 +972,23 @@ body{
 .stmt-tape.a{top:-16px;left:13%;rotate:-6deg}
 .stmt-tape.b{bottom:-16px;right:15%;rotate:5deg}
 
+/* ---- artwork in the scrap's negative space (right) ---- */
+.stmt-art{
+  position:absolute;z-index:2;margin:0;
+  right:-3%;top:50%;translate:0 -50%;
+  width:min(360px,38%);
+  rotate:4.5deg;
+  pointer-events:none;
+}
+.stmt-art img{
+  width:100%;height:auto;display:block;
+  filter:url(#torn);            /* ragged torn-photo edge, no shadow (halo) */
+}
+@media(max-width:1024px){
+  .stmt-art{position:static;translate:0 0;rotate:2deg;
+    width:min(70vw,320px);margin:24px auto 0}
+}
+
 /* ---- about + contact sit on a torn cream sheet ---- */
 .about-grid,.contact-links{
   position:relative;background:var(--cream);
