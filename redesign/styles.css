@@ -1200,7 +1200,7 @@ body{text-transform:lowercase}
 .vers-row.vr-pink .vers-note h3{color:var(--coral)}
 
 /* ---- contact pull-quote: lowercase Permanent Marker, three lines ---- */
-.contact-kicker{margin-top:clamp(150px,20vh,280px);font-size:19px;letter-spacing:.14em}
+.contact-kicker{margin-top:clamp(260px,34vh,460px);font-size:19px;letter-spacing:.14em}
 /* the "reach me out at" card, sized up */
 .contact-links{padding:clamp(36px,4.6vw,66px)}
 .contact-reach{font-size:15px;letter-spacing:.14em}
