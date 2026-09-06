@@ -1379,3 +1379,59 @@ body{text-transform:lowercase}
   .nav-links a{padding:9px 10px 7px;font-size:12px}
   .mark svg{width:26px}
 }
+
+/* =====================================================================
+   Contact social — icon-only, the platform name writes itself in BELOW
+   the icon on hover / keyboard-focus (hand-drawn logo SVGs, fill:currentColor)
+   ===================================================================== */
+.contact-social{
+  display:flex;justify-content:center;align-items:flex-start;
+  gap:clamp(28px,5vw,46px);
+}
+.soc{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  color:var(--ink-soft);text-decoration:none;border:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.soc-ico{
+  width:clamp(26px,3vw,32px);height:auto;display:block;
+  fill:currentColor;overflow:visible;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1.2), color .25s ease;
+}
+/* the label: parked just under the icon, collapsed + faint, doesn't take
+   layout space so the icons stay put until you hover */
+.soc-name{
+  position:absolute;top:100%;left:50%;
+  margin-top:8px;white-space:nowrap;pointer-events:none;
+  font-family:var(--hand);font-weight:600;
+  font-size:clamp(15px,1.7vw,19px);line-height:1;letter-spacing:.01em;
+  color:var(--navy);
+  opacity:0;
+  transform:translate(-50%,-8px) rotate(-4deg) scale(.9);
+  transition:opacity .26s ease,
+             transform .32s cubic-bezier(.18,.9,.28,1.35);
+}
+.soc:hover .soc-ico,
+.soc:focus-visible .soc-ico{
+  color:var(--coral);                 /* olive-green ink on hover */
+  transform:translateY(-4px) rotate(-5deg) scale(1.1);
+}
+.soc:hover .soc-name,
+.soc:focus-visible .soc-name{
+  opacity:1;
+  transform:translate(-50%,2px) rotate(-2deg) scale(1);
+}
+.soc:nth-child(2):hover .soc-name{rotate:3deg}   /* small per-icon variety */
+.soc:focus-visible{outline:none}
+.soc:focus-visible .soc-ico{outline:2px dashed var(--coral);outline-offset:4px;border-radius:3px}
+
+/* touch / no-hover: no reveal to trigger, so show the names by default,
+   sitting in normal flow under each icon */
+@media (hover:none){
+  .contact-social{gap:clamp(22px,7vw,40px)}
+  .soc-name{
+    position:static;margin-top:7px;opacity:1;
+    transform:rotate(-2deg);
+  }
+  .soc:nth-child(2) .soc-name{transform:rotate(2deg)}
+}
