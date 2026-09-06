@@ -21,7 +21,9 @@
      client-side navigation swaps <main>, so both templates must request the
      same fonts up front regardless of which one loads first (this page
      doesn't use Prompt itself, but the homepage's statement text does). -->
-<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet" />
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&text=abcdefghijklmnopqrstuvwxyz%20.%2C%27%22%E2%80%9C%E2%80%9D&display=swap" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" /></noscript>
 <link rel="stylesheet" href="/redesign/styles.css?v=32" />
 <!-- Case-view styles now live in ../styles.css (the "case study" block) so
      they are present no matter how the view is reached — a full load of this
@@ -101,9 +103,9 @@
   <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
   <img id="lightboxImg" src="" alt="" />
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="/redesign/main.js?v=5"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script defer src="/redesign/main.js?v=7"></script>
 </body>
 </html>

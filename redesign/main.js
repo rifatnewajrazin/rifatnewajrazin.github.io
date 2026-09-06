@@ -464,7 +464,10 @@
   }
   function setShot(el, src, fallbackClass) {
     if (!el || !src) return;
-    el.innerHTML = '<img src="' + esc(src) + '" alt="">';
+    // #shotCover is near the top; the .shot-row pair is well below the fold
+    var eager = el.id === 'shotCover';
+    el.innerHTML = '<img src="' + esc(src) + '" alt="" decoding="async"' +
+      (eager ? '' : ' loading="lazy"') + '>';
     el.classList.remove(fallbackClass);
   }
   function populateCaseView(url) {

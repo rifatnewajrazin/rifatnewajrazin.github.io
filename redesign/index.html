@@ -19,10 +19,17 @@
 <script>(function(d){d.setAttribute('data-theme','light')})(document.documentElement)</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- All-handwritten type: Shantell Sans for anything that must read (body,
-     nav, headings, case studies), Caveat for the artistic hits (mark, hero
-     name, big contact line, hand labels). -->
-<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet" />
+<!-- All-handwritten type. Shantell Sans = anything that must read (body, nav,
+     headings, case studies); Caveat = the artistic hits (mark, hero name, big
+     contact line, hand labels). Loaded non-render-blocking (media=print swap);
+     display=swap covers the brief FOUT. -->
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&display=swap" />
+<!-- Permanent Marker is used for ONE line only (the contact pull-quote), so
+     it's character-subset via &text= (~29KB -> a few KB). If that line's copy
+     gains a glyph outside a-z / . , ' " “ ”, regenerate this URL or the new
+     character falls back to Caveat. -->
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&text=abcdefghijklmnopqrstuvwxyz%20.%2C%27%22%E2%80%9C%E2%80%9D&display=swap" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" /></noscript>
 <link rel="stylesheet" href="/redesign/styles.css?v=32" />
 </head>
 <body>
@@ -100,7 +107,9 @@
          and update the src). It removes itself cleanly if the file is
          missing. -->
     <figure class="stmt-art" aria-hidden="true">
-      <img src="/redesign/uploads/statement-art.jpg" alt="" width="900" height="1350"
+      <img src="/redesign/uploads/statement-art.webp" alt="" width="900" height="1350"
+           srcset="/redesign/uploads/statement-art-560.webp 560w, /redesign/uploads/statement-art.webp 900w"
+           sizes="(max-width:1024px) min(62vw,300px), 310px"
            loading="eager" decoding="async" fetchpriority="low"
            onerror="this.closest('.stmt-art').remove()" />
     </figure>
@@ -443,9 +452,12 @@
   <img id="lightboxImg" src="" alt="" />
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="/redesign/main.js?v=5"></script>
+<!-- defer: parsed off the main thread, executed in order after the document,
+     before DOMContentLoaded. main.js depends on the GSAP/Lenis globals; defer
+     preserves source order so they're all present when it runs. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script defer src="/redesign/main.js?v=7"></script>
 </body>
 </html>
