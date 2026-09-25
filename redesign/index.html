@@ -9,6 +9,47 @@
 <!-- Work-in-progress prototype with placeholder copy. Keep it out of search
      until it replaces the live site, so it can't compete with or dilute it. -->
 <meta name="robots" content="noindex, nofollow" />
+<!-- Metadata baked in ahead of cutover per the growth roadmap (Phase A/2.2-2.3).
+     noindex above already keeps this out of search regardless — these tags are
+     prep work, not a signal to index. Paths are self-referencing to /redesign/
+     for now; they get swept up in the same rewrite pass as everything else at
+     cutover (Phase B moves /redesign/* to the site root). -->
+<meta name="author" content="Rifat Newaj Razin" />
+<meta property="og:site_name" content="Rifat Newaj Razin" />
+<meta property="og:title" content="Rifat Newaj Razin — Graphic Designer, Dhaka" />
+<meta property="og:description" content="Rifat Newaj Razin is a graphic designer in Dhaka, Bangladesh working on brand identity, packaging, social, and motion." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.rifatnewajrazin.com/redesign/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Rifat Newaj Razin — Graphic Designer, Dhaka" />
+<meta name="twitter:description" content="Rifat Newaj Razin is a graphic designer in Dhaka, Bangladesh working on brand identity, packaging, social, and motion." />
+<link rel="canonical" href="https://www.rifatnewajrazin.com/redesign/" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Rifat Newaj Razin",
+  "url": "https://www.rifatnewajrazin.com/redesign/",
+  "jobTitle": "Graphic Designer",
+  "description": "Graphic designer and creative professional from Dhaka, Bangladesh — brand identity, packaging, social, and motion.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dhaka",
+    "addressCountry": "BD"
+  },
+  "knowsAbout": [
+    "Brand Identity Design",
+    "Packaging Design",
+    "Motion Graphics",
+    "Social Media Design"
+  ],
+  "sameAs": [
+    "https://www.linkedin.com/in/rifatnewajrazin/",
+    "https://www.behance.net/rifatnewajrazin",
+    "https://www.instagram.com/_razinn_/"
+  ]
+}
+</script>
 <!-- Runs before first paint: mark the page JS-ready so [data-anim] blocks
      start hidden (no flash of visible content that then snaps away and
      re-animates on a hard reload), and stop the browser restoring the old
@@ -264,32 +305,32 @@
          data/work.json loads, main.js renderWorkGrid() replaces them with
          the real, CMS-editable project list. -->
     <div class="work-grid" data-anim>
-      <a class="work-cell" href="/redesign/work/case.html?slug=lorem-ipsum-studio">
+      <a class="work-cell" href="/redesign/work/lorem-ipsum-studio">
         <span class="wc-year">2026</span>
         <span class="wc-title">Lorem Ipsum Studio</span>
         <span class="wc-cat">Brand Identity · Packaging</span>
       </a>
-      <a class="work-cell" href="/redesign/work/case.html?slug=dolor-sit-beverages">
+      <a class="work-cell" href="/redesign/work/dolor-sit-beverages">
         <span class="wc-year">2025</span>
         <span class="wc-title">Dolor Sit Beverages</span>
         <span class="wc-cat">Packaging · Art Direction</span>
       </a>
-      <a class="work-cell" href="/redesign/work/case.html?slug=consectetur-festival">
+      <a class="work-cell" href="/redesign/work/consectetur-festival">
         <span class="wc-year">2025</span>
         <span class="wc-title">Consectetur Festival</span>
         <span class="wc-cat">Event Design · Motion</span>
       </a>
-      <a class="work-cell" href="/redesign/work/case.html?slug=adipiscing-tech">
+      <a class="work-cell" href="/redesign/work/adipiscing-tech">
         <span class="wc-year">2024</span>
         <span class="wc-title">Adipiscing Tech</span>
         <span class="wc-cat">Brand Identity · Web</span>
       </a>
-      <a class="work-cell" href="/redesign/work/case.html?slug=eiusmod-skincare">
+      <a class="work-cell" href="/redesign/work/eiusmod-skincare">
         <span class="wc-year">2024</span>
         <span class="wc-title">Eiusmod Skincare</span>
         <span class="wc-cat">Packaging · Social</span>
       </a>
-      <a class="work-cell" href="/redesign/work/case.html?slug=tempor-incididunt-co">
+      <a class="work-cell" href="/redesign/work/tempor-incididunt-co">
         <span class="wc-year">2023</span>
         <span class="wc-title">Tempor Incididunt Co.</span>
         <span class="wc-cat">Brand Identity</span>
@@ -458,6 +499,6 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script defer src="/redesign/main.js?v=7"></script>
+<script defer src="/redesign/main.js?v=9"></script>
 </body>
 </html>

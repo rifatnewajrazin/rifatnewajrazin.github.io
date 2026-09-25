@@ -32,22 +32,34 @@
      Suffix-based so it works the same whether the site is hosted at the
      domain root or under /redesign/, and both locally and in production. */
   function routeKind(pathname) {
-    if (/\/work\/case(\.html)?$/.test(pathname)) return 'case';
+    if (/\/work\/[^/]+\/?$/.test(pathname)) return 'case';
     if (/\/(index\.html)?$/.test(pathname)) return 'home';
     return null;
+  }
+  // Clean case-study URLs are "/work/{slug}" (case.html itself carries no
+  // slug of its own — a direct hit on it falls back to ?slug= below).
+  function slugFromPath(pathname) {
+    var m = pathname.match(/\/work\/([^/]+)\/?$/);
+    if (!m) return '';
+    var s = decodeURIComponent(m[1]);
+    return s === 'case.html' ? '' : s;
   }
   function detectView(doc) {
     return doc.querySelector('.case-hero') ? 'case' : 'home';
   }
 
-  // The URL shown in the address bar (bare "/redesign/") can differ from
-  // what we actually fetch: relying on a host's directory-index behaviour
-  // to resolve "/redesign/" to its index.html is one more thing that can
-  // vary by host/config, so fetch the explicit filename instead.
+  // The URL shown in the address bar (bare "/redesign/", or a clean
+  // "/redesign/work/{slug}") can differ from the file we actually need to
+  // fetch: relying on a host's directory-index / rewrite behaviour for
+  // fetch() too is one more thing that can vary by host/config, so always
+  // resolve to the explicit backing file ourselves.
   function fetchTarget(url) {
     var path = url.pathname;
-    if (routeKind(path) === 'home' && !/\/index\.html$/.test(path)) {
+    var kind = routeKind(path);
+    if (kind === 'home' && !/\/index\.html$/.test(path)) {
       path = path.replace(/\/$/, '') + '/index.html';
+    } else if (kind === 'case' && !/\/case\.html$/.test(path)) {
+      path = path.replace(/\/[^/]+\/?$/, '/case.html');
     }
     return url.origin + path + url.search;
   }
@@ -100,6 +112,20 @@
      ============================================================ */
   var routing = false;
 
+  // Only <main> gets swapped on client-side navigation — <head> from the
+  // page that was cold-loaded stays put. document.title is kept in sync
+  // below on every swap; canonical + JSON-LD need the same treatment or
+  // they'd keep pointing at whichever page was cold-loaded first (e.g. a
+  // stale case-study canonical still showing after navigating "back to
+  // work"). populateCaseView() then refines these further with the actual
+  // per-project values, same as it does for the title.
+  function syncHeadFrom(doc) {
+    ['link[rel="canonical"]', 'script[type="application/ld+json"]'].forEach(function (sel) {
+      Array.prototype.forEach.call(document.head.querySelectorAll(sel), function (el) { el.remove(); });
+      Array.prototype.forEach.call(doc.head.querySelectorAll(sel), function (el) { document.head.appendChild(el.cloneNode(true)); });
+    });
+  }
+
   function swapMainTo(doc) {
     var newMain = doc.querySelector('main');
     if (!newMain) throw new Error('fetched document has no <main>');
@@ -109,6 +135,7 @@
     if (window.ScrollTrigger) ScrollTrigger.getAll().forEach(function (st) { st.kill(); });
     root.classList.remove('reveal-all');
     document.title = doc.title;
+    syncHeadFrom(doc);
     document.querySelector('main').replaceWith(newMain);
     window.scrollTo(0, 0);
     if (lenis) lenis.scrollTo(0, { immediate: true });
@@ -147,16 +174,20 @@
       try { url = new URL(href, location.href); } catch (err) { return; }
       if (url.origin !== location.origin) return;
 
-      // "same page" means the same route (by KIND, not raw pathname — a
-      // link to "/redesign/" and a cold load at "/redesign/index.html" are
-      // the same page, just two valid URL forms for it) AND the same query
-      // string, so e.g. "Next project" (same kind, different ?slug=) is
-      // correctly treated as real navigation, not an in-page anchor. The
-      // nav bar lives outside <main> and never gets swapped, so its links
+      // "same page" means the same route AND the same specific content:
+      // for home, that's KIND alone (a link to "/redesign/" and a cold
+      // load at "/redesign/index.html" are the same page, just two valid
+      // URL forms for it). For a case study, every slug is a different
+      // page under the same kind, so "Next project" (same kind, different
+      // slug/pathname) must still compare the full pathname — kind alone
+      // would wrongly treat every case study as "already here". The nav
+      // bar lives outside <main> and never gets swapped, so its links
       // always use absolute paths precisely so this comparison stays
       // reliable no matter which view is showing.
       var kind = routeKind(url.pathname);
-      var samePage = !!kind && kind === routeKind(location.pathname) && url.search === location.search;
+      var locKind = routeKind(location.pathname);
+      var samePage = !!kind && kind === locKind && url.search === location.search &&
+        (kind !== 'case' || url.pathname === location.pathname);
       if (samePage && url.hash) {
         e.preventDefault();
         // keep the address bar in sync with where we just scrolled, so a
@@ -334,7 +365,7 @@
         items.forEach(function (item, i) {
           var a = document.createElement('a');
           a.className = 'work-cell';
-          a.href = '/redesign/work/case.html?slug=' + encodeURIComponent(item.slug || '');
+          a.href = '/redesign/work/' + encodeURIComponent(item.slug || '');
           a.style.transitionDelay = (i * 0.06).toFixed(2) + 's';
           a.innerHTML =
             '<span class="wc-year">' + esc(item.year) + '</span>' +
@@ -471,7 +502,9 @@
     el.classList.remove(fallbackClass);
   }
   function populateCaseView(url) {
-    var slug = new URLSearchParams(url.search).get('slug');
+    // Clean "/work/{slug}" URLs first; "?slug=" stays as a fallback for the
+    // bare case.html file (direct hits, old links) so nothing 404s.
+    var slug = slugFromPath(url.pathname) || new URLSearchParams(url.search).get('slug');
     return fetch('/redesign/data/work.json', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
@@ -485,6 +518,29 @@
         document.title = item.title + ' — Rifat Newaj Razin';
         var pageTitle = document.getElementById('pageTitle');
         if (pageTitle) pageTitle.textContent = document.title;
+
+        // Self-referencing canonical + CreativeWork JSON-LD, per actual
+        // project — OG/Twitter tags stay static (see the <head> comment:
+        // social crawlers don't run this JS, so a per-project update here
+        // would never reach them; Google's crawler does execute JS, so
+        // canonical/JSON-LD updates here are real signal for it).
+        var canonicalUrl = 'https://www.rifatnewajrazin.com/redesign/work/' + encodeURIComponent(item.slug || '');
+        var canonicalEl = document.getElementById('caseCanonical');
+        if (canonicalEl) canonicalEl.href = canonicalUrl;
+        var jsonLdEl = document.getElementById('caseJsonLd');
+        if (jsonLdEl) {
+          jsonLdEl.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'CreativeWork',
+            name: item.title || '',
+            about: item.category || '',
+            url: canonicalUrl,
+            creator: { '@type': 'Person', name: 'Rifat Newaj Razin', url: 'https://www.rifatnewajrazin.com/redesign/' },
+            datePublished: item.year ? String(item.year) : undefined,
+            image: item.cover || undefined
+          });
+        }
+
         setText('caseTitle', item.title);
         setText('metaYear', item.year || '—');
         setText('metaRole', item.role || '—');
@@ -502,7 +558,7 @@
         var nextLink = document.getElementById('nextProjectLink');
         if (nextLink) {
           nextLink.textContent = (next.title || '') + ' ↗';
-          nextLink.href = '/redesign/work/case.html?slug=' + encodeURIComponent(next.slug || '');
+          nextLink.href = '/redesign/work/' + encodeURIComponent(next.slug || '');
         }
       })
       .catch(function () { /* static "—" placeholders stay as a safe fallback */ });
