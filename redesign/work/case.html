@@ -7,6 +7,23 @@
 <title id="pageTitle">Loading… — Rifat Newaj Razin</title>
 <meta name="description" content="Case study — Rifat Newaj Razin, graphic designer in Dhaka." />
 <meta name="robots" content="noindex, nofollow" />
+<!-- OG/Twitter stay generic (not JS-updated): social crawlers (Facebook,
+     Twitter/X, LinkedIn) don't execute JS, so a per-project title/image set
+     after fetch would never be seen by them — same JS-rendering risk the
+     growth roadmap already flags for the <title>. Real per-project share
+     cards need prerendering or a small edge function per slug; until then
+     this generic card is what actually gets shown, so it's what's here.
+     Canonical + JSON-LD below ARE updated by JS (populateCaseView in
+     main.js) since Google's crawler does execute JS for those. -->
+<meta property="og:site_name" content="Rifat Newaj Razin" />
+<meta property="og:title" content="Case Study — Rifat Newaj Razin" />
+<meta property="og:description" content="Case study — Rifat Newaj Razin, graphic designer in Dhaka." />
+<meta property="og:type" content="article" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Case Study — Rifat Newaj Razin" />
+<meta name="twitter:description" content="Case study — Rifat Newaj Razin, graphic designer in Dhaka." />
+<link rel="canonical" id="caseCanonical" href="https://www.rifatnewajrazin.com/redesign/work/" />
+<script type="application/ld+json" id="caseJsonLd">{}</script>
 <!-- Runs before first paint: mark the page JS-ready so [data-anim] blocks
      start hidden (no flash of visible content that then snaps away and
      re-animates on a hard reload), and stop the browser restoring the old
@@ -106,6 +123,6 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script defer src="/redesign/main.js?v=8"></script>
+<script defer src="/redesign/main.js?v=9"></script>
 </body>
 </html>

@@ -112,6 +112,20 @@
      ============================================================ */
   var routing = false;
 
+  // Only <main> gets swapped on client-side navigation — <head> from the
+  // page that was cold-loaded stays put. document.title is kept in sync
+  // below on every swap; canonical + JSON-LD need the same treatment or
+  // they'd keep pointing at whichever page was cold-loaded first (e.g. a
+  // stale case-study canonical still showing after navigating "back to
+  // work"). populateCaseView() then refines these further with the actual
+  // per-project values, same as it does for the title.
+  function syncHeadFrom(doc) {
+    ['link[rel="canonical"]', 'script[type="application/ld+json"]'].forEach(function (sel) {
+      Array.prototype.forEach.call(document.head.querySelectorAll(sel), function (el) { el.remove(); });
+      Array.prototype.forEach.call(doc.head.querySelectorAll(sel), function (el) { document.head.appendChild(el.cloneNode(true)); });
+    });
+  }
+
   function swapMainTo(doc) {
     var newMain = doc.querySelector('main');
     if (!newMain) throw new Error('fetched document has no <main>');
@@ -121,6 +135,7 @@
     if (window.ScrollTrigger) ScrollTrigger.getAll().forEach(function (st) { st.kill(); });
     root.classList.remove('reveal-all');
     document.title = doc.title;
+    syncHeadFrom(doc);
     document.querySelector('main').replaceWith(newMain);
     window.scrollTo(0, 0);
     if (lenis) lenis.scrollTo(0, { immediate: true });
@@ -503,6 +518,29 @@
         document.title = item.title + ' — Rifat Newaj Razin';
         var pageTitle = document.getElementById('pageTitle');
         if (pageTitle) pageTitle.textContent = document.title;
+
+        // Self-referencing canonical + CreativeWork JSON-LD, per actual
+        // project — OG/Twitter tags stay static (see the <head> comment:
+        // social crawlers don't run this JS, so a per-project update here
+        // would never reach them; Google's crawler does execute JS, so
+        // canonical/JSON-LD updates here are real signal for it).
+        var canonicalUrl = 'https://www.rifatnewajrazin.com/redesign/work/' + encodeURIComponent(item.slug || '');
+        var canonicalEl = document.getElementById('caseCanonical');
+        if (canonicalEl) canonicalEl.href = canonicalUrl;
+        var jsonLdEl = document.getElementById('caseJsonLd');
+        if (jsonLdEl) {
+          jsonLdEl.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'CreativeWork',
+            name: item.title || '',
+            about: item.category || '',
+            url: canonicalUrl,
+            creator: { '@type': 'Person', name: 'Rifat Newaj Razin', url: 'https://www.rifatnewajrazin.com/redesign/' },
+            datePublished: item.year ? String(item.year) : undefined,
+            image: item.cover || undefined
+          });
+        }
+
         setText('caseTitle', item.title);
         setText('metaYear', item.year || '—');
         setText('metaRole', item.role || '—');
