@@ -493,11 +493,11 @@
       return '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>';
     }).join('');
   }
-  function setShot(el, src, fallbackClass) {
+  function setShot(el, src, alt, fallbackClass) {
     if (!el || !src) return;
     // #shotCover is near the top; the .shot-row pair is well below the fold
     var eager = el.id === 'shotCover';
-    el.innerHTML = '<img src="' + esc(src) + '" alt="" decoding="async"' +
+    el.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(alt || '') + '" decoding="async"' +
       (eager ? '' : ' loading="lazy"') + '>';
     el.classList.remove(fallbackClass);
   }
@@ -550,10 +550,14 @@
         setHTML('approachText', paragraphs(item.approach));
         setHTML('outcomeText', paragraphs(item.outcome));
 
-        setShot(document.getElementById('shotCover'), item.cover, 'a');
+        setShot(document.getElementById('shotCover'), item.cover, item.coverAlt, 'a');
+        // Gallery items are { image, alt } objects (CMS-editable per-image
+        // alt text) — the || {} guards a still-placeholder empty slot.
         var gallery = item.gallery || [];
-        setShot(document.getElementById('shotB'), gallery[0], 'b');
-        setShot(document.getElementById('shotC'), gallery[1], 'c');
+        var g0 = gallery[0] || {};
+        var g1 = gallery[1] || {};
+        setShot(document.getElementById('shotB'), g0.image, g0.alt, 'b');
+        setShot(document.getElementById('shotC'), g1.image, g1.alt, 'c');
 
         var nextLink = document.getElementById('nextProjectLink');
         if (nextLink) {
