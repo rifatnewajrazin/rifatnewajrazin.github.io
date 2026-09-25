@@ -54,6 +54,11 @@ collections:
                 name: "cover"
                 widget: "image"
                 required: false
+              - label: "Cover Image Alt Text"
+                name: "coverAlt"
+                widget: "string"
+                required: false
+                hint: "Describe what's in the image for screen readers and search engines, e.g. \"Arnob tour t-shirt, front print, black on natural.\""
               - label: "Brief"
                 name: "brief"
                 widget: "text"
@@ -70,7 +75,17 @@ collections:
                 name: "gallery"
                 widget: "list"
                 required: false
-                field: { label: "Image", name: "image", widget: "image", required: false }
+                summary: "{{fields.alt}}"
+                fields:
+                  - label: "Image"
+                    name: "image"
+                    widget: "image"
+                    required: false
+                  - label: "Alt Text"
+                    name: "alt"
+                    widget: "string"
+                    required: false
+                    hint: "Describe what's in the image for screen readers and search engines."
 
   - name: "statement"
     label: "Statement"

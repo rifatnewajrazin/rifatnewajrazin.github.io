@@ -6,12 +6,19 @@
       "client": "Placeholder Co.",
       "outcome": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
       "gallery": [
-        "",
-        ""
+        {
+          "image": "",
+          "alt": ""
+        },
+        {
+          "image": "",
+          "alt": ""
+        }
       ],
       "deliverables": "Logo, System, Boxes",
       "role": "Identity, Packaging",
       "cover": "",
+      "coverAlt": "",
       "title": "Lorem Ipsum Studio",
       "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.",
       "year": "2026",
@@ -23,12 +30,19 @@
       "client": "Placeholder Co.",
       "outcome": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
       "gallery": [
-        "/redesign/uploads/gemini_generated_image_3l5b3t3l5b3t3l5b.webp",
-        "/redesign/uploads/gemini_generated_image_dhwd31dhwd31dhwd.webp"
+        {
+          "image": "/redesign/uploads/gemini_generated_image_3l5b3t3l5b3t3l5b.webp",
+          "alt": ""
+        },
+        {
+          "image": "/redesign/uploads/gemini_generated_image_dhwd31dhwd31dhwd.webp",
+          "alt": ""
+        }
       ],
       "deliverables": "Bottle System, Labels",
       "role": "Packaging, Art Direction",
       "cover": "/redesign/uploads/gemini_generated_image_s0743bs0743bs074.webp",
+      "coverAlt": "",
       "title": "Dolor Sit Beverages",
       "brief": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       "year": "2025",
@@ -40,12 +54,19 @@
       "client": "Placeholder Co.",
       "outcome": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
       "gallery": [
-        "",
-        ""
+        {
+          "image": "",
+          "alt": ""
+        },
+        {
+          "image": "",
+          "alt": ""
+        }
       ],
       "deliverables": "Signage, Motion Titles",
       "role": "Event Design, Motion",
       "cover": "",
+      "coverAlt": "",
       "title": "Consectetur Festival",
       "brief": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       "year": "2025",
@@ -57,12 +78,19 @@
       "client": "Placeholder Co.",
       "outcome": "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
       "gallery": [
-        "",
-        ""
+        {
+          "image": "",
+          "alt": ""
+        },
+        {
+          "image": "",
+          "alt": ""
+        }
       ],
       "deliverables": "Logo, Site Design",
       "role": "Identity, Web",
       "cover": "",
+      "coverAlt": "",
       "title": "Adipiscing Tech",
       "brief": "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.",
       "year": "2024",
@@ -74,12 +102,19 @@
       "client": "Placeholder Co.",
       "outcome": "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae.",
       "gallery": [
-        "",
-        ""
+        {
+          "image": "",
+          "alt": ""
+        },
+        {
+          "image": "",
+          "alt": ""
+        }
       ],
       "deliverables": "Bottle System, Social Kit",
       "role": "Packaging, Social",
       "cover": "",
+      "coverAlt": "",
       "title": "Eiusmod Skincare",
       "brief": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque.",
       "year": "2024",
@@ -91,12 +126,19 @@
       "client": "Placeholder Co.",
       "outcome": "Accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto.",
       "gallery": [
-        "",
-        ""
+        {
+          "image": "",
+          "alt": ""
+        },
+        {
+          "image": "",
+          "alt": ""
+        }
       ],
       "deliverables": "Logo, Guidelines",
       "role": "Identity",
       "cover": "",
+      "coverAlt": "",
       "title": "Tempor Incididunt Co.",
       "brief": "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur.",
       "year": "2023",
