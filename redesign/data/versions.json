@@ -22,12 +22,13 @@
           "image": "/redesign/uploads/the-one-who-plans-it.jpg",
           "caption": "the one who enjoys it the most"
         }
-      ]
+      ],
+      "hidden": true
     },
     {
       "heading": "Miles and kilometers",
       "body": "cycling's been my thing since college. eight, nine years and twenty-five thousand kilometers deep. running just happened recently but it grabbed me hard. i do marathons when they're on, but running and cycling are weekend regulars now.\n\nthe dopamine hit, the rhythm, the endurance keeps me moving. music makes it all flow without much effort. i wish i'd started sooner, but honestly, better late than never. both keep me sane. that's where i think. that's where i live...",
-      "flip": false,
+      "flip": true,
       "photos": [
         {
           "image": "/redesign/uploads/7.5-km-marathon.jpg",
@@ -46,7 +47,7 @@
     {
       "heading": "The duality",
       "body": "everyone around me thinks i'm an extrovert. the confidence, the way i speak publicly, how i lead. but it's all learned. i'm an introvert at my core. took years to practice being vocal in front of crowds. and yeah, i can do it now.\n\nbut that part of introversion is still inside me. i hate myself among a lot of people, a lot of unknown people especially...",
-      "flip": true,
+      "flip": false,
       "photos": [
         {
           "image": "/redesign/uploads/sleeping.jpg",
@@ -79,7 +80,8 @@
           "caption": "kaptai lake",
           "image": "/redesign/uploads/kaptai-lake.jpg"
         }
-      ]
+      ],
+      "hidden": true
     }
   ]
 }

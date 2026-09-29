@@ -71,9 +71,11 @@
      character falls back to Caveat. -->
 <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&text=abcdefghijklmnopqrstuvwxyz%20.%2C%27%22%E2%80%9C%E2%80%9D&display=swap" />
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..700;1,300..600&family=Caveat:wght@400;500;600;700&family=Permanent+Marker&display=swap" /></noscript>
-<link rel="stylesheet" href="/redesign/styles.css?v=32" />
+<link rel="stylesheet" href="/redesign/styles.css?v=33" />
+<noscript><style>.intro,.page-transition{display:none !important}</style></noscript>
 </head>
 <body>
+<a class="skip-link" href="#top">Skip to content</a>
 
 <!-- rough torn-edge filter for the mixed-media skin (styles.css) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="torn" color-interpolation-filters="sRGB" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
@@ -101,11 +103,11 @@
     <a href="/redesign/#work">Work</a>
     <a href="/redesign/#about">About</a>
     <a href="/redesign/#versions">B-Sides</a>
-    <a href="/redesign/#contact">Contact</a>
+    <a href="/redesign/#contact" class="nav-cta">Contact</a>
   </nav>
 </header>
 
-<main id="top">
+<main id="top" tabindex="-1">
 
   <!-- Draggable "desktop clutter" for the hero, built in main.js
        initFloaties(). A full-bleed SIBLING of .hero (not a child — the
@@ -135,6 +137,10 @@
       <span class="line line-1">Rifat Newaj</span>
       <span class="line line-2">Razin</span>
     </h1>
+    <div class="hero-lede">
+      <p>Brand identity, packaging, social and motion, for teams who lose sleep over the tiny details.</p>
+      <a class="hero-cta" href="/redesign/#work">See the work</a>
+    </div>
   </section>
 
   <!-- STATEMENT — dark band, text lights up on scroll.
@@ -306,33 +312,39 @@
          the real, CMS-editable project list. -->
     <div class="work-grid" data-anim>
       <a class="work-cell" href="/redesign/work/lorem-ipsum-studio">
-        <span class="wc-year">2026</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Lorem Ipsum Studio</span>
+        <span class="wc-year">2026</span>
         <span class="wc-cat">Brand Identity · Packaging</span>
       </a>
       <a class="work-cell" href="/redesign/work/dolor-sit-beverages">
-        <span class="wc-year">2025</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Dolor Sit Beverages</span>
+        <span class="wc-year">2025</span>
         <span class="wc-cat">Packaging · Art Direction</span>
       </a>
       <a class="work-cell" href="/redesign/work/consectetur-festival">
-        <span class="wc-year">2025</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Consectetur Festival</span>
+        <span class="wc-year">2025</span>
         <span class="wc-cat">Event Design · Motion</span>
       </a>
       <a class="work-cell" href="/redesign/work/adipiscing-tech">
-        <span class="wc-year">2024</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Adipiscing Tech</span>
+        <span class="wc-year">2024</span>
         <span class="wc-cat">Brand Identity · Web</span>
       </a>
       <a class="work-cell" href="/redesign/work/eiusmod-skincare">
-        <span class="wc-year">2024</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Eiusmod Skincare</span>
+        <span class="wc-year">2024</span>
         <span class="wc-cat">Packaging · Social</span>
       </a>
       <a class="work-cell" href="/redesign/work/tempor-incididunt-co">
-        <span class="wc-year">2023</span>
+        <span class="wc-img is-empty"></span>
         <span class="wc-title">Tempor Incididunt Co.</span>
+        <span class="wc-year">2023</span>
         <span class="wc-cat">Brand Identity</span>
       </a>
     </div>
@@ -351,10 +363,10 @@
         enjoy it.
       </p>
       <dl class="stats" data-anim>
-        <div><dt>Years</dt><dd data-count="7" data-suffix="+">0</dd></div>
-        <div><dt>Projects</dt><dd data-count="800" data-suffix="+">0</dd></div>
-        <div><dt>Brands</dt><dd data-count="12" data-suffix="+">0</dd></div>
-        <div><dt>Roles now</dt><dd data-count="2" data-suffix="">0</dd></div>
+        <div><dt>Years</dt><dd data-count="7" data-suffix="+">7+</dd></div>
+        <div><dt>Projects</dt><dd data-count="800" data-suffix="+">800+</dd></div>
+        <div><dt>Brands</dt><dd data-count="12" data-suffix="+">12+</dd></div>
+        <div><dt>Roles now</dt><dd data-count="2" data-suffix="">2</dd></div>
       </dl>
     </div>
   </section>
@@ -372,74 +384,20 @@
 
     <div class="vers-doodads" aria-hidden="true"></div>
 
-    <div class="vers-row" data-anim>
-      <figure class="instax">
-        <div class="instax-img g-a" data-ph="add photo"></div>
-        <figcaption>Backstage, not on stage</figcaption>
-      </figure>
-      <div class="vers-note">
-        <h3>The artist manager</h3>
-        <p>When a release is due I'm three inboxes deep at 2am — deadlines, splits,
-          artwork approvals — so the artist only has to think about the music.</p>
-      </div>
+    <!-- No-JS / fetch-failure fallback: mirrors the visible rows of
+         data/versions.json (rows flagged hidden are left out). main.js
+         replaces this with the live CMS rows on load. -->
+    <div class="vers-row vr-coral" data-anim>
+      <figure class="instax"><div class="instax-img"><img src="/redesign/uploads/the-backstage-guy.jpg" alt="the work nobody sees" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>the work nobody sees</figcaption></figure>
+      <div class="vers-note"><h3>The Backstage Guy</h3><p>from designing shows to managing them, from creating visuals to running them live, the music industry has always been my favorite place to work. forty-plus shows in the last four years and i&#x27;m still counting...</p></div>
     </div>
-
-    <div class="vers-row flip" data-anim>
-      <figure class="instax">
-        <div class="instax-img g-b" data-ph="add photo"></div>
-        <figcaption>km 32, still smiling</figcaption>
-      </figure>
-      <div class="vers-note">
-        <h3>The tour manager</h3>
-        <p>Vans, visas, load-ins, day sheets. If the show starts on time and
-          everyone's fed and accounted for, I did the job right.</p>
-      </div>
+    <div class="vers-row vr-teal flip" data-anim>
+      <div class="instax-gallery"><div class="instax-pair"><figure class="instax"><div class="instax-img"><img src="/redesign/uploads/7.5-km-marathon.jpg" alt="running 7.5km" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>running 7.5km</figcaption></figure><figure class="instax"><div class="instax-img"><img src="/redesign/uploads/cycling-on-victory-day.jpg" alt="cycling on victory day" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>cycling on victory day</figcaption></figure></div><div class="instax-pair"><figure class="instax"><div class="instax-img"><img src="/redesign/uploads/15-km-run.jpg" alt="my first 15km" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>my first 15km</figcaption></figure></div></div>
+      <div class="vers-note"><h3>Miles and kilometers</h3><p>cycling&#x27;s been my thing since college. eight, nine years and twenty-five thousand kilometers deep. running just happened recently but it grabbed me hard. i do marathons when they&#x27;re on, but running and cycling are weekend regulars now.</p><p>the dopamine hit, the rhythm, the endurance keeps me moving. music makes it all flow without much effort. i wish i&#x27;d started sooner, but honestly, better late than never. both keep me sane. that&#x27;s where i think. that&#x27;s where i live...</p></div>
     </div>
-
-    <div class="vers-row" data-anim>
-      <div class="instax-reel">
-        <figure class="instax">
-          <div class="instax-img g-c" data-ph="add photo"></div>
-          <figcaption>5am club</figcaption>
-        </figure>
-        <figure class="instax">
-          <div class="instax-img g-d" data-ph="add photo"></div>
-          <figcaption>chasing a PB</figcaption>
-        </figure>
-        <figure class="instax">
-          <div class="instax-img g-e" data-ph="add photo"></div>
-          <figcaption>podium-adjacent</figcaption>
-        </figure>
-      </div>
-      <div class="vers-note">
-        <h3>On two wheels &amp; two feet</h3>
-        <p>Long rides and longer runs are where the actual thinking happens.
-          Half the ideas on this site were worked out somewhere around km 20.</p>
-      </div>
-    </div>
-
-    <div class="vers-row flip" data-anim>
-      <figure class="instax">
-        <div class="instax-img g-f" data-ph="add photo"></div>
-        <figcaption>where did we park?</figcaption>
-      </figure>
-      <div class="vers-note">
-        <h3>In the friend circle</h3>
-        <p>The designated planner, driver and photo-taker. Someone has to book
-          the table, keep the plan alive, and remember where we left the car.</p>
-      </div>
-    </div>
-
-    <div class="vers-row" data-anim>
-      <figure class="instax">
-        <div class="instax-img g-g" data-ph="add photo"></div>
-        <figcaption>depends on the day</figcaption>
-      </figure>
-      <div class="vers-note">
-        <h3>Introvert / extrovert</h3>
-        <p>Loud in a room of six, invisible in a room of sixty. Both are me —
-          just on different days, and I've stopped apologising for either.</p>
-      </div>
+    <div class="vers-row vr-pink" data-anim>
+      <div class="instax-gallery"><div class="instax-pair"><figure class="instax"><div class="instax-img"><img src="/redesign/uploads/sleeping.jpg" alt="sleeping among 150+ people" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>sleeping among 150+ people</figcaption></figure><figure class="instax"><div class="instax-img"><img src="/redesign/uploads/forced-to-speak.jpg" alt="forced to speak" loading="lazy" decoding="async" width="400" height="600"></div><figcaption>forced to speak</figcaption></figure></div></div>
+      <div class="vers-note"><h3>The duality</h3><p>everyone around me thinks i&#x27;m an extrovert. the confidence, the way i speak publicly, how i lead. but it&#x27;s all learned. i&#x27;m an introvert at my core. took years to practice being vocal in front of crowds. and yeah, i can do it now.</p><p>but that part of introversion is still inside me. i hate myself among a lot of people, a lot of unknown people especially...</p></div>
     </div>
   </section>
 
@@ -499,6 +457,6 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-<script defer src="/redesign/main.js?v=10"></script>
+<script defer src="/redesign/main.js?v=11"></script>
 </body>
 </html>
