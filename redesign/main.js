@@ -367,9 +367,17 @@
           a.className = 'work-cell';
           a.href = '/redesign/work/' + encodeURIComponent(item.slug || '');
           a.style.transitionDelay = (i * 0.06).toFixed(2) + 's';
+          // cover frame first: a real image when the CMS has one, otherwise an
+          // empty 4:3 frame so the card keeps its final proportions.
+          var cover = item.cover
+            ? '<img src="' + esc(item.cover) + '" alt="' + esc(item.coverAlt || item.title) +
+              '" loading="lazy" decoding="async" width="800" height="600" ' +
+              'onerror="var f=this.parentNode;this.remove();if(f)f.classList.add(\'is-empty\')">'
+            : '';
           a.innerHTML =
-            '<span class="wc-year">' + esc(item.year) + '</span>' +
+            '<span class="wc-img' + (item.cover ? '' : ' is-empty') + '">' + cover + '</span>' +
             '<span class="wc-title">' + esc(item.title) + '</span>' +
+            '<span class="wc-year">' + esc(item.year) + '</span>' +
             '<span class="wc-cat">' + esc(item.category) + '</span>';
           grid.appendChild(a);
         });
@@ -402,7 +410,8 @@
     // of a broken-image icon — the card keeps its size and the layout holds.
     var inner = p && p.image
       ? '<div class="instax-img"><img src="' + esc(p.image) + '" alt="' +
-          esc(p.caption || '') + '" loading="lazy" decoding="async" ' +
+          esc(p.caption || '') + '" loading="lazy" decoding="async" width="400" height="600" ' +
+          'tabindex="0" role="button" aria-label="View larger: ' + esc(p.caption || 'photo') + '" ' +
           'onerror="var d=this.parentNode;this.remove();if(d)d.setAttribute(\'data-ph\',\'add photo\')"></div>'
       : '<div class="instax-img" data-ph="add photo"></div>';
     var capTone = p && p.caption
@@ -449,6 +458,9 @@
       .then(function (data) {
         var rows = data && data.rows;
         if (!rows || !rows.length) return; // keep the static fallback rows
+        // rows flagged hidden in the CMS stay in the data but are not rendered
+        rows = rows.filter(function (r) { return !(r && r.hidden); });
+        if (!rows.length) return;
         if (data.title) {
           var h = document.getElementById('versionsTitle');
           if (h) h.textContent = data.title;
@@ -493,12 +505,13 @@
       return '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>';
     }).join('');
   }
-  function setShot(el, src, fallbackClass) {
+  function setShot(el, src, alt, fallbackClass) {
     if (!el || !src) return;
     // #shotCover is near the top; the .shot-row pair is well below the fold
     var eager = el.id === 'shotCover';
-    el.innerHTML = '<img src="' + esc(src) + '" alt="" decoding="async"' +
-      (eager ? '' : ' loading="lazy"') + '>';
+    el.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(alt || '') + '" decoding="async"' +
+      (eager ? '' : ' loading="lazy"') +
+      ' tabindex="0" role="button" aria-label="View larger: ' + esc(alt || 'photo') + '">';
     el.classList.remove(fallbackClass);
   }
   function populateCaseView(url) {
@@ -550,10 +563,14 @@
         setHTML('approachText', paragraphs(item.approach));
         setHTML('outcomeText', paragraphs(item.outcome));
 
-        setShot(document.getElementById('shotCover'), item.cover, 'a');
+        setShot(document.getElementById('shotCover'), item.cover, item.coverAlt, 'a');
+        // Gallery items are { image, alt } objects (CMS-editable per-image
+        // alt text) — the || {} guards a still-placeholder empty slot.
         var gallery = item.gallery || [];
-        setShot(document.getElementById('shotB'), gallery[0], 'b');
-        setShot(document.getElementById('shotC'), gallery[1], 'c');
+        var g0 = gallery[0] || {};
+        var g1 = gallery[1] || {};
+        setShot(document.getElementById('shotB'), g0.image, g0.alt, 'b');
+        setShot(document.getElementById('shotC'), g1.image, g1.alt, 'c');
 
         var nextLink = document.getElementById('nextProjectLink');
         if (nextLink) {
@@ -567,29 +584,52 @@
   function setHTML(id, v) { var el = document.getElementById(id); if (el) el.innerHTML = v; }
 
   // ---------- lightbox (independent of GSAP) — wired once, delegated ----------
+  // Photos are focusable buttons (Enter / Space open them). While open it is a
+  // modal dialog: focus moves to Close and stays there (it is the only control),
+  // Escape or Close dismisses it, and focus returns to the photo that opened it.
   (function wireLightbox() {
     var lb = document.getElementById('lightbox');
     var lbImg = document.getElementById('lightboxImg');
+    var lbClose = document.getElementById('lightboxClose');
     if (!lb || !lbImg) return;
-    function open(src, alt) {
+    var TRIGGER = '.shot img, .instax-img img';
+    var lastTrigger = null;
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Photo viewer');
+    function isOpen() { return lb.classList.contains('open'); }
+    function open(src, alt, trigger) {
+      lastTrigger = trigger || null;
       lbImg.src = src;
       lbImg.alt = alt || '';
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      if (lbClose) lbClose.focus();
     }
     function close() {
+      if (!isOpen()) return;
       lb.classList.remove('open');
       lb.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
+      lastTrigger = null;
     }
     document.addEventListener('click', function (e) {
-      var img = e.target.closest && e.target.closest('.shot img, .instax-img img');
-      if (img) { open(img.src, img.alt); return; }
+      var img = e.target.closest && e.target.closest(TRIGGER);
+      if (img) { open(img.src, img.alt, img); return; }
       if (e.target === lb || e.target.id === 'lightboxClose') close();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') close();
+      if (isOpen()) {
+        if (e.key === 'Escape') { close(); return; }
+        if (e.key === 'Tab') { e.preventDefault(); if (lbClose) lbClose.focus(); }
+        return;
+      }
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches(TRIGGER)) {
+        e.preventDefault();
+        open(e.target.src, e.target.alt, e.target);
+      }
     });
   })();
 
@@ -972,11 +1012,15 @@
       });
     }
     document.querySelectorAll('[data-count]').forEach(function (el) {
+      // final values live in the HTML; reduced motion keeps them as-is
+      if (reduce) return;
       var end = +el.dataset.count, suf = el.dataset.suffix || '', o = { v: 0 };
-      el.textContent = '0' + suf;
       ScrollTrigger.create({
         trigger: el, start: 'top 88%', once: true,
         onEnter: function () {
+          // count up from 0 only now, as the number scrolls into view; until
+          // then (or if this never fires) the HTML's final value stays put
+          el.textContent = '0' + suf;
           gsap.to(o, { v: end, duration: 1.4, ease: 'power2.out',
             onUpdate: function () { el.textContent = Math.round(o.v) + suf; } });
         }
