@@ -132,11 +132,6 @@ collections:
                 widget: "boolean"
                 default: false
                 hint: "Off = photo on the left, on = photo on the right"
-              - label: "Hide from page"
-                name: "hidden"
-                widget: "boolean"
-                default: false
-                hint: "On = the row stays saved here but is not shown on the page"
               - label: "Photos"
                 name: "photos"
                 widget: "list"
